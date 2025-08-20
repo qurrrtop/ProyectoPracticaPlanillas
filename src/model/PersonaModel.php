@@ -12,7 +12,9 @@ abstract class PersonaModel
 
   protected $fechanac;
 
-  public function __construct($idPersona = null, $nombre = null, $apellido = null, $dni = null, $tel = null, $email = null, $fechanac = null)
+  protected $direccion;
+
+  public function __construct($idPersona = null, $nombre = null, $apellido = null, $dni = null, $tel = null, $email = null, $fechanac = null, $direccion=null)
   {
 
     $this->idPersona = $idPersona;
@@ -22,6 +24,7 @@ abstract class PersonaModel
     $this->tel = $tel;
     $this->email = $email;
     $this->fechanac = $fechanac;
+    $this->direccion = $direccion;
   }
 
   public function getIdPersona()
@@ -71,14 +74,19 @@ abstract class PersonaModel
     $this->dni = $dni;
   }
 
-  public function setTel($tel)
-  {
-    $this->tel = $tel;
-  }
+  public function setTel($tel)  {
+    if( filter_var($tel, '', FILTER_VALIDATE_INT) !== false) {
+      throw new Exception("el numero de telefono ingresado no es valido");
+    } 
+      $this->tel = trim($tel);
+    }
 
-  public function setEmail($email)
-  {
-    $this->email = $email;
+  public function setEmail($email){
+    
+    if( empty( $email ) || filter_var($email, '', FILTER_VALIDATE_EMAIL) !== false ) {
+      throw new Exception("el correo electronico ingresado no tiene un formato valido o esta vacio");
+    }  
+      $this->email = trim($email);
   }
 
   public function setFechaNac($fechanac){
@@ -92,7 +100,16 @@ abstract class PersonaModel
       throw new Exception("la fecha de vecimiento no puede ser menor que la actual");
     }
 
+    $this->fechanac = $fechanac;
   }
+
+  public function setDireccion($direccion) {
+    if(empty($direccion) || !is_string($direccion) || $direccion == false) {
+
+    }
+  }
+
+
 }
     //no se q es
     // if (!is_string($nombre) || !empty($nombre) || $nombre === null){

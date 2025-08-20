@@ -90,7 +90,7 @@
     // if (!is_string($nombre) || !empty($nombre) || $nombre === null){
 
     //   throw new Exception("el nombre es una cadena de texto y no puede estar vacio")
-    // }
+    // }effeveveveve
 
   }
 

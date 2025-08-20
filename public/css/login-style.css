@@ -1,0 +1,118 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Teachers', sans-serif;
+}
+
+body {
+    /* background-color: #4a4a4a; */
+    background-image: url('/appwebplanilla/public/assets/img/login/backg-blur.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.form-card {
+    display: flex;
+    flex-direction: row;
+    width: 55%;
+    max-width: 900px;
+    margin: 130px auto;
+    border-radius: 30px;
+    box-shadow: 5px 5px 15px #000000;
+}
+
+.form {
+    width: 50%;
+    background-color: #9292928a;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    border-top-right-radius: 30px;
+    border-bottom-right-radius: 30px;
+}
+
+.presentation {
+    background-image: url('/appwebplanilla/public/assets/img/backg-isfd-green.jpg');
+    background-size: cover;
+    width: 50%;
+    text-align: center;
+    border-top-left-radius: 30px;
+    border-bottom-left-radius: 30px;
+}
+
+.logo-isfd {
+    max-width: 80px;
+    min-width: 60px;
+    margin: 35px 0 30px 0;
+    filter: drop-shadow(3px 3px 7px #000000);
+}
+
+.message {
+    color: #fff;
+    font-size: 1.3rem;
+    margin: 0 50px 35px 50px;
+    padding-bottom: 20px;
+}
+
+.title {
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin: 30px 0 25px 0;
+}
+
+.inp-dni {
+    width: 75%;
+    height: 40px;
+    border-radius: 10px;
+    border: none;
+    margin: 0 0 15px 0;
+    box-shadow: 0px 2px 4px 0px #00000076;
+    padding-left: 10px;
+}
+
+.inp-pass {
+    width: 75%;
+    height: 40px;
+    border-radius: 10px;
+    border: none;
+    box-shadow: 0px 2px 4px 0px #00000076;
+    padding-left: 10px;
+}
+
+.inp-dni::placeholder {
+    font-weight: 500;
+}
+
+.inp-pass::placeholder {
+    font-weight: 600;
+}
+
+.inp-dni:focus, .inp-pass:focus {
+    outline: none;
+}
+
+.btn-submit {
+    background-color: #19512E;
+    color: #fff;
+    font-weight: 500;
+    font-size: 1rem;
+    margin: 20px 0 14px 0;
+    padding: 8px 30px;
+    border-radius: 20px;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0px 2px 4px 0px #000000ab;
+}
+
+.fa-lock, .fa-id-card {
+    color: #3f3f3f;
+    font-size: 1.2rem;
+    margin: 0 5px 0 0;
+}
+
+.link-pass {
+    color: #000000;
+    padding: 10px;
+    margin: 10px;
+}

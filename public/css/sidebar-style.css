@@ -1,0 +1,82 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+.nav {
+    width: 17vw;
+    height: 100vh;
+    background-color: #c3c3c3;
+    position: fixed;
+    top: 0;
+    left: 0;
+    font-family: sans-serif;
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
+}
+
+.backg-sidebar {
+    height: 26vh;
+    background-image: url('/appwebplanilla/public/assets/img/backg-isfd-green.jpg');
+    background-size: cover;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.logo-ingles {
+    width: 60%;
+}
+
+.list-sidebar {
+    list-style: none;
+    flex-grow: 1;
+}
+
+.list-sidebar a {
+    color: #000;
+    text-decoration: none;
+    font-weight: 700;
+}
+
+.list-sidebar li {
+    padding: 10px 0 10px 0;
+    width: 100%;
+    padding: 15px 0 15px 25px;
+}
+
+.list-sidebar li:hover {
+    background-color: #adadad;
+    transition: .5s;
+}
+
+.list-sidebar i {
+    font-size: 1.1rem;
+    margin-right: 7px;
+}
+
+.cerrar-sesion {
+    text-decoration: none;
+    list-style: none;
+    color: #000;
+    font-weight: 700;
+}
+
+.cerrar-sesion i {
+    font-size: 1.1rem;
+    margin-right: 7px;
+}
+
+.cerrar-sesion li {
+    padding: 10px 0 10px 0;
+    width: 100%;
+    padding: 15px 0 15px 25px;
+}
+
+.cerrar-sesion li:hover {
+    background-color: #adadad;
+    transition: .5s;   
+}

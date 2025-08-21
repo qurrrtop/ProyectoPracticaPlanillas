@@ -1,6 +1,6 @@
 <?php
 
-  class CoordinadorModel extends UsuarioModel {
+  class CoordinadorModel extends PersonaModelo {
     private $idCoordinador;
   
   }

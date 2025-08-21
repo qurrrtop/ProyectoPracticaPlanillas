@@ -21,7 +21,21 @@
         return $this -> $usuario;
     }
 
-    public function setContraseña($contraseña) {
+    // MÉTODO SET USUARIO - CONTRASEÑA;
+    //validación para el usuario y contraseña (que no esté vacio, que sea string y que no sea nulo);
+    //la validación de longitud, caracteres, números, minúsculas y mayúsculas en otra capa.
 
+    public function setUsuario($usuario) {
+        if (empty($usuario) || !is_string($usuario) || $usuario === null) {
+            throw new Exception("El nombre de usuario es obligatorio y debe ser una cadena de texto");
+        }
+        $this -> usuario = trim($usuario);
+    }
+
+    public function setContraseña($contraseña) {
+        if (empty($contraseña) || !is_string($contraseña) || $contraseña === null) {
+            throw new Exception("La contraseña no es valida y debe ser una cadena de texto");
+        }
+        $this -> contraseña = trim($contraseña);
     }
 ?>

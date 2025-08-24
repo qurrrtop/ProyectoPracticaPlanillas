@@ -8,14 +8,14 @@
         protected $telefono;
         protected $direccion;
         protected $fnacimiento;
-    }
+    
 
 
     // se coloca null los atributos por que el UsuarioModelo utilizará el CONSTRUCT;
     public function __CONSTRUCT($id = null, $nombre = null, $apellido = null, $dni = null, $email = null, $telefono = null, $direccion = null, $fnacimiento = null) {
         $this -> id = $id;
         $this -> nombre = $nombre;
-        $this -> apeliido = $apeliido;
+        $this -> apellido = $apellido;
         $this -> dni = $dni;
         $this -> email = $email;
         $this -> telefono = $telefono;
@@ -102,10 +102,10 @@
     //el 'error.log' solo lo vé el desarrollador;
     public function setFnacimiento($fnacimiento) {
         try {
-            $date = new Datetime($fnacimiento)
+            $date = new Datetime($fnacimiento);
         }catch(Exception $e) {
-            error_log("El valor ingresado de la fecha de nacimiento no es valido" $e);
-            throw new Exception('El valor ingresado para la fecha de nacimiento no tiene un formato valido')
+            error_log("El valor ingresado de la fecha de nacimiento no es valido". $e);
+            throw new Exception('El valor ingresado para la fecha de nacimiento no tiene un formato valido');
         }
 
         // $now = new DateTime();
@@ -120,4 +120,5 @@
     //los controles se harán en diferentes capas, con diferentes validaciones;
     // en capas de 'servicio' o 'controller'
     //el try catch lo usaremos en todas las capas.
+    }
 ?>

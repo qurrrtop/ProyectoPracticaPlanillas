@@ -1,1 +1,3 @@
 no se q va aca xd
+
+se puede hacer verificaciones de dni por ej (sea entero, no este vacio, su longitud)

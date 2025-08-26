@@ -1,6 +1,6 @@
 <?php 
     abstract class PersonaModelo {
-        protected $id;
+        protected $idPersona;
         protected $nombre;
         protected $apellido;
         protected $dni;
@@ -12,7 +12,7 @@
 
 
     // se coloca null los atributos por que el UsuarioModelo utilizará el CONSTRUCT;
-    public function __CONSTRUCT($id = null, $nombre = null, $apellido = null, $dni = null, $email = null, $telefono = null, $direccion = null, $fnacimiento = null) {
+    public function __CONSTRUCT($idPersona = null, $nombre = null, $apellido = null, $dni = null, $email = null, $telefono = null, $direccion = null, $fnacimiento = null) {
         $this -> id = $id;
         $this -> nombre = $nombre;
         $this -> apellido = $apellido;
@@ -21,6 +21,10 @@
         $this -> telefono = $telefono;
         $this -> direccion = $direccion;
         $this -> fnacimiento = $fnacimiento;
+    }
+
+    public function getIdPersona() {
+      return $this->idPersona;
     }
 
     public function getNombre() {

@@ -11,7 +11,7 @@
       public function __CONSTRUCT( ConnectionBD $connectionBD ) {
         $this->connectionBD = $connectionBD;
       }
-
+              #CREAR UN NUEVO USUARIO
       public function createANewUser( UsuarioModelo $usuario): UsuarioModelo {
         $sql = "INSER INTO ".self::TBL_NAME."(nombre, apellido, dni, email, telefono, direccion, fnacimiento) VALUES (:nombre, :apellido, :dni, :email, :telefono, :direccion, :fnacimiento)";
         
@@ -32,7 +32,7 @@
           $usuario = $stmt->execute( $userData );
           $newID = $conn->lastInsertId();
          
-          #falta metodo que retorna objetos (userdata)
+          return $this->readAUserByDNI( $newID );
 
         } catch(PDOException $e) {
 
@@ -46,7 +46,7 @@
         }
 
       }
-      
+                      #LEER USUARIO POR DNI
       public function readAUserByDNI( int $dni ): ?UsuarioModelo #el ? significa que puede no encontrarlo pero si lo encuentra retorna el objeto (usuario modelo)
       { 
 
@@ -85,7 +85,7 @@
         }
 
       }
-
+                #LEER UN USUARIO POR ID
       public function readAUserByID( int $id ): ?UsuarioModelo {
         $sql = "SELECT idPersona, nombre, apellido, dni, telefono, email, direccion, fnacimiento FROM " .self::TBL_NAME. " WHERE idPersona = :idPersona";
         
@@ -122,7 +122,7 @@
             throw $e;
         }
       }
-
+                #LISTAR TODOS LOS USUARIOS
       public function readAllUser(): array { #sera una coleccion de objeto lo que devuelve
         $sql = "SELECT idPersona, nombre, apellido, dni, email, telefono, direccion, fnacimiento FROM ". self::TBL_NAME. " ORDER BY idPersona";
 
@@ -138,24 +138,96 @@
 
           foreach( $queryResult as $row ) { #se usa para asignar a cada fila (resultado) al arreglo de alluser
 
-            
+            $AllUser[] = new UsuarioModelo(
+              $row["idPersona"],
+              $row["nombre"],
+              $row["apellido"],
+              $row["dni"],
+              $row["email"],
+              $row["telefono"],
+              $row["direccion"],
+              $row["fnacimiento"],
+            );
 
           }
+
+          return $AllUser;
 
         } catch( PDOException $e ) {
           error_log("error al intentar listar todos los usuarios". $e->getMessage());
           throw new Exception("error al intentar listar todos los usuarios");
+
         } catch( Exception $e ) {
           error_log("error al intentar listar todos los usuarios");
           throw $e;
         }
       }
 
+      public function updateAUser( UsuarioModelo $usuario ): UsuarioModelo {
+
+        $sql = "UPDATE ". self::TBL_NAME. " SET nombre = :nombre, apellido = :apellido, dni = :dni, email = :email, telefono = :telefono, direccion = :direccion, fnacimiento = :fnacimiento WHERE idPersona = idPersona";
+
+        $userData = [
+          ":nombre" => $usuario->getNombre(),
+          ":apellido" => $usuario->getApellido(),
+          ":dni" => $usuario->getDni(),
+          ":email" => $usuario->getEmail(),
+          ":telefono" => $usuario->getTelefono(),
+          ":direccion" => $usuario->getDireccion(),
+          ":fnacimiento" => $usuario->getFnacimiento(),
+          "idPersona" => $usuario->getIdPersona()
+        ];
+
+        try {
+
+          $conn = $this->connectionBD->getConnection();
+          $stmt = $conn->prepare( $sql );
+          $stmt->execute( $userData );
+         
+          // if( $stmt->rowCount()  ) {
+        
+          // }
+
+          return $this->readAUserByDNI( $usuario->getIdPersona() );
+
+        } catch( PDOException $e ) {
+          error_log("No se puede actualizar ese usuario en la base de datos". $e->getMessage());
+          throw new Exception("error  al actualizar en la BD");
+
+        } catch(Exception $e) {
+          error_log("error al actualizar el usuario en la BD");
+          throw $e;
+        }
+
+      }
+
+      public function deleteAUser( int $idPersona): bool {
+        $sql = "DELETE FROM ". self::TBL_NAME . " WHERE idPersona = :idPersona";
+
+        try {
+
+          $conn = $this->connectionBD->getConnection();
+          $stmt = $conn->prepare( $sql );
+          $stmt->bindParam(":idPersona", $idPersona, PDO::PARAM_INT);
+          $stmt->execute();
+          
+          return $stmt->rowCount() > 0;
+
+        } catch( PDOException $e ) {
+          error_log("error al borrar el registro en la BD". $e->getMessage());
+          throw new Exception("error al borrar el registro en la BD");
+
+        } catch( Exception $e ) {
+         error_log("error al borrar el registro de la BD");
+         throw $e;
+        }
+      }
+
     }
-    // capas¿? de como funciona de arriba a abajo o mas arriba a mas abajo 
+    // capas¿? de como funciona de arriba a abajo en profundidad¿
     // vista 
     // controlador 
-    // vista 
+    // servicio 
     // modelo | dao
 
     //inyectamos la conexion

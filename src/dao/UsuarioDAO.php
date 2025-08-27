@@ -30,7 +30,7 @@
           $conn = $this->connectionBD->getConnection();
           $stmt = $conn->prepare( $sql );
           $usuario = $stmt->execute( $userData );
-          $newID = $conn->lasInsertId();
+          $newID = $conn->lastInsertId();
          
           #falta metodo que retorna objetos (userdata)
 
@@ -59,7 +59,7 @@
           $stmt->bindParam( ":dni", $dni, PDO::PARAM_INT );
           $stmt->execute();
 
-          $queryResult = $stmt->fecth( PDO::FETCH_ASSOC );
+          $queryResult = $stmt->fetch( PDO::FETCH_ASSOC );
 
           if( !$queryResult ) {
             throw new Exception("porque te tatuatis");
@@ -87,7 +87,7 @@
       }
 
       public function readAUserByID( int $id ): ?UsuarioModelo {
-        $sql = "SELECT idPersona, nombre, apellido, dni, telefono, email, direccion, fnacimiento FROM " self::TBL_NAME. " WHERE idPersona = :idPersona";
+        $sql = "SELECT idPersona, nombre, apellido, dni, telefono, email, direccion, fnacimiento FROM " .self::TBL_NAME. " WHERE idPersona = :idPersona";
         
         try {
           #conn seria un objeto de clase PDO
@@ -101,7 +101,7 @@
           if ( !$queryResult ) {
             throw new Exception("no existe ningun usuario con el id ingresado");
           } #si no recupera nada no hace nada de lo que sigue abajo
-          $si encuentra un resultado en queryresult pasa esto=
+          #si encuentra un resultado en queryresult pasa esto=
           return new UsuarioModelo(
             $queryResult["idPersona"],
             $queryResult["nombre"],
@@ -141,7 +141,7 @@
           }
 
         } catch( PDOException $e ) {
-          error_log("error al intentar listar todos los usuarios". $e->getMesagge());
+          error_log("error al intentar listar todos los usuarios". $e->getMessage());
           throw new Exception("error al intentar listar todos los usuarios");
         } catch( Exception $e ) {
           error_log("error al intentar listar todos los usuarios");

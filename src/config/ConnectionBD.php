@@ -22,7 +22,7 @@
 
         } catch( PDOException $e ) {
           error_log("error en la conexion a la base de datos" .$e->getMessage());
-          throw $e
+          throw $e;
         }
       }
 

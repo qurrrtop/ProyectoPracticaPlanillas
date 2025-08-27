@@ -138,6 +138,8 @@
 
           foreach( $queryResult as $row ) { #se usa para asignar a cada fila (resultado) al arreglo de alluser
 
+            
+
           }
 
         } catch( PDOException $e ) {

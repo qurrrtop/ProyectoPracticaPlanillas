@@ -184,9 +184,9 @@
           $stmt = $conn->prepare( $sql );
           $stmt->execute( $userData );
          
-          // if( $stmt->rowCount()  ) {
-        
-          // }
+          if( $stmt->rowCount() === 0 ) {
+            throw new Exception("la modificacion no fue exitosa");
+          }
 
           return $this->readAUserByDNI( $usuario->getIdPersona() );
 

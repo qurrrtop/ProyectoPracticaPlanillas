@@ -123,7 +123,7 @@
         }
       }
                 #LISTAR TODOS LOS USUARIOS
-      public function readAllUser(): array { #sera una coleccion de objeto lo que devuelve
+      public function readAllUser(): array { #sera una coleccion de objetos lo que devuelve
         $sql = "SELECT idPersona, nombre, apellido, dni, email, telefono, direccion, fnacimiento FROM ". self::TBL_NAME. " ORDER BY idPersona";
 
         try {
@@ -175,7 +175,7 @@
           ":telefono" => $usuario->getTelefono(),
           ":direccion" => $usuario->getDireccion(),
           ":fnacimiento" => $usuario->getFnacimiento(),
-          "idPersona" => $usuario->getIdPersona()
+          "idPersona" => $usuario->getIdUsuario()
         ];
 
         try {
@@ -188,7 +188,7 @@
         
           // }
 
-          return $this->readAUserByDNI( $usuario->getIdPersona() );
+          return $this->readAUserByDNI( $usuario->getIdUsuario() );
 
         } catch( PDOException $e ) {
           error_log("No se puede actualizar ese usuario en la base de datos". $e->getMessage());

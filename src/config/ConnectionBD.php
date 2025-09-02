@@ -24,9 +24,9 @@
         }
       }
 
-      public static function getInstance(): DBConnection {
+      public static function getInstance(): ConnectionBD {
         if( self::$instance === null ) {
-          self::$instance = new DBConnection(); #esto solo pasa en la primera conexion a la BD
+          self::$instance = new ConnectionBD(); #esto solo pasa en la primera conexion a la BD
         }
 
         return self::$instance;

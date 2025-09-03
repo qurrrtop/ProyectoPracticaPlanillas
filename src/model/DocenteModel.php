@@ -1,8 +1,6 @@
 <?php
 
-  class DocenteModel extends PersonaModelo {
-
-    private $IdDocente;
+  class DocenteModel extends UsuarioModelo {
     
   }
 

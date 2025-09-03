@@ -3,7 +3,7 @@
   require_once __DIR__."/../config/ConnectionBD.php";
 
 
-    class UsuarioDAO {
+    class DocenteDAO {
       private $connectionBD = null;
 
       const TBL_NAME = "user"; #nombre de la tabla en la BD user es pa ponerle alguno, dsp vemos
@@ -14,9 +14,9 @@
         $this->connectionBD = $connectionBD;
       }
 
-      // ------------------------- CREATE A NEW USER -------------------------
+      // ------------------------- CREATE A NEW COORDINADOR -------------------------
 
-      public function createANewUser( UsuarioModelo $usuario): UsuarioModelo {
+      public function createANewCoordinador( DocenteModel $usuario): DocenteModel {
         $sql = "INSERT INTO ".self::TBL_NAME." (userName, passwordHash, nombre, apellido, dni, email, telefono, direccion, fnacimiento) VALUES (:userName, :passwordHash, :nombre, :apellido, :dni, :email, :telefono, :direccion, :fnacimiento)";
         
         $userData = [
@@ -38,24 +38,24 @@
           $usuario = $stmt->execute( $userData );
           $newID = $conn->lastInsertId();
          
-          return $this->readAUserByID( $newID );
+          return $this->readADocenteByID( $newID );
 
         } catch(PDOException $e) {
 
-          error_log("error al intentar agregar a la BD a un nuevo usuario".$e->getMessage());
-          throw new Exception("error al intentar agregar a la BD a un nuevo usuario");
+          error_log("error al intentar agregar a la BD a un nuevo docente".$e->getMessage());
+          throw new Exception("error al intentar agregar a la BD a un nuevo docente");
           
         } catch(Exception $e) {
 
-          error_log("error al intentar guardar un nuevo usuario".$e->getMessage());
+          error_log("error al intentar guardar un nuevo docente".$e->getMessage());
           throw $e; #cualquier problema que haya ocurrido se transfiere a la variable "e" y con throw lo muestra
         }
 
       }
       
-      // ------------------------- READ A USER BY DNI -------------------------
+      // ------------------------- READ A DOCENTE BY DNI -------------------------
 
-      public function readAUserByDNI( int $dni ): ?UsuarioModelo #el ? significa que puede no encontrarlo pero si lo encuentra retorna el objeto (usuario modelo)
+      public function readADocenteByDNI( int $dni ): ?DocenteModel #el ? significa que puede no encontrarlo pero si lo encuentra retorna el objeto (usuario modelo)
       { 
 
         $sql = "SELECT idUsuario, userName, passwordHash, nombre, apellido, dni, email, telefono, direccion, fnacimiento FROM ".self::TBL_NAME." WHERE dni = :dni";
@@ -73,7 +73,7 @@
             throw new Exception("porque te tatuatis");
           }
 
-          return new UsuarioModelo(
+          return new DocenteModel(
             $queryResult["idUsuario"],
             $queryResult["userName"],
             $queryResult["passwordHash"],
@@ -87,18 +87,18 @@
           ); #queryresult retorna todos los campos de un registro de la bd
 
         } catch( PDOException $e) {
-          error_log("error al buscar tal usuario por su dni en la BD".$e->getMessage());
-          throw new Exception("no se encontro a ningun usuario en la BD con el dni suministrado");
+          error_log("error al buscar tal docente por su dni en la BD".$e->getMessage());
+          throw new Exception("no se encontro a ningun docente en la BD con el dni suministrado");
         } catch( Exception $e) {
-          error_log("error al buscar por dni al usuario");
+          error_log("error al buscar por dni al docente");
           throw $e;
         }
 
       }
       
-      // ------------------------- READ A USER BY ID -------------------------
+      // ------------------------- READ A DOCENTE BY ID -------------------------
 
-      public function readAUserByID( int $idUsuario ): ?UsuarioModelo {
+      public function readADocenteByID( int $idUsuario ): ?DocenteModel {
         $sql = "SELECT idUsuario, userName, passwordHash, nombre, apellido, dni, telefono, email, direccion, fnacimiento FROM ".self::TBL_NAME." WHERE idUsuario = :idUsuario";
         
         try {
@@ -114,7 +114,7 @@
             throw new Exception("no existe ningun usuario con el id ingresado");
           } #si no recupera nada no hace nada de lo que sigue abajo
           #si encuentra un resultado en queryresult pasa esto=
-          return new UsuarioModelo(
+          return new DocenteModel(
             $queryResult["idUsuario"],
             $queryResult["userName"],
             $queryResult["passwordHash"],
@@ -128,18 +128,18 @@
           );
 
         } catch(PDOException $e) {
-            error_log("no existe un usuario con ese id en la BD");
-            throw new Exception("no existe un usuario con esa ID en la BD");
+            error_log("no existe un docente con ese id en la BD");
+            throw new Exception("no existe un docente con esa ID en la BD");
 
         } catch( Exception $e) {
-            error_log("no se encontro un usuario con esa ID");
+            error_log("no se encontro un docente con esa ID");
             throw $e;
         }
       }
       
-      // --------------------------- READ ALL USER ---------------------------
+      // --------------------------- READ ALL DOCENTES ---------------------------
 
-      public function readAllUser(): array { #sera una coleccion de objetos lo que devuelve
+      public function readAllDocente(): array { #sera una coleccion de objetos lo que devuelve
         $sql = "SELECT idUsuario, userName, passwordHash, nombre, apellido, dni, email, telefono, direccion, fnacimiento FROM ".self::TBL_NAME." ORDER BY idUsuario";
 
         try {
@@ -150,11 +150,11 @@
 
           $queryResult = $stmt->fetchAll( PDO::FETCH_ASSOC ); #fetchAll devuelve todos los registros
 
-          $AllUser = [];
+          $allUser = [];
 
           foreach( $queryResult as $row ) { #se usa para asignar a cada fila (resultado) al arreglo de alluser
 
-            $AllUser[] = new UsuarioModelo(
+            $allUser[] = new DocenteModel(
               $row["idUsuario"],
               $row["userName"],
               $row["passwordHash"],
@@ -169,59 +169,59 @@
 
           }
 
-          return $AllUser;
+          return $allUser;
 
         } catch( PDOException $e ) {
-          error_log("error al intentar listar todos los usuarios". $e->getMessage());
-          throw new Exception("error al intentar listar todos los usuarios");
+          error_log("error al intentar listar todos los docentes". $e->getMessage());
+          throw new Exception("error al intentar listar todos los docentes");
 
         } catch( Exception $e ) {
-          error_log("error al intentar listar todos los usuarios");
+          error_log("error al intentar listar todos los docentes");
           throw $e;
         }
       }
 
       // -------------------------- UPDATE A USER ---------------------------
 
-      public function updateAUser( UsuarioModelo $usuario ): UsuarioModelo {
+      public function updateAUser( DocenteModel $docente ): DocenteModel {
 
         $sql = "UPDATE ". self::TBL_NAME. " SET userName = :userName, passwordHash = :passwordHash, nombre = :nombre, apellido = :apellido, dni = :dni, email = :email, telefono = :telefono, direccion = :direccion, fnacimiento = :fnacimiento WHERE idUsuario = idUsuario";
 
-        $userData = [
-          ":nombre" => $usuario->getNombre(),
-          ":apellido" => $usuario->getApellido(),
-          ":dni" => $usuario->getDni(),
-          ":email" => $usuario->getEmail(),
-          ":telefono" => $usuario->getTelefono(),
-          ":direccion" => $usuario->getDireccion(),
-          ":fnacimiento" => $usuario->getFnacimiento(),
-          "idUsuario" => $usuario->getIdUsuario()
+        $docenteData = [
+          ":nombre" => $docente->getNombre(),
+          ":apellido" => $docente->getApellido(),
+          ":dni" => $docente->getDni(),
+          ":email" => $docente->getEmail(),
+          ":telefono" => $docente->getTelefono(),
+          ":direccion" => $docente->getDireccion(),
+          ":fnacimiento" => $docente->getFnacimiento(),
+          "idUsuario" => $docente->getIdUsuario()
         ];
 
         try {
 
           $conn = $this->connectionBD->getConnection();
           $stmt = $conn->prepare( $sql );
-          $stmt->execute( $userData );
+          $stmt->execute( $docenteData );
          
           if( $stmt->rowCount() === 0 ) {
             throw new Exception("la modificacion no fue exitosa");
           }
 
-          return $this->readAUserByDNI( $usuario->getIdUsuario() );
+          return $this->readADocenteByDNI( $docente->getIdUsuario() );
 
         } catch( PDOException $e ) {
-          error_log("No se puede actualizar ese usuario en la base de datos". $e->getMessage());
-          throw new Exception("error  al actualizar en la BD");
+          error_log("No se puede actualizar ese docente en la base de datos". $e->getMessage());
+          throw new Exception("error al actualizar el docente en la BD");
 
         } catch(Exception $e) {
-          error_log("error al actualizar el usuario en la BD");
+          error_log("error al actualizar el docente en la BD");
           throw $e;
         }
 
       }
 
-      // --------------------------- DELETE A USER --------------------------
+      // --------------------------- DELETE A DOCENTE --------------------------
 
       public function deleteAUser( int $idUsuario): bool {
         $sql = "DELETE FROM ".self::TBL_NAME." WHERE idUsuario = :idUsuario";

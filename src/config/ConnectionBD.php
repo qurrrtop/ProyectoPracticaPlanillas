@@ -1,10 +1,12 @@
 <?php 
     class ConnectionBD {
-      
+      // Atributo que guarda la instancia única del singleton;
       private static $instance = null;
+      // Atributo que guarda la conexion PDO;
       private $pdo;
             
       #el constructor es privado para evitar instanciacion directa ¿?
+      // Constructor privado para evitar que se creen instancias fuera de la clase;
       private function __construct() {
 
         #dsn tiene el tipo de BD, el nombre de la misma, el host y la categoria de caracteres utilizados (charset), no es obligatorio el charset, tampoco importa el orden
@@ -24,6 +26,7 @@
         }
       }
 
+      // Método estático que devuelve la única instancia de la clase;
       public static function getInstance(): ConnectionBD {
         if( self::$instance === null ) {
           self::$instance = new ConnectionBD(); #esto solo pasa en la primera conexion a la BD
@@ -32,6 +35,7 @@
         return self::$instance;
       }
 
+      // Método público para obtener el objeto PDO y ejecutar consultas;
       public function getConnection(): PDO {
         return $this->pdo;
       }

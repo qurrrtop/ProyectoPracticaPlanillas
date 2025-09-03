@@ -8,14 +8,20 @@
 
       const TBL_NAME = "user"; #nombre de la tabla en la BD user es pa ponerle alguno, dsp vemos
 
+      // ------------- CONSTRUCTOR CON INYECCIÓN DE DEPENDENCIAS --------------
+
       public function __CONSTRUCT( ConnectionBD $connectionBD ) {
         $this->connectionBD = $connectionBD;
       }
-              #CREAR UN NUEVO USUARIO
+
+      // ------------------------- CREATE A NEW USER -------------------------
+
       public function createANewUser( UsuarioModelo $usuario): UsuarioModelo {
-        $sql = "INSER INTO ".self::TBL_NAME."(nombre, apellido, dni, email, telefono, direccion, fnacimiento) VALUES (:nombre, :apellido, :dni, :email, :telefono, :direccion, :fnacimiento)";
+        $sql = "INSERT INTO ".self::TBL_NAME." (userName, passwordHash, nombre, apellido, dni, email, telefono, direccion, fnacimiento) VALUES (:userName, :passwordHash, :nombre, :apellido, :dni, :email, :telefono, :direccion, :fnacimiento)";
         
         $userData = [
+          ":userName" => $usuario->getUserName(),
+          ":passwordHash" => $usuario->getPasswordHash(),
           ":nombre" => $usuario->getNombre(),
           ":apellido" => $usuario->getApellido(),
           ":dni" => $usuario->getDni(),
@@ -32,7 +38,7 @@
           $usuario = $stmt->execute( $userData );
           $newID = $conn->lastInsertId();
          
-          return $this->readAUserByDNI( $newID );
+          return $this->readAUserByID( $newID );
 
         } catch(PDOException $e) {
 
@@ -46,11 +52,13 @@
         }
 
       }
-                      #LEER USUARIO POR DNI
+      
+      // ------------------------- READ A USER BY DNI -------------------------
+
       public function readAUserByDNI( int $dni ): ?UsuarioModelo #el ? significa que puede no encontrarlo pero si lo encuentra retorna el objeto (usuario modelo)
       { 
 
-        $sql = "SELECT idPerson, nombre, apellido, dni, email, telefono, direccion, fnacimiento FROM ".self::TBL_NAME. " WHERE dni = :dni";
+        $sql = "SELECT idUsuario, userName, passwordHash, nombre, apellido, dni, email, telefono, direccion, fnacimiento FROM ".self::TBL_NAME." WHERE dni = :dni";
 
         try {
 
@@ -66,7 +74,9 @@
           }
 
           return new UsuarioModelo(
-            $queryResult["idPersona"],
+            $queryResult["idUsuario"],
+            $queryResult["userName"],
+            $queryResult["passwordHash"],
             $queryResult["nombre"],
             $queryResult["apellido"],
             $queryResult["dni"],
@@ -85,15 +95,17 @@
         }
 
       }
-                #LEER UN USUARIO POR ID
-      public function readAUserByID( int $id ): ?UsuarioModelo {
-        $sql = "SELECT idPersona, nombre, apellido, dni, telefono, email, direccion, fnacimiento FROM " .self::TBL_NAME. " WHERE idPersona = :idPersona";
+      
+      // ------------------------- READ A USER BY ID -------------------------
+
+      public function readAUserByID( int $idUsuario ): ?UsuarioModelo {
+        $sql = "SELECT idUsuario, userName, passwordHash, nombre, apellido, dni, telefono, email, direccion, fnacimiento FROM ".self::TBL_NAME." WHERE idUsuario = :idUsuario";
         
         try {
           #conn seria un objeto de clase PDO
           $conn = $this->connectionBD->getConnection(); #se inyecta la BD para entrar a sus metodos
           $stmt = $conn->prepare( $sql );
-          $stmt->bindParam( ":idPersona", $id, PDO::PARAM_INT );
+          $stmt->bindParam( ":idUsuario", $idUsuario, PDO::PARAM_INT );
           $stmt->execute();
 
           $queryResult = $stmt->fetch( PDO::FETCH_ASSOC );
@@ -103,7 +115,9 @@
           } #si no recupera nada no hace nada de lo que sigue abajo
           #si encuentra un resultado en queryresult pasa esto=
           return new UsuarioModelo(
-            $queryResult["idPersona"],
+            $queryResult["idUsuario"],
+            $queryResult["userName"],
+            $queryResult["passwordHash"],
             $queryResult["nombre"],
             $queryResult["apellido"],
             $queryResult["dni"],
@@ -122,9 +136,11 @@
             throw $e;
         }
       }
-                #LISTAR TODOS LOS USUARIOS
+      
+      // --------------------------- READ ALL USER ---------------------------
+
       public function readAllUser(): array { #sera una coleccion de objetos lo que devuelve
-        $sql = "SELECT idPersona, nombre, apellido, dni, email, telefono, direccion, fnacimiento FROM ". self::TBL_NAME. " ORDER BY idPersona";
+        $sql = "SELECT idUsuario, userName, passwordHash, nombre, apellido, dni, email, telefono, direccion, fnacimiento FROM ".self::TBL_NAME." ORDER BY idUsuario";
 
         try {
 
@@ -139,7 +155,9 @@
           foreach( $queryResult as $row ) { #se usa para asignar a cada fila (resultado) al arreglo de alluser
 
             $AllUser[] = new UsuarioModelo(
-              $row["idPersona"],
+              $row["idUsuario"],
+              $row["userName"],
+              $row["passwordHash"],
               $row["nombre"],
               $row["apellido"],
               $row["dni"],
@@ -163,9 +181,11 @@
         }
       }
 
+      // -------------------------- UPDATE A USER ---------------------------
+
       public function updateAUser( UsuarioModelo $usuario ): UsuarioModelo {
 
-        $sql = "UPDATE ". self::TBL_NAME. " SET nombre = :nombre, apellido = :apellido, dni = :dni, email = :email, telefono = :telefono, direccion = :direccion, fnacimiento = :fnacimiento WHERE idPersona = idPersona";
+        $sql = "UPDATE ". self::TBL_NAME. " SET userName = :userName, passwordHash = :passwordHash, nombre = :nombre, apellido = :apellido, dni = :dni, email = :email, telefono = :telefono, direccion = :direccion, fnacimiento = :fnacimiento WHERE idUsuario = idUsuario";
 
         $userData = [
           ":nombre" => $usuario->getNombre(),
@@ -175,7 +195,7 @@
           ":telefono" => $usuario->getTelefono(),
           ":direccion" => $usuario->getDireccion(),
           ":fnacimiento" => $usuario->getFnacimiento(),
-          "idPersona" => $usuario->getIdUsuario()
+          "idUsuario" => $usuario->getIdUsuario()
         ];
 
         try {
@@ -201,14 +221,16 @@
 
       }
 
-      public function deleteAUser( int $idPersona): bool {
-        $sql = "DELETE FROM ". self::TBL_NAME . " WHERE idPersona = :idPersona";
+      // --------------------------- DELETE A USER --------------------------
+
+      public function deleteAUser( int $idUsuario): bool {
+        $sql = "DELETE FROM ".self::TBL_NAME." WHERE idUsuario = :idUsuario";
 
         try {
 
           $conn = $this->connectionBD->getConnection();
           $stmt = $conn->prepare( $sql );
-          $stmt->bindParam(":idPersona", $idPersona, PDO::PARAM_INT);
+          $stmt->bindParam(":idUsuario", $idUsuario, PDO::PARAM_INT);
           $stmt->execute();
           
           return $stmt->rowCount() > 0;

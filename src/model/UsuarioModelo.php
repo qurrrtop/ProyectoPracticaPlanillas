@@ -1,9 +1,9 @@
 <?php
     
     abstract class UsuarioModelo {
+        protected $idUsuario;
         protected $passwordHash;
         protected $userName;
-        protected $idUsuario;
         protected $nombre;
         protected $apellido;
         protected $dni;
@@ -27,16 +27,16 @@
         $this->passwordHash = $passwordHash;
     }
 
-        public function getPasswordHash() {
-            return $this->passwordHash;
-        }
+    public function getPasswordHash() {
+        return $this->passwordHash;
+    }
 
-        public function getUserName() {
-            return $this->userName;
-        }
+    public function getUserName() {
+        return $this->userName;
+    }
 
-        public function getIdUsuario() {
-      return $this->idUsuario;
+    public function getIdUsuario() {
+        return $this->idUsuario;
     }
 
     public function getNombre() {
@@ -140,7 +140,7 @@
 
         public function setUserName($userName) {
             if (empty($userName) || !is_string($userName) || $userName === null) {
-            throw new Exception("El nombre de user es obligatorio y debe ser una cadena de texto");
+                throw new Exception("El nombre de user es obligatorio y debe ser una cadena de texto");
             }
             $this->userName = trim($userName);
         }

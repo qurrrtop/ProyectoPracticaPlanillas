@@ -2,7 +2,7 @@
     class AlumnoModelo {
         private $nombre;
         private $apellido;
-        private $legajo;
+        private $dni;
         private $libreta;
         private $cohorte;
         private $legajo;
@@ -60,18 +60,30 @@
             $this -> apellido = trim($apellido);
         }
 
-        public function setDni($legajo) {
-            if (empty($legajo) || !is_string($legajo) || $legajo <= 0) {
+        public function setDni($dni) {
+            if (empty($dni) || !is_string($dni) || $dni <= 0) {
                 throw new Exception("El DNI es invalido, debe ser un número entero");
             }
-            $this -> legajo = trim($legajo);
+            $this -> dni = trim($dni);
+        }
+
+        public function setLibreta($libreta) {
+            if (!is_numeric($libreta) || intval($libreta) != $libreta || $libreta <= 0) {
+                throw new Exception("El nro de libreta es inválido, debe ser un número entero");
+            }
+            $this->libreta = intval($libreta);
+        }
+
+        public function setCohorte($cohorte) {
+            if (empty($cohorte) || !is_numeric($cohorte) || $cohorte <= 0) {
+                throw new Exception("El cohorte es inválido, debe ser un año válido");
+            }
+            $this->cohorte = intval($cohorte);
+
         }
 
         public function setLegajo($legajo) {
-            if (empty($legajo) || !is_string($legajo) || $legajo <= 0) {
-                throw new Exception("El legajo es invalido, debe ser un número entero");
-            }
-            $this -> legajo = trim($legajo);
+            $this->legajo = $legajo;
         }
 
     }

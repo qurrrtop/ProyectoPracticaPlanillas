@@ -30,7 +30,7 @@
         }
 
         public function getDni() {
-            return $this -> legajo;
+            return $this -> dni;
         }
 
         public function getLibreta() {

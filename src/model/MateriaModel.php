@@ -7,7 +7,10 @@
     private $curso;
     private $año;
 
-    
+    public function getIDMateria() {
+      return $this->idMateria;
+    }
+  
     
   }
 

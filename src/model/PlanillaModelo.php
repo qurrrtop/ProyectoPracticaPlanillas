@@ -19,19 +19,19 @@ class PlanillaModelo {
 
         // -------------------- MÉTODOS GET --------------------
 
-        public function getNombre() {
+        public function getPlanilla() {
             return $this -> idPlanilla;
         }
 
-        public function getasistencia() {
+        public function getAsistencia() {
             return $this -> asistencia;
         }
 
-        public function getDni() {
+        public function getPromedio() {
             return $this -> promedio;
         }
 
-        public function getLibreta() {
+        public function getCondicion() {
             return $this -> condicion;
         }
 

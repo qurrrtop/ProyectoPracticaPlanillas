@@ -1,5 +1,5 @@
 <?php
- class AlumnoModelo {
+ class CursadaModeloModelo {
         private $idCursada;
         private $añoCursada;
         private $FechaIni;
@@ -17,11 +17,11 @@
 
         // -------------------- MÉTODOS GET --------------------
 
-        public function getNombre() {
+        public function getCursada() {
             return $this -> idCursada;
         }
 
-        public function getApellido() {
+        public function getAñoCursada() {
             return $this -> añoCursada;
         }
 
@@ -29,7 +29,7 @@
             return $this -> FechaIni;
         }
 
-        public function getLibreta() {
+        public function getFechafin() {
             return $this -> FechaFin;
         }
 
@@ -39,14 +39,14 @@
 
         // -------------------- MÉTODOS SET --------------------
 
-        public function setNombre($idCursada) {
+        public function setCursada($idCursada) {
             if (empty($idCursada) || !is_string($idCursada) || $idCursada === null) {
                 throw new Exception("El idCursada es invalido, debe ser una cadena de texto");
             }
             $this -> idCursada = trim($idCursada);
         }
 
-        public function setApellido($añoCursada) {
+        public function setAñoCursada($añoCursada) {
             if (empty($añoCursada) || !is_string($añoCursada) || $añoCursada === null) {
                 throw new Exception("El añoCursada es invalido, debe ser una cadena de texto");
             }
@@ -60,7 +60,7 @@
             $this -> FechaIni = trim($FechaIni);
         }
 
-        public function setLibreta($FechaFin) {
+        public function setFechaFin($FechaFin) {
             if (!is_numeric($FechaFin) || intval($FechaFin) != $FechaFin || $FechaFin <= 0) {
                 throw new Exception("La FechaFin es inválido, debe ser un número entero");
             }

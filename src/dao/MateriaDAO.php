@@ -155,7 +155,7 @@ require_once __DIR__."/../config/ConnectionBD.php";
 
     }
 
-    public function deleteAMateria(  int $idMateria ): bool {
+    public function deleteAMateria( int $idMateria ): bool {
 
       $sql = "DELETE FROM ". self::TBL_NAME . " WHERE idMateria = :idMateria";
 
@@ -171,6 +171,7 @@ require_once __DIR__."/../config/ConnectionBD.php";
       } catch ( PDOException $e ) {
         error_log("no se pudo eliminar la materia ". $e->getMessage() );
         throw new Exception("no se pudo eliminar la materia");
+        
       } catch ( Exception $e ) {
         error_log("no se pudo eliminar la materia");
         throw $e;

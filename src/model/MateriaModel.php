@@ -4,8 +4,9 @@
 
     private $idMateria;
     private $nombre;
-    private $curso;
     private $año;
+    private $duracion;
+    private $formato;
 
     public function getIDMateria() {
       return $this->idMateria;
@@ -15,14 +16,17 @@
       return $this->nombre;
     }
 
-    public function getCurso() {
-      return $this->curso;
-    }
-
     public function getAño() {
       return $this->año;
     }
   
+    public function getDuracion() {
+      return $this->duracion;
+    }
+
+    public function getFormato() {
+      return $this->formato;
+    }
     
   }
 

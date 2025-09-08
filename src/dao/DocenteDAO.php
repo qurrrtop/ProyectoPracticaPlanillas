@@ -1,5 +1,5 @@
 <?php
-  require_once __DIR__."/../model/UsuarioModelo.php";
+  require_once __DIR__."/../model/DocenteModel.php";
   require_once __DIR__."/../config/ConnectionBD.php";
 
 
@@ -17,7 +17,7 @@
       // ------------------------- CREATE A NEW COORDINADOR -------------------------
 
       public function createANewCoordinador( DocenteModel $usuario): DocenteModel {
-        $sql = "INSERT INTO ".self::TBL_NAME." (userName, passwordHash, nombre, apellido, dni, email, telefono, direccion, fnacimiento) VALUES (:userName, :passwordHash, :nombre, :apellido, :dni, :email, :telefono, :direccion, :fnacimiento)";
+        $sql = "INSERT INTO ".self::TBL_NAME." (userName, passwordHash, nombre, apellido, dni, email, telefono, direccion, fnacimiento) VALUES (:userName, :passwordHash, :nombre, :apellido, :dni, :email, :telefono, :direccion, :fnacimiento)";  
         
         $userData = [
           ":userName" => $usuario->getUserName(),
@@ -164,7 +164,7 @@
               $row["email"],
               $row["telefono"],
               $row["direccion"],
-              $row["fnacimiento"],
+              $row["fnacimiento"]
             );
 
           }
@@ -181,9 +181,9 @@
         }
       }
 
-      // -------------------------- UPDATE A USER ---------------------------
+      // -------------------------- UPDATE A DOCENTE ---------------------------
 
-      public function updateAUser( DocenteModel $docente ): DocenteModel {
+      public function updateADocente( DocenteModel $docente ): DocenteModel {
 
         $sql = "UPDATE ". self::TBL_NAME. " SET userName = :userName, passwordHash = :passwordHash, nombre = :nombre, apellido = :apellido, dni = :dni, email = :email, telefono = :telefono, direccion = :direccion, fnacimiento = :fnacimiento WHERE idUsuario = idUsuario";
 
@@ -223,7 +223,7 @@
 
       // --------------------------- DELETE A DOCENTE --------------------------
 
-      public function deleteAUser( int $idUsuario): bool {
+      public function deleteADocente( int $idUsuario): bool {
         $sql = "DELETE FROM ".self::TBL_NAME." WHERE idUsuario = :idUsuario";
 
         try {

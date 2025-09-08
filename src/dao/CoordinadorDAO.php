@@ -1,5 +1,5 @@
 <?php
-  require_once __DIR__."/../model/UsuarioModelo.php";
+  require_once __DIR__."/../model/CoordinadorModelo.php";
   require_once __DIR__."/../config/ConnectionBD.php";
 
 
@@ -16,26 +16,26 @@
 
       // ------------------------- CREATE A NEW COORDINADOR -------------------------
 
-      public function createANewCoordinador( CoordinadorModel $usuario): CoordinadorModel {
+      public function createANewCoordinador( CoordinadorModel $coordinador): CoordinadorModel {
         $sql = "INSERT INTO ".self::TBL_NAME." (userName, passwordHash, nombre, apellido, dni, email, telefono, direccion, fnacimiento) VALUES (:userName, :passwordHash, :nombre, :apellido, :dni, :email, :telefono, :direccion, :fnacimiento)";
         
-        $userData = [
-          ":userName" => $usuario->getUserName(),
-          ":passwordHash" => $usuario->getPasswordHash(),
-          ":nombre" => $usuario->getNombre(),
-          ":apellido" => $usuario->getApellido(),
-          ":dni" => $usuario->getDni(),
-          ":email" => $usuario->getEmail(),
-          ":telefono" => $usuario->getTelefono(),
-          ":direccion" => $usuario->getDireccion(),
-          ":fnacimiento" => $usuario->getFnacimiento()
+        $coordinadorData = [
+          ":userName" => $coordinador->getUserName(),
+          ":passwordHash" => $coordinador->getPasswordHash(),
+          ":nombre" => $coordinador->getNombre(),
+          ":apellido" => $coordinador->getApellido(),
+          ":dni" => $coordinador->getDni(),
+          ":email" => $coordinador->getEmail(),
+          ":telefono" => $coordinador->getTelefono(),
+          ":direccion" => $coordinador->getDireccion(),
+          ":fnacimiento" => $coordinador->getFnacimiento()
         ];
 
         try {
 
           $conn = $this->connectionBD->getConnection();
           $stmt = $conn->prepare( $sql );
-          $usuario = $stmt->execute( $userData );
+          $coordinador = $stmt->execute( $coordinadorData );
           $newID = $conn->lastInsertId();
          
           return $this->readACoordinadorByID( $newID ); 
@@ -47,7 +47,7 @@
           
         } catch(Exception $e) {
 
-          error_log("error al intentar guardar un nuevo coordinador".$e->getMessage());
+          error_log("error al intentar guardar un nuevo coordinador");
           throw $e; #cualquier problema que haya ocurrido se transfiere a la variable "e" y con throw lo muestra
         }
 
@@ -150,11 +150,11 @@
 
           $queryResult = $stmt->fetchAll( PDO::FETCH_ASSOC ); #fetchAll devuelve todos los registros
 
-          $allUser = [];
+          $allCoordinador = [];
 
           foreach( $queryResult as $row ) { #se usa para asignar a cada fila (resultado) al arreglo de alluser
 
-            $allUser[] = new CoordinadorModel(
+            $allCoordinador[] = new CoordinadorModel(
               $row["idUsuario"],
               $row["userName"],
               $row["passwordHash"],
@@ -169,7 +169,7 @@
 
           }
 
-          return $allUser;
+          return $allCoordinador;
 
         } catch( PDOException $e ) {
           error_log("error al intentar listar todos los coordinadores". $e->getMessage());
@@ -183,7 +183,7 @@
 
       // -------------------------- UPDATE A USER ---------------------------
 
-      public function updateAUser( CoordinadorModel $coordinador ): CoordinadorModel {
+      public function updateACoordinador( CoordinadorModel $coordinador ): CoordinadorModel {
 
         $sql = "UPDATE ". self::TBL_NAME. " SET userName = :userName, passwordHash = :passwordHash, nombre = :nombre, apellido = :apellido, dni = :dni, email = :email, telefono = :telefono, direccion = :direccion, fnacimiento = :fnacimiento WHERE idUsuario = idUsuario";
 
@@ -223,7 +223,7 @@
 
       // --------------------------- DELETE A COORDINADOR --------------------------
 
-      public function deleteAUser( int $idUsuario): bool {
+      public function deleteACoordinador( int $idUsuario ): bool {
         $sql = "DELETE FROM ".self::TBL_NAME." WHERE idUsuario = :idUsuario";
 
         try {

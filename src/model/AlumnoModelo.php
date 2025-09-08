@@ -12,11 +12,10 @@
         public function __construct($nombre, $apellido, $dni, $legajo, $libreta, $cohorte ) {
             $this -> nombre = $nombre;
             $this -> apellido = $apellido;
-            $this->dni = $dni; 
+            $this -> dni = $dni; 
             $this -> legajo = $legajo;
             $this -> libreta = $libreta;
             $this -> cohorte = $cohorte;
-            $this -> legajo = $legajo;
         }
 
         // -------------------- MÉTODOS GET --------------------

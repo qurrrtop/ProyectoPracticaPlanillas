@@ -14,7 +14,7 @@
         $this->connectionBD = $connectionBD;
       }
 
-      // ------------------------- CREATE A NEW COORDINADOR -------------------------
+      // ------------------------- CREATE A NEW DOCENTE -------------------------
 
       public function createANewCoordinador( DocenteModel $usuario): DocenteModel {
         $sql = "INSERT INTO ".self::TBL_NAME." (userName, passwordHash, nombre, apellido, dni, email, telefono, direccion, fnacimiento) VALUES (:userName, :passwordHash, :nombre, :apellido, :dni, :email, :telefono, :direccion, :fnacimiento)";

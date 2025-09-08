@@ -1,9 +1,9 @@
 <?php
-  require_once __DIR__."/../model/DocenteModel.php";
+  require_once __DIR__."/../model/CoordinadorModelo.php";
   require_once __DIR__."/../config/ConnectionBD.php";
 
 
-    class DocenteDAO {
+    class CoordinadorDAO {
       private $connectionBD = null;
 
       const TBL_NAME = "user"; #nombre de la tabla en la BD user es pa ponerle alguno, dsp vemos
@@ -14,48 +14,48 @@
         $this->connectionBD = $connectionBD;
       }
 
-      // ------------------------- CREATE A NEW DOCENTE -------------------------
+      // ------------------------- CREATE A NEW COORDINADOR -------------------------
 
-      public function createANewCoordinador( DocenteModel $usuario): DocenteModel {
-        $sql = "INSERT INTO ".self::TBL_NAME." (userName, passwordHash, nombre, apellido, dni, email, telefono, direccion, fnacimiento) VALUES (:userName, :passwordHash, :nombre, :apellido, :dni, :email, :telefono, :direccion, :fnacimiento)";  
+      public function createANewCoordinador( CoordinadorModel $coordinador): CoordinadorModel {
+        $sql = "INSERT INTO ".self::TBL_NAME." (userName, passwordHash, nombre, apellido, dni, email, telefono, direccion, fnacimiento) VALUES (:userName, :passwordHash, :nombre, :apellido, :dni, :email, :telefono, :direccion, :fnacimiento)";
         
-        $userData = [
-          ":userName" => $usuario->getUserName(),
-          ":passwordHash" => $usuario->getPasswordHash(),
-          ":nombre" => $usuario->getNombre(),
-          ":apellido" => $usuario->getApellido(),
-          ":dni" => $usuario->getDni(),
-          ":email" => $usuario->getEmail(),
-          ":telefono" => $usuario->getTelefono(),
-          ":direccion" => $usuario->getDireccion(),
-          ":fnacimiento" => $usuario->getFnacimiento()
+        $coordinadorData = [
+          ":userName" => $coordinador->getUserName(),
+          ":passwordHash" => $coordinador->getPasswordHash(),
+          ":nombre" => $coordinador->getNombre(),
+          ":apellido" => $coordinador->getApellido(),
+          ":dni" => $coordinador->getDni(),
+          ":email" => $coordinador->getEmail(),
+          ":telefono" => $coordinador->getTelefono(),
+          ":direccion" => $coordinador->getDireccion(),
+          ":fnacimiento" => $coordinador->getFnacimiento()
         ];
 
         try {
 
           $conn = $this->connectionBD->getConnection();
           $stmt = $conn->prepare( $sql );
-          $usuario = $stmt->execute( $userData );
+          $coordinador = $stmt->execute( $coordinadorData );
           $newID = $conn->lastInsertId();
          
-          return $this->readADocenteByID( $newID );
+          return $this->readACoordinadorByID( $newID ); 
 
         } catch(PDOException $e) {
 
-          error_log("error al intentar agregar a la BD a un nuevo docente".$e->getMessage());
-          throw new Exception("error al intentar agregar a la BD a un nuevo docente");
+          error_log("error al intentar agregar a la BD a un nuevo coordinador".$e->getMessage());
+          throw new Exception("error al intentar agregar a la BD a un nuevo coordinador");
           
         } catch(Exception $e) {
 
-          error_log("error al intentar guardar un nuevo docente".$e->getMessage());
+          error_log("error al intentar guardar un nuevo coordinador");
           throw $e; #cualquier problema que haya ocurrido se transfiere a la variable "e" y con throw lo muestra
         }
 
       }
       
-      // ------------------------- READ A DOCENTE BY DNI -------------------------
+      // ------------------------- READ A COORDINADOR BY DNI -------------------------
 
-      public function readADocenteByDNI( int $dni ): ?DocenteModel #el ? significa que puede no encontrarlo pero si lo encuentra retorna el objeto (usuario modelo)
+      public function readACoordinadorByDNI( int $dni ): ?CoordinadorModel #el ? significa que puede no encontrarlo pero si lo encuentra retorna el objeto (usuario modelo)
       { 
 
         $sql = "SELECT idUsuario, userName, passwordHash, nombre, apellido, dni, email, telefono, direccion, fnacimiento FROM ".self::TBL_NAME." WHERE dni = :dni";
@@ -73,7 +73,7 @@
             throw new Exception("porque te tatuatis");
           }
 
-          return new DocenteModel(
+          return new CoordinadorModel(
             $queryResult["idUsuario"],
             $queryResult["userName"],
             $queryResult["passwordHash"],
@@ -87,18 +87,18 @@
           ); #queryresult retorna todos los campos de un registro de la bd
 
         } catch( PDOException $e) {
-          error_log("error al buscar tal docente por su dni en la BD".$e->getMessage());
-          throw new Exception("no se encontro a ningun docente en la BD con el dni suministrado");
+          error_log("error al buscar tal coordinador por su dni en la BD".$e->getMessage());
+          throw new Exception("no se encontro a ningun coordinador en la BD con el dni suministrado");
         } catch( Exception $e) {
-          error_log("error al buscar por dni al docente");
+          error_log("error al buscar por dni al coordinador");
           throw $e;
         }
 
       }
       
-      // ------------------------- READ A DOCENTE BY ID -------------------------
+      // ------------------------- READ A COORDINADOR BY ID -------------------------
 
-      public function readADocenteByID( int $idUsuario ): ?DocenteModel {
+      public function readACoordinadorByID( int $idUsuario ): ?CoordinadorModel {
         $sql = "SELECT idUsuario, userName, passwordHash, nombre, apellido, dni, telefono, email, direccion, fnacimiento FROM ".self::TBL_NAME." WHERE idUsuario = :idUsuario";
         
         try {
@@ -114,7 +114,7 @@
             throw new Exception("no existe ningun usuario con el id ingresado");
           } #si no recupera nada no hace nada de lo que sigue abajo
           #si encuentra un resultado en queryresult pasa esto=
-          return new DocenteModel(
+          return new CoordinadorModel(
             $queryResult["idUsuario"],
             $queryResult["userName"],
             $queryResult["passwordHash"],
@@ -128,18 +128,18 @@
           );
 
         } catch(PDOException $e) {
-            error_log("no existe un docente con ese id en la BD");
-            throw new Exception("no existe un docente con esa ID en la BD");
+            error_log("no existe un coordinador con ese id en la BD");
+            throw new Exception("no existe un coordinador con esa ID en la BD");
 
         } catch( Exception $e) {
-            error_log("no se encontro un docente con esa ID");
+            error_log("no se encontro un coordinador con esa ID");
             throw $e;
         }
       }
       
-      // --------------------------- READ ALL DOCENTES ---------------------------
+      // --------------------------- READ ALL COORDINADOR ---------------------------
 
-      public function readAllDocente(): array { #sera una coleccion de objetos lo que devuelve
+      public function readAllCoordinador(): array { #sera una coleccion de objetos lo que devuelve
         $sql = "SELECT idUsuario, userName, passwordHash, nombre, apellido, dni, email, telefono, direccion, fnacimiento FROM ".self::TBL_NAME." ORDER BY idUsuario";
 
         try {
@@ -150,11 +150,11 @@
 
           $queryResult = $stmt->fetchAll( PDO::FETCH_ASSOC ); #fetchAll devuelve todos los registros
 
-          $allUser = [];
+          $allCoordinador = [];
 
           foreach( $queryResult as $row ) { #se usa para asignar a cada fila (resultado) al arreglo de alluser
 
-            $allUser[] = new DocenteModel(
+            $allCoordinador[] = new CoordinadorModel(
               $row["idUsuario"],
               $row["userName"],
               $row["passwordHash"],
@@ -164,66 +164,66 @@
               $row["email"],
               $row["telefono"],
               $row["direccion"],
-              $row["fnacimiento"]
+              $row["fnacimiento"],
             );
 
           }
 
-          return $allUser;
+          return $allCoordinador;
 
         } catch( PDOException $e ) {
-          error_log("error al intentar listar todos los docentes". $e->getMessage());
-          throw new Exception("error al intentar listar todos los docentes");
+          error_log("error al intentar listar todos los coordinadores". $e->getMessage());
+          throw new Exception("error al intentar listar todos los coordinadores");
 
         } catch( Exception $e ) {
-          error_log("error al intentar listar todos los docentes");
+          error_log("error al intentar listar todos los coordinadores");
           throw $e;
         }
       }
 
-      // -------------------------- UPDATE A DOCENTE ---------------------------
+      // -------------------------- UPDATE A USER ---------------------------
 
-      public function updateADocente( DocenteModel $docente ): DocenteModel {
+      public function updateACoordinador( CoordinadorModel $coordinador ): CoordinadorModel {
 
         $sql = "UPDATE ". self::TBL_NAME. " SET userName = :userName, passwordHash = :passwordHash, nombre = :nombre, apellido = :apellido, dni = :dni, email = :email, telefono = :telefono, direccion = :direccion, fnacimiento = :fnacimiento WHERE idUsuario = idUsuario";
 
-        $docenteData = [
-          ":nombre" => $docente->getNombre(),
-          ":apellido" => $docente->getApellido(),
-          ":dni" => $docente->getDni(),
-          ":email" => $docente->getEmail(),
-          ":telefono" => $docente->getTelefono(),
-          ":direccion" => $docente->getDireccion(),
-          ":fnacimiento" => $docente->getFnacimiento(),
-          "idUsuario" => $docente->getIdUsuario()
+        $coordinadorData = [
+          ":nombre" => $coordinador->getNombre(),
+          ":apellido" => $coordinador->getApellido(),
+          ":dni" => $coordinador->getDni(),
+          ":email" => $coordinador->getEmail(),
+          ":telefono" => $coordinador->getTelefono(),
+          ":direccion" => $coordinador->getDireccion(),
+          ":fnacimiento" => $coordinador->getFnacimiento(),
+          "idUsuario" => $coordinador->getIdUsuario()
         ];
 
         try {
 
           $conn = $this->connectionBD->getConnection();
           $stmt = $conn->prepare( $sql );
-          $stmt->execute( $docenteData );
+          $stmt->execute( $coordinadorData );
          
           if( $stmt->rowCount() === 0 ) {
             throw new Exception("la modificacion no fue exitosa");
           }
 
-          return $this->readADocenteByDNI( $docente->getIdUsuario() );
+          return $this->readACoordinadorByDNI( $coordinador->getIdUsuario() );
 
         } catch( PDOException $e ) {
-          error_log("No se puede actualizar ese docente en la base de datos". $e->getMessage());
-          throw new Exception("error al actualizar el docente en la BD");
+          error_log("No se puede actualizar ese coordiandor en la base de datos". $e->getMessage());
+          throw new Exception("error al actualizar el coordinador en la BD");
 
         } catch(Exception $e) {
-          error_log("error al actualizar el docente en la BD");
+          error_log("error al actualizar el coordinador en la BD");
           throw $e;
         }
 
       }
 
-      // --------------------------- DELETE A DOCENTE --------------------------
+      // --------------------------- DELETE A COORDINADOR --------------------------
 
-      public function deleteADocente( int $idUsuario): bool {
+      public function deleteACoordinador( int $idUsuario ): bool {
         $sql = "DELETE FROM ".self::TBL_NAME." WHERE idUsuario = :idUsuario";
 
         try {
@@ -246,20 +246,4 @@
       }
 
     }
-    // capas¿? de como funciona de arriba a abajo en profundidad¿
-    // vista 
-    // controlador 
-    // servicio 
-    // modelo | dao
-
-    //inyectamos la conexion
-    // en la capa DAO inyectaré MODELO
-    //PUBLIC FUNCTION CREATENEWCUSTOMER(CustomerModel $CUSTOMER): CustomerModel {}
-    // en la capa controller inyectaré la capa SERVICIO
-    //CREATE
-    //READ BY DNI
-    //READ BY ID
-    //READ BY NOMBRE
-    //para no usar tantos BindParam se hace un arreglo | en el create pa;
-?>
-
+    ?>

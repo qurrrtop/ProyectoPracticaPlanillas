@@ -132,6 +132,68 @@
         }
       }
 
+      // -------------------------- UPDATE A ALUMNO ---------------------------
+  
+        public function updateAAlumno( AlumnoModelo $alumno ): AlumnoModelo {
+  
+          $sql = "UPDATE ".self::TBL_NAME." SET nombre = :nombre, apellido = :apellido, dni = :dni, libreta = :libreta, cohorte = :cohorte, legajo = :legajo WHERE dni = :dni";
+  
+          $alumnoData = [
+            ":nombre" => $alumno->getNombre(),
+            ":apellido" => $alumno->getApellido(),
+            ":dni" => $alumno->getDni(),
+            ":libreta" => $alumno->getLibreta(),
+            ":cohorte" => $alumno->getCohorte(),
+            ":legajo" => $alumno->getLegajo(),
+          ];
+  
+          try {
+  
+            $conn = $this->connectionBD->getConnection();
+            $stmt = $conn->prepare( $sql );
+            $stmt->execute( $alumnoData );
+           
+            if( $stmt->rowCount() === 0 ) {
+              throw new Exception("la modificacion no fue exitosa");
+            }
+  
+            return $this->readAAlumnoByDNI( $alumno->getDni() );
+  
+          } catch( PDOException $e ) {
+            error_log("No se puede actualizar ese alumno en la base de datos". $e->getMessage());
+            throw new Exception("error al actualizar el alumno en la BD");
+  
+          } catch(Exception $e) {
+            error_log("error al actualizar el alumno en la BD");
+            throw $e;
+          }
+  
+        }
+
+        // --------------------------- DELETE A ALUMNO --------------------------
+
+      public function deleteAAlumno( int $dni): bool {
+        $sql = "DELETE FROM ".self::TBL_NAME." WHERE dni = :dni";
+
+        try {
+
+          $conn = $this->connectionBD->getConnection();
+          $stmt = $conn->prepare( $sql );
+          $stmt->bindParam(":dni", $dni, PDO::PARAM_INT);
+          $stmt->execute();
+          
+          return $stmt->rowCount() > 0;
+
+        } catch( PDOException $e ) {
+          error_log("error al borrar el registro en la BD". $e->getMessage());
+          throw new Exception("error al borrar el registro en la BD");
+
+        } catch( Exception $e ) {
+         error_log("error al borrar el registro de la BD");
+         throw $e;
+        }
+      }
     }
+
 
 ?>

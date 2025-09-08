@@ -8,7 +8,7 @@ class PlanillaModelo {
 
         // -------------------- CONSTRUCTOR --------------------
 
-        public function __construct($idPlanilla, $asistencia, $promedio, $legajo, $condicion, $cohorte ) {
+        public function __construct($idPlanilla, $asistencia, $promedio,  $condicion) {
             $this -> idPlanilla = $idPlanilla;
             $this -> asistencia = $asistencia;
             $this->promedio = $promedio; 

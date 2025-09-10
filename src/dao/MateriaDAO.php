@@ -13,7 +13,7 @@ require_once __DIR__."/../config/ConnectionBD.php";
         $this->connectionBD = $connectionBD;
     }
 
-    public function createANewMateria( MateriaModel $materia): MateriaModel {
+    public function createANewMateria( MateriaModel $materia ): MateriaModel {
       
       $sql = "INSERT INTO " . self::TBL_NAME ."(nombre, año, duracion, formato) VALUES (:nombre, :año, :duracion, :formato)";
 
@@ -34,7 +34,7 @@ require_once __DIR__."/../config/ConnectionBD.php";
         return $this->readAMateriaByID( $newID );
 
       } catch( PDOException $e ) {
-        error_log("error al cargar una nueva materia" .$e->getMessage());
+        error_log("error al cargar una nueva materia" .$e->getMessage() );
         throw new Exception("error al cargar una nueva materia");
 
       } catch ( Exception $e ) {
@@ -53,7 +53,7 @@ require_once __DIR__."/../config/ConnectionBD.php";
 
         $conn = $this->connectionBD->getConnection();
         $stmt = $conn->prepare( $sql );
-        $stmt->bindParam( "idMateria", $idMateria, pdo::FETCH_ASSOC );
+        $stmt->bindParam( ":idMateria", $idMateria, pdo::FETCH_ASSOC );
         $stmt->execute();
 
         $queryResult = $stmt->fetch( PDO::FETCH_ASSOC );
@@ -121,7 +121,7 @@ require_once __DIR__."/../config/ConnectionBD.php";
 
     public function updateAMateria( MateriaModel $materia ): MateriaModel {
 
-      $sql = "UPDATE ". self::TBL_NAME . " SET nombre = :nombre, año = :año, duracion = :duracion, formato = :formato WHERE idMateria = idMateria";
+      $sql = "UPDATE ". self::TBL_NAME . " SET nombre = :nombre, año = :año, duracion = :duracion, formato = :formato WHERE idMateria = :idMateria";
 
       $materiaData = [
         ":idMateria" => $materia->getIDMateria(),
@@ -171,7 +171,7 @@ require_once __DIR__."/../config/ConnectionBD.php";
       } catch ( PDOException $e ) {
         error_log("no se pudo eliminar la materia ". $e->getMessage() );
         throw new Exception("no se pudo eliminar la materia");
-        
+          
       } catch ( Exception $e ) {
         error_log("no se pudo eliminar la materia");
         throw $e;

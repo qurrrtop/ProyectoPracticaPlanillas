@@ -185,7 +185,7 @@
 
       public function updateACoordinador( CoordinadorModel $coordinador ): CoordinadorModel {
 
-        $sql = "UPDATE ". self::TBL_NAME. " SET userName = :userName, passwordHash = :passwordHash, nombre = :nombre, apellido = :apellido, dni = :dni, email = :email, telefono = :telefono, direccion = :direccion, fnacimiento = :fnacimiento WHERE idUsuario = idUsuario";
+        $sql = "UPDATE ". self::TBL_NAME. " SET userName = :userName, passwordHash = :passwordHash, nombre = :nombre, apellido = :apellido, dni = :dni, email = :email, telefono = :telefono, direccion = :direccion, fnacimiento = :fnacimiento WHERE idUsuario = :idUsuario";
 
         $coordinadorData = [
           ":nombre" => $coordinador->getNombre(),
@@ -195,7 +195,7 @@
           ":telefono" => $coordinador->getTelefono(),
           ":direccion" => $coordinador->getDireccion(),
           ":fnacimiento" => $coordinador->getFnacimiento(),
-          "idUsuario" => $coordinador->getIdUsuario()
+          ":idUsuario" => $coordinador->getIdUsuario()
         ];
 
         try {

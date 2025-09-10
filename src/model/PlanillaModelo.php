@@ -1,5 +1,6 @@
 <?php
 class PlanillaModelo {
+
         private $idPlanilla;
         private $asistencia;
         private $promedio;
@@ -13,13 +14,11 @@ class PlanillaModelo {
             $this -> asistencia = $asistencia;
             $this->promedio = $promedio; 
             $this -> condicion = $condicion;
-           
-      
         }
 
         // -------------------- MÉTODOS GET --------------------
 
-        public function getPlanilla() {
+        public function getIDPlanilla() {
             return $this -> idPlanilla;
         }
 

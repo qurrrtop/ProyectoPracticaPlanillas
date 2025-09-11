@@ -1,5 +1,5 @@
 <?php
- class CursadaModeloModelo {
+ class CursadaModelo {
         private $idCursada;
         private $añoCursada;
         private $FechaIni;

@@ -1,0 +1,65 @@
+h2 {
+    text-align: center;
+    margin: 20px 0 10px 0;
+    font-size: 24px;
+    color: #222;
+    font-family: 'Teachers';
+}
+
+main {
+    margin-top: 40px;
+    margin-left: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.form-container {
+    max-width: 400px;
+    margin: 0 auto;
+    background: #fff;
+    padding: 5px 20px 20px 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    font-family: 'Teachers';
+    border: solid 1px #969696ad;
+}
+
+  label {
+    font-size: 14px;
+    color: #555;
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 18px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  select:focus {
+    border-color: #4CAF50;
+  }
+
+  .btn {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    background: #4CAF50;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+
+  .btn:hover {
+    background: #45a049;
+  }

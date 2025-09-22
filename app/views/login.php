@@ -19,21 +19,28 @@
         </div>
 
         <div class="form">
-            <form action="" method="">
+            <form action="index.php?controller=login&action=login" method="POST">
+
                 <p class="title">Bienvenido!</p>
 
                 <i class="fa-regular fa-id-card"></i>
 
-                <input class="inp-dni" type="text" placeholder="Ingrese su DNI">
+                <input required class="inp-dni" type="text" name="userName" placeholder="Ingrese su usuario">
 
                 <br>
 
                 <i class="fa-solid fa-lock"></i>
                 
                 
-                <input class="inp-pass" type="password" placeholder="Ingrese su contraseña">
+                <input required class="inp-pass" type="password" name="password" placeholder="Ingrese su contraseña">
+
+                <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
                 
                 <br>
+
+                <button type="button" id="togglePassword">
+                    <i class="fa-solid fa-eye"></i>
+                </button>
 
                 <button class="btn-submit" type="submit">Acceder</button>
 
@@ -44,6 +51,14 @@
             </form>
         </div>
     </div>
+
+    <?php if (!empty($error)): ?> 
+        <div class="error-message">
+            <p><?php echo htmlspecialchars($error); ?></p>
+        </div>
+    <?php endif; ?> 
+
     
+    <script src="assets/js/password-login.js"></script>
 </body>
 </html>

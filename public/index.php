@@ -1,5 +1,56 @@
-<?php require_once __DIR__."/../src/view/template/header.php"; ?>
+<?php
 
-<h1>texto de ejemplo</h1>
+    // Carpeta donde están los controladores
+    define("CONTROLLER_FOLDER", __DIR__ . "/../app/controllers/");
 
-<?php require_once __DIR__."/../src/view/template/footer.php"; ?>
+    // Controlador y acción por defecto
+    define("DEFAULT_CONTROLLER", "Login");
+    define("DEFAULT_ACTION", "login");
+
+    // Obtener el controlador de la URL si viene por GET
+    $controller = DEFAULT_CONTROLLER;
+    if (!empty($_GET['controller'])) {
+        $controller = $_GET['controller'];
+    }
+
+    // Obtener la acción de la URL si viene por GET
+    $action = DEFAULT_ACTION;
+    if (!empty($_GET['action'])) {
+        $action = $_GET['action'];
+    }
+
+    // Formar el nombre de la clase del controlador
+    $controllerClass = ucfirst($controller) . 'Controller';
+
+    // Ruta al archivo del controlador
+    $controllerFilePath = CONTROLLER_FOLDER . $controllerClass . '.php';
+
+    try {
+        // Verificar si existe el archivo
+        if (is_file($controllerFilePath)) {
+            require_once $controllerFilePath;
+
+            // Verificar si la clase existe
+            if (class_exists($controllerClass)) {
+                // Instanciar el controlador
+                $controllerInstance = new $controllerClass();
+
+                // Verificar si el método existe
+                if (method_exists($controllerInstance, $action)) {
+                    // Ejecutar la acción
+                    $controllerInstance->$action();
+                } else {
+                    throw new Exception("La acción '$action' no existe en $controllerClass");
+                }
+            } else {
+                throw new Exception("La clase $controllerClass no existe");
+            }
+        } else {
+            throw new Exception("El archivo del controlador '$controllerFilePath' no existe");
+        }
+    } catch (Exception $e) {
+        // Manejo de errores simple
+        echo "Error: " . $e->getMessage();
+    }
+?>
+

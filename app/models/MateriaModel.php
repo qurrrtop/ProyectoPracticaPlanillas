@@ -8,7 +8,7 @@
     private $duracion;
     private $formato;
 
-    public function getIDMateria() {
+    public function getIdMateria() {
       return $this->idMateria;
     }
 

@@ -45,7 +45,7 @@
 .list-sidebar li {
     padding: 10px 0 10px 0;
     width: 100%;
-    padding: 15px 0 15px 25px;
+    padding: 20px 0 20px 40px;
 }
 
 .list-sidebar li:hover {
@@ -73,10 +73,42 @@
 .cerrar-sesion li {
     padding: 10px 0 10px 0;
     width: 100%;
-    padding: 15px 0 15px 25px;
+    padding: 20px 0 20px 40px;
 }
 
 .cerrar-sesion li:hover {
     background-color: #adadad;
     transition: .5s;   
+}
+
+.logo-user {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+}
+
+.logo-user:visited {
+    color: #929292;
+}
+
+.fa-circle-user {
+    font-size: 3rem;
+    text-decoration: none;
+}
+
+.list-sidebar a li.active {
+    background-color: aqua;
+    color: aqua;
+}
+
+.header {
+    font-family: 'Teachers', sans-serif;
+    margin-bottom: 10px;
+    margin-top: 20px;
+    margin-left: 250px;
+    margin-right: 18px;
+}
+
+.header span {
+    font-weight: 500;
 }

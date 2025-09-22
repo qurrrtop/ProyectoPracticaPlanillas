@@ -1,6 +1,6 @@
 <?php
-  require_once __DIR__."/../model/DocenteModel.php";
-  require_once __DIR__."/../config/ConnectionBD.php";
+  require_once __DIR__."/../models/DocenteModel.php";
+  require_once __DIR__."/../config/ConexionBD.php";
 
 
     class DocenteDAO {

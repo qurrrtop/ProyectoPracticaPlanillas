@@ -11,10 +11,11 @@
     protected $telefono;
     protected $direccion;
     protected $fnacimiento;
+    protected $rol;
     
 
     // se coloca null los atributos por que se heredara
-    public function __CONSTRUCT($idUsuario = null, $nombre = null, $apellido = null, $dni = null, $email = null, $telefono = null, $direccion = null, $fnacimiento = null, $passwordHash = null, $userName = null) {
+    public function __CONSTRUCT($idUsuario = null, $nombre = null, $apellido = null, $dni = null, $email = null, $telefono = null, $direccion = null, $fnacimiento = null, $passwordHash = null, $userName = null, $rol = null) {
       $this -> idUsuario = $idUsuario;
       $this -> nombre = $nombre;
       $this -> apellido = $apellido;
@@ -25,6 +26,7 @@
       $this -> fnacimiento = $fnacimiento;
       $this->userName = $userName;
       $this->passwordHash = $passwordHash;
+      $this->rol = $rol;
     }
 
     public function getPasswordHash() {
@@ -64,7 +66,13 @@
     }
 
     public function getFnacimiento() {
-      return $this->fnacimiento;
+      return $this->fnacimiento instanceof \DateTime 
+          ? $this->fnacimiento->format('Y-m-d') 
+          : $this->fnacimiento;
+    }
+
+    public function getRol(): ?string {
+      return $this->rol;
     }
 
     public function setNombre($nombre) {
@@ -151,8 +159,4 @@
       $this->passwordHash = trim($passwordHash);
     }
   }
-        // la clase persona es abstracta; porque las demás clases heredarán de allí los atributos 
-    //los controles se harán en diferentes capas, con diferentes validaciones;
-    // en capas de 'servicio' o 'controller'
-    //el try catch lo usaremos en todas las capas.
 ?>

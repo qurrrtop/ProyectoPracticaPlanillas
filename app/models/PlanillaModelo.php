@@ -18,7 +18,7 @@ class PlanillaModelo {
 
         // -------------------- MÉTODOS GET --------------------
 
-        public function getIDPlanilla() {
+        public function getIdPlanilla() {
             return $this -> idPlanilla;
         }
 

@@ -1,6 +1,6 @@
 <?php
-  require_once __DIR__."/../model/CoordinadorModelo.php";
-  require_once __DIR__."/../config/ConnectionBD.php";
+  require_once __DIR__."/../models/CoordinadorModel.php";
+  require_once __DIR__."/../config/ConexionBD.php";
 
 
     class CoordinadorDAO {

@@ -1,16 +1,16 @@
 <?php
     require_once __DIR__."/../model/AlumnoModelo.php";
-    require_once __DIR__."/../config/ConnectionBD.php";
+    require_once __DIR__."/../config/ConnectionDB.php";
 
     class AlumnoDAO {
-        private $connectionBD = null;
+        private $connectionDB = null;
 
         const TBL_NAME = 'alumno';
 
       // ------------- CONSTRUCTOR CON INYECCIÓN DE DEPENDENCIAS --------------
 
-      public function __CONSTRUCT( ConnectionBD $connectionBD ) {
-        $this->connectionBD = $connectionBD;
+      public function __CONSTRUCT( ConnectionDB $connectionDB ) {
+        $this->connectionDB = $connectionDB;
       }
 
       // ------------------------- CREATE A NEW ALUMNO -------------------------
@@ -29,12 +29,12 @@
 
         try {
 
-          $conn = $this->connectionBD->getConnection();
+          $conn = $this->connectionDB->getConnection();
           $stmt = $conn->prepare( $sql );
           $alumno = $stmt->execute( $alumnoData );
           $newID = $conn->lastInsertId();
          
-          return $this->readAAlumnoByID( $newID );
+          return $this->readAAlumnoByDNI( $newID );
 
         } catch(PDOException $e) {
 
@@ -58,7 +58,7 @@
 
         try {
 
-          $conn = $this->connectionBD->getConnection();
+          $conn = $this->connectionDB->getConnection();
           $stmt = $conn->prepare( $sql );
           $stmt->bindParam( ":dni", $dni, PDO::PARAM_INT );
           $stmt->execute();
@@ -95,7 +95,7 @@
 
         try {
 
-          $conn = $this->connectionBD->getConnection();
+          $conn = $this->connectionDB->getConnection();
           $stmt = $conn->prepare( $sql );
           $stmt->execute();
 
@@ -149,7 +149,7 @@
   
           try {
   
-            $conn = $this->connectionBD->getConnection();
+            $conn = $this->connectionDB->getConnection();
             $stmt = $conn->prepare( $sql );
             $stmt->execute( $alumnoData );
            
@@ -177,7 +177,7 @@
 
         try {
 
-          $conn = $this->connectionBD->getConnection();
+          $conn = $this->connectionDB->getConnection();
           $stmt = $conn->prepare( $sql );
           $stmt->bindParam(":dni", $dni, PDO::PARAM_INT);
           $stmt->execute();

@@ -1,19 +1,18 @@
 <?php
     
-  abstract class UsuarioModelo {
-    protected $idUsuario;
-    protected $passwordHash;
-    protected $userName;
-    protected $nombre;
-    protected $apellido;
-    protected $dni;
-    protected $email;
-    protected $telefono;
-    protected $direccion;
-    protected $fnacimiento;
-    protected $rol;
+  class UsuarioModelo {
+    protected int $idUsuario;
+    protected string $passwordHash;
+    protected string $userName;
+    protected string $nombre;
+    protected string $apellido;
+    protected int $dni;
+    protected string $email;
+    protected int $telefono;
+    protected string $direccion;
+    protected DateTime $fnacimiento;
+    protected string $rol;
     
-
     // se coloca null los atributos por que se heredara
     public function __CONSTRUCT($idUsuario = null, $nombre = null, $apellido = null, $dni = null, $email = null, $telefono = null, $direccion = null, $fnacimiento = null, $passwordHash = null, $userName = null, $rol = null) {
       $this -> idUsuario = $idUsuario;
@@ -145,18 +144,23 @@
     //validación para el user y password (que no esté vacio, que sea string y que no sea nulo);
     //la validación de longitud, caracteres, números, minúsculas y mayúsculas en otra capa.
 
-    public function setUserName($userName) {
-      if (empty($userName) || !is_string($userName) || $userName === null) {
-        throw new Exception("El nombre de user es obligatorio y debe ser una cadena de texto");
+    public function setUserName( string $userName ): void {
+      if ( empty( $userName ) || $userName === null ) {
+        throw new InvalidArgumentException("El nombre de user es obligatorio y debe ser una cadena de texto");
       }
-      $this->userName = trim($userName);
+      $this->userName = trim( $userName );
     }
 
-    public function setPasswordHash($passwordHash) {
-      if (empty($passwordHash) || !is_string($passwordHash) || $passwordHash === null) {
-        throw new Exception("La password no es valida y debe ser una cadena de texto");
+    public function setPassword( string $plaintext ): void {
+      if ( empty( $plaintext ) || $plaintext === null ) {
+        throw new InvalidArgumentException("La password no es valida y debe ser una cadena de texto");
       }
-      $this->passwordHash = trim($passwordHash);
+      $this->passwordHash = password_hash( $plaintext, PASSWORD_DEFAULT );
     }
+
+    public function verifyPassword( string $plaintext ): bool {
+      return password_verify( $plaintext, $this->passwordHash );
+    }
+
   }
 ?>

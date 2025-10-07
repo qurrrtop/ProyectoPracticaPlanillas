@@ -1,17 +1,17 @@
 <?php
-    require_once __DIR__ . "/../config/ConexionBD.php"; // referencia a la base de datos;
+    require_once __DIR__ . "/../config/ConenctionDB.php"; // referencia a la base de datos;
     require_once __DIR__ . "/../models/UsuarioModelo.php"; // referencia al Usuario Modelo;
     require_once __DIR__ . "/../models/DocenteModel.php"; // referencia al Usuario Modelo;
     require_once __DIR__ . "/../models/CoordinadorModel.php"; // referencia al Usuario Modelo;
 
 
     class UsuarioDAO {
-        private $connectionBD = null;
+        private $connectionDB = null;
 
         const TBL_NAME = 'usuarios';
 
-        public function __CONSTRUCT(ConexionBD $conexionBD){
-            $this -> connectionBD = $conexionBD;
+        public function __CONSTRUCT(ConnectionDB $connectionDB){
+            $this->connectionDB = $connectionDB;
         }
 
         // ------------------------- CREATE NEW USER -------------------------
@@ -22,7 +22,7 @@
                     VALUES (:nombre, :apellido, :dni, :email, :telefono, :direccion, :fnacimiento, :passwordHash, :userName, :rol)";
 
             try {
-                $conn = $this->connectionBD->getConexion();
+                $conn = $this->connectionDB->getConnection();
                 $stmt = $conn->prepare($sql);
 
                 $stmt->execute([
@@ -33,7 +33,7 @@
                     ':telefono'     => $user->getTelefono(),
                     ':direccion'    => $user->getDireccion(),
                     ':fnacimiento'  => $user->getFnacimiento(),
-                    ':passwordHash' => $user->getPassword(),
+                    ':passwordHash' => $user->getPasswordHash(),
                     ':userName'     => $user->getUserName(),
                     ':rol'          => $user->getRol()
                 ]);
@@ -53,7 +53,7 @@
             $sql = "SELECT * FROM " . self::TBL_NAME . " WHERE dni = :dni LIMIT 1";
 
             try {
-                $conn = $this->connectionBD->getConexion();
+                $conn = $this->connectionDB->getConnection();
                 $stmt = $conn->prepare($sql);
                 $stmt->bindParam(':dni', $dni, PDO::PARAM_INT);
                 $stmt->execute();
@@ -124,7 +124,7 @@
             $sql = "SELECT idUsuario, userName, nombre, apellido, dni, email, telefono, direccion, fnacimiento FROM ".self::TBL_NAME." WHERE idUsuario = :idUsuario";
 
             try {
-                $conn = $this->connectionBD->getConexion();
+                $conn = $this->connectionDB->getConnection();
                 $stmt = $conn->prepare($sql);
 
                 $stmt->bindParam(':idUsuario', $id, PDO::PARAM_INT);
@@ -163,7 +163,7 @@
             $sql = "SELECT idUsuario, userName, nombre, apellido, dni, email, telefono, direccion, fnacimiento FROM ".self::TBL_NAME." ORDER BY apellido";
     
             try {
-                $conn = $this->connectionBD->getConexion();
+                $conn = $this->connectionDB->getConnection();
                 $stmt = $conn->prepare($sql);
                 $stmt->execute();
     
@@ -200,16 +200,16 @@
         // ------------------------- UPDATE USER -------------------------
     
         public function updateUser(UsuarioModelo $user): UsuarioModelo {
-            $sql = "UPDATE ".self::TBL_NAME." SET user = :user, passwordHash = :passwordHash WHERE id = :id";
+            $sql = "UPDATE ".self::TBL_NAME." SET user = :username, passwordHash = :passwordHash WHERE idUsuario = :idUsuario";
     
             $userData = [
-                ':user' => $user->getUser(),
-                ':passwordHash' => $user->getPassword(),
-                ':id' => $user->getId()
+                ':user' => $user->getUserName(),
+                ':passwordHash' => $user->getPasswordHash(),
+                ':id' => $user->getIdUsuario()
             ];
     
             try {
-                $conn = $this ->$connectionBD->getConexion();
+                $conn = $this->connectionDB->getConnection();
                 $stmt = $conn->prepare($sql);
                 $stmt->execute($userData);
     
@@ -219,7 +219,7 @@
                     throw new Exception("No pudo ser posible la edición del usuario");
                 }
                 
-                return $this->readUserById($user->getId());
+                return $this->readUserById($user->getIdUsuario());
 
             } catch (PDOException $e) {
                 throw new Exception("Error al intentar modificar datos del usuario por su ID".$e->getMessage());
@@ -231,10 +231,10 @@
         // ------------------------- DELETE USER -------------------------
     
         public function deleteUser(int $id): bool {
-            $sql = "DELETE FROM ".self::TBL_USER." WHERE id = :id";
+            $sql = "DELETE FROM ".self::TBL_NAME." WHERE id = :id";
     
             try {
-                $conn = $this->connectionBD->getConexion();
+                $conn = $this->connectionDB->getConnection();
                 $stmt = $conn->prepare($sql);
                 $stmt -> bindParam(':id', $id, PDO::PARAM_INT);
                 $stmt->execute();
@@ -256,7 +256,7 @@
             $sql = "SELECT * FROM ".self::TBL_NAME." WHERE userName = :userName LIMIT 1";
         
             try {
-                $conn = $this->connectionBD->getConexion();
+                $conn = $this->connectionDB->getConnection();
                 $stmt = $conn->prepare($sql);
                 $stmt->bindParam(':userName', $userName, PDO::PARAM_STR);
                 $stmt->execute();
@@ -313,7 +313,7 @@
         public function getUserById(int $id): ?UsuarioModelo {
             $sql = "SELECT * FROM " . self::TBL_NAME . " WHERE idUsuario = :id LIMIT 1";
             try {
-                $conn = $this->connectionBD->getConexion();
+                $conn = $this->connectionDB->getConnection();
                 $stmt = $conn->prepare($sql);
                 $stmt->bindParam(':id', $id, PDO::PARAM_INT);
                 $stmt->execute();
@@ -375,9 +375,9 @@
 
 
         public function updateProfile(int $id, string $userName, string $nombre, string $apellido, ?string $dni, ?string $email, ?string $telefono, ?string $direccion, ?string $fnacimiento): bool {
-            $sql = "UPDATE " . self::TBL_NAME . " SET userName = :userName, nombre = :nombre, apellido = :apellido, dni = :dni, email = :email, telefono = :telefono, direccion = :direccion, fnacimiento = :fnacimiento WHERE idUsuario = :id";
+            $sql = "UPDATE " . self::TBL_NAME . " SET userName = :userName, nombre = :nombre, apellido = :apellido, dni = :dni, email = :email, telefono = :telefono, direccion = :direccion, fnacimiento = :fnacimiento, WHERE idUsuario = :idUsuario";
             try {
-                $conn = $this->connectionBD->getConexion();
+                $conn = $this->connectionDB->getConnection();
                 $stmt = $conn->prepare($sql);
                 $stmt->execute([
                     ':userName' => $userName,
@@ -388,7 +388,7 @@
                     ':telefono' => $telefono ?: null,
                     ':direccion' => $direccion ?: null,
                     ':fnacimiento' => $fnacimiento ?: null,
-                    ':id' => $id
+                    ':idUsuario' => $id
                 ]);
                 return $stmt->rowCount() >= 0; // true si se ejecutó
             } catch (PDOException $e) {
@@ -400,13 +400,13 @@
 
         // updatePassword: guarda el nuevo hash
         public function updatePassword(int $id, string $newHash): bool {
-            $sql = "UPDATE " . self::TBL_NAME . " SET passwordHash = :passwordHash WHERE idUsuario = :id";
+            $sql = "UPDATE " . self::TBL_NAME . " SET passwordHash = :passwordHash WHERE idUsuario = :idUsuario";
             try {
-                $conn = $this->connectionBD->getConexion();
+                $conn = $this->connectionDB->getConnection();
                 $stmt = $conn->prepare($sql);
                 $stmt->execute([
                     ':passwordHash' => $newHash,
-                    ':id' => $id
+                    ':idUsuario' => $id
                 ]);
                 return $stmt->rowCount() > 0;
             } catch (PDOException $e) {

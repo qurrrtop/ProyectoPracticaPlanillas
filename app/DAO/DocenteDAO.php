@@ -1,17 +1,17 @@
 <?php
   require_once __DIR__."/../models/DocenteModel.php";
-  require_once __DIR__."/../config/ConexionBD.php";
+  require_once __DIR__."/../config/ConnectionDB.php";
 
 
     class DocenteDAO {
-      private $connectionBD = null;
+      private $connectionDB = null;
 
       const TBL_NAME = "user"; #nombre de la tabla en la BD user es pa ponerle alguno, dsp vemos
 
       // ------------- CONSTRUCTOR CON INYECCIÓN DE DEPENDENCIAS --------------
 
-      public function __CONSTRUCT( ConnectionBD $connectionBD ) {
-        $this->connectionBD = $connectionBD;
+      public function __CONSTRUCT( ConnectionDB $connectionDB ) {
+        $this->connectionDB = $connectionDB;
       }
 
       // ------------------------- CREATE A NEW DOCENTE -------------------------
@@ -33,7 +33,7 @@
 
         try {
 
-          $conn = $this->connectionBD->getConnection();
+          $conn = $this->connectionDB->getConnection();
           $stmt = $conn->prepare( $sql );
           $usuario = $stmt->execute( $userData );
           $newID = $conn->lastInsertId();
@@ -62,7 +62,7 @@
 
         try {
 
-          $conn = $this->connectionBD->getConnection();
+          $conn = $this->connectionDB->getConnection();
           $stmt = $conn->prepare( $sql );
           $stmt->bindParam( ":dni", $dni, PDO::PARAM_INT );
           $stmt->execute();
@@ -103,7 +103,7 @@
         
         try {
           #conn seria un objeto de clase PDO
-          $conn = $this->connectionBD->getConnection(); #se inyecta la BD para entrar a sus metodos
+          $conn = $this->connectionDB->getConnection(); #se inyecta la BD para entrar a sus metodos
           $stmt = $conn->prepare( $sql );
           $stmt->bindParam( ":idUsuario", $idUsuario, PDO::PARAM_INT );
           $stmt->execute();
@@ -144,7 +144,7 @@
 
         try {
 
-          $conn = $this->connectionBD->getConnection();
+          $conn = $this->connectionDB->getConnection();
           $stmt = $conn->prepare( $sql );
           $stmt->execute();
 
@@ -200,7 +200,7 @@
 
         try {
 
-          $conn = $this->connectionBD->getConnection();
+          $conn = $this->connectionDB->getConnection();
           $stmt = $conn->prepare( $sql );
           $stmt->execute( $docenteData );
          
@@ -228,7 +228,7 @@
 
         try {
 
-          $conn = $this->connectionBD->getConnection();
+          $conn = $this->connectionDB->getConnection();
           $stmt = $conn->prepare( $sql );
           $stmt->bindParam(":idUsuario", $idUsuario, PDO::PARAM_INT);
           $stmt->execute();

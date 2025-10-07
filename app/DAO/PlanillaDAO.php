@@ -2,12 +2,12 @@
 
   class PlanillaDAO {
 
-    private $connectionBD = null;
+    private $connectionDB = null;
 
     const TBL_NAME = "planilla";
 
-    public function __construct( ConnectionBD $connectionBD) {
-      $this->connectionBD = $connectionBD;
+    public function __construct( ConnectionDB $connectionDB) {
+      $this->connectionDB = $connectionDB;
     }
 
     public function createANewPlanilla( PlanillaModelo $planilla ): PlanillaModelo {
@@ -22,7 +22,7 @@
 
       try {
 
-        $conn = $this->connectionBD->getConnection();
+        $conn = $this->connectionDB->getConnection();
         $stmt = $conn->prepare( $sql );
         $planilla = $stmt->execute( $planillaData );
         $newID = $conn->lastInsertId();
@@ -47,7 +47,7 @@
 
       try {
 
-        $conn = $this->connectionBD->getConnection();
+        $conn = $this->connectionDB->getConnection();
         $stmt = $conn->prepare( $sql );
         $stmt->bindParam( ":idPlanilla", $idPlanilla, PDO::PARAM_INT );
         $stmt->execute();
@@ -81,7 +81,7 @@
 
       try {
 
-        $conn = $this->connectionBD->getConnection();
+        $conn = $this->connectionDB->getConnection();
         $stmt = $conn->prepare( $sql );
         $stmt->execute();
 
@@ -124,7 +124,7 @@
 
       try {
 
-        $conn = $this->connectionBD->getConnection();
+        $conn = $this->connectionDB->getConnection();
         $stmt = $conn->prepare( $sql );
         $stmt->execute( $planillaData );
 
@@ -152,7 +152,7 @@
 
       try {
 
-        $conn = $this->connectionBD->getConnection();
+        $conn = $this->connectionDB->getConnection();
         $stmt = $conn->prepare( $sql );
         $stmt->bindParam( ":idPlanilla", $idPlanilla, PDO::PARAM_INT );
         $stmt->execute();

@@ -1,5 +1,5 @@
 <?php 
-    class ConnectionBD {
+    class ConnectionDB {
         // Atributo que guarda la instancia única del singleton;
         private static $instancia = null;
 
@@ -28,16 +28,16 @@
         }
 
         // Método estático que devuelve la única instancia de la clase;
-        public static function getInstancia(): ConnectionBD {
+        public static function getInstancia(): ConnectionDB {
             if (self::$instancia === null) {
-                self::$instancia = new ConnectionBD();
+                self::$instancia = new ConnectionDB();
             }
             return self::$instancia;
         }
 
         
         // Método público para obtener el objeto PDO y ejecutar consultas;
-        public function getConexion(): PDO {
+        public function getConnection(): PDO {
             return $this->connection;
         }
     }

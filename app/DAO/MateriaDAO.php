@@ -1,16 +1,16 @@
 <?php 
 
 require_once __DIR__."/../model/MateriaModel.php";
-require_once __DIR__."/../config/ConnectionBD.php";
+require_once __DIR__."/../config/ConnectionDB.php";
 
   class MateriaDAO {
 
-    private $connectionBD = null;
+    private $connectionDB = null;
 
     const TBL_NAME = "materia";
 
-    public function __construct( ConnectionBD $connectionBD) {
-        $this->connectionBD = $connectionBD;
+    public function __construct( ConnectionDB $connectionDB) {
+        $this->connectionDB = $connectionDB;
     }
 
     public function createANewMateria( MateriaModel $materia ): MateriaModel {
@@ -26,7 +26,7 @@ require_once __DIR__."/../config/ConnectionBD.php";
 
       try {
 
-        $conn = $this->connectionBD->getConnection();
+        $conn = $this->connectionDB->getConnection();
         $stmt = $conn->prepare( $sql );
         $materia = $stmt->execute( $materiaData );
         $newID = $conn->lastInsertId();
@@ -51,7 +51,7 @@ require_once __DIR__."/../config/ConnectionBD.php";
 
       try {
 
-        $conn = $this->connectionBD->getConnection();
+        $conn = $this->connectionDB->getConnection();
         $stmt = $conn->prepare( $sql );
         $stmt->bindParam( ":idMateria", $idMateria, pdo::FETCH_ASSOC );
         $stmt->execute();
@@ -87,7 +87,7 @@ require_once __DIR__."/../config/ConnectionBD.php";
 
       try {
 
-        $conn = $this->connectionBD->getConnection();
+        $conn = $this->connectionDB->getConnection();
         $stmt = $conn->prepare( $sql );
         $stmt->execute();
 
@@ -133,7 +133,7 @@ require_once __DIR__."/../config/ConnectionBD.php";
 
       try {
 
-        $conn = $this->connectionBD->getConnection();
+        $conn = $this->connectionDB->getConnection();
         $stmt = $conn->prepare( $sql );
         $stmt->execute( $materiaData );
 
@@ -161,7 +161,7 @@ require_once __DIR__."/../config/ConnectionBD.php";
 
       try {
 
-        $conn = $this->connectionBD->getConnection();
+        $conn = $this->connectionDB->getConnection();
         $stmt = $conn->prepare( $sql );
         $stmt->bindParam( ":idMateria", $idMateria, PDO::PARAM_INT );
         $stmt->execute();

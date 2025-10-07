@@ -1,5 +1,5 @@
 <?php
-    require_once __DIR__."/../config/ConexionBD.php";
+    require_once __DIR__."/../config/ConnectionDB.php";
     require_once __DIR__."/../DAO/UsuarioDAO.php";
     require_once __DIR__."/../service/UsuarioService.php";
 
@@ -7,7 +7,7 @@
         private $usuarioService;
 
         public function __construct() {
-            $conexionBD = ConexionBD::getInstancia();
+            $conexionBD = ConnectionDB::getInstancia();
             $usuarioDAO = new UsuarioDAO($conexionBD);
             $this->usuarioService = new UsuarioService($usuarioDAO);
         }

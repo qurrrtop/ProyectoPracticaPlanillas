@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . "/../config/ConexionBD.php";
+require_once __DIR__ . "/../config/ConenctionDB.php";
 require_once __DIR__ . "/../DAO/UsuarioDAO.php";
 require_once __DIR__ . "/../service/UsuarioService.php";
 require_once __DIR__ . "/../service/validate/Validation.php";
@@ -9,8 +9,8 @@ class UsuarioController {
     private $usuarioDAO;
 
     public function __construct() {
-        $conexionBD = ConexionBD::getInstancia();
-        $this->usuarioDAO = new UsuarioDAO($conexionBD);
+        $ConnectionDB = ConnectionDB::getInstancia();
+        $this->usuarioDAO = new UsuarioDAO($ConnectionDB);
         $this->usuarioService = new UsuarioService($this->usuarioDAO);
     }
 

@@ -14,6 +14,9 @@ class UsuarioController {
         $this->usuarioService = new UsuarioService($this->usuarioDAO);
     }
 
+    // ---- Método que le permite actualizar sus datos personales ----
+    // ---- a cualquier usuario que necesite modificarlo ----
+
     public function perfil() {
         if (session_status() === PHP_SESSION_NONE) session_start();
 

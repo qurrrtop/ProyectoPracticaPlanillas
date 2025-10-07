@@ -16,33 +16,29 @@
 
         // ------------------------- CREATE NEW USER -------------------------
 
-        public function create(UsuarioModelo $user): UsuarioModelo {
+        public function createANewUser(UsuarioModelo $user): UsuarioModelo {
             $sql = "INSERT INTO " . self::TBL_NAME . " 
-                    (nombre, apellido, dni, email, telefono, direccion, fnacimiento, passwordHash, userName, rol)
-                    VALUES (:nombre, :apellido, :dni, :email, :telefono, :direccion, :fnacimiento, :passwordHash, :userName, :rol)";
+                    (userName, passwordHash, nombre, email, rol)
+                    VALUES (:userName, :passwordHash, :nombre, :email, :rol)";
 
             try {
-                $conn = $this->connectionDB->getConnection();
+                $conn = $this->connectionBD->getConexion();
                 $stmt = $conn->prepare($sql);
 
                 $stmt->execute([
-                    ':nombre'       => $user->getNombre(),
-                    ':apellido'     => $user->getApellido(),
-                    ':dni'          => $user->getDni(),
-                    ':email'        => $user->getEmail(),
-                    ':telefono'     => $user->getTelefono(),
-                    ':direccion'    => $user->getDireccion(),
-                    ':fnacimiento'  => $user->getFnacimiento(),
-                    ':passwordHash' => $user->getPasswordHash(),
                     ':userName'     => $user->getUserName(),
-                    ':rol'          => $user->getRol()
+                    ':passwordHash' => $user->getPasswordHash(),
+                    ':nombre'       => $user->getNombre(),
+                    ':email'        => $user->getEmail(),
+                    ':rol'          => 'DOCENTE'
                 ]);
 
                 $newID = $conn->lastInsertId();
-                return $this->getUserById($newID);
+                return $this->readUserById($newID);
 
             } catch (PDOException $e) {
                 error_log("Error al insertar usuario: " . $e->getMessage());
+                die("Error real al insertar usuario: " . $e->getMessage());
                 throw new Exception("No se pudo crear el usuario");
             }
         }
@@ -53,7 +49,7 @@
             $sql = "SELECT * FROM " . self::TBL_NAME . " WHERE dni = :dni LIMIT 1";
 
             try {
-                $conn = $this->connectionDB->getConnection();
+                $conn = $this->connectionBD->getConexion();
                 $stmt = $conn->prepare($sql);
                 $stmt->bindParam(':dni', $dni, PDO::PARAM_INT);
                 $stmt->execute();
@@ -121,10 +117,10 @@
         // ------------------------- READ USER BY ID -------------------------
 
         public function readUserById(int $id): ?UsuarioModelo {
-            $sql = "SELECT idUsuario, userName, nombre, apellido, dni, email, telefono, direccion, fnacimiento FROM ".self::TBL_NAME." WHERE idUsuario = :idUsuario";
+            $sql = "SELECT idUsuario, userName, passwordHash, nombre, apellido, dni, email, telefono, direccion, fnacimiento, rol FROM ".self::TBL_NAME." WHERE idUsuario = :idUsuario LIMIT 1";
 
             try {
-                $conn = $this->connectionDB->getConnection();
+                $conn = $this->connectionBD->getConexion();
                 $stmt = $conn->prepare($sql);
 
                 $stmt->bindParam(':idUsuario', $id, PDO::PARAM_INT);
@@ -136,17 +132,21 @@
                     throw new Exception("No existe ningún usuario con el ID ingresado");
                 }
 
-                return new UsuarioModelo(
-                    $queryResult['idUsuario'],
-                    $queryResult['usernName'],
-                    $queryResult['nombre'],
-                    $queryResult['apellido'],
-                    $queryResult['dni'],
-                    $queryResult['email'],
-                    $queryResult['telefono'],
-                    $queryResult['direccion'],
-                    $queryResult['fnacimiento']
-                );
+                if ($queryResult['rol'] === 'DOCENTE') {
+                    return new DocenteModel(
+                        $queryResult['idUsuario'],
+                        $queryResult['userName'],
+                        $queryResult['passwordHash'],
+                        $queryResult['nombre'],
+                        $queryResult['apellido'],
+                        $queryResult['dni'],
+                        $queryResult['email'],
+                        $queryResult['telefono'],
+                        $queryResult['direccion'],
+                        $queryResult['fnacimiento'],
+                        $queryResult['rol']
+                    );
+                }
 
             } catch(PDOException $e) {
                 error_log("No existe un usuario en la base de datos con el ID deseado");
@@ -163,7 +163,7 @@
             $sql = "SELECT idUsuario, userName, nombre, apellido, dni, email, telefono, direccion, fnacimiento FROM ".self::TBL_NAME." ORDER BY apellido";
     
             try {
-                $conn = $this->connectionDB->getConnection();
+                $conn = $this->connectionBD->getConexion();
                 $stmt = $conn->prepare($sql);
                 $stmt->execute();
     
@@ -200,16 +200,16 @@
         // ------------------------- UPDATE USER -------------------------
     
         public function updateUser(UsuarioModelo $user): UsuarioModelo {
-            $sql = "UPDATE ".self::TBL_NAME." SET user = :username, passwordHash = :passwordHash WHERE idUsuario = :idUsuario";
+            $sql = "UPDATE ".self::TBL_NAME." SET user = :user, passwordHash = :passwordHash WHERE id = :id";
     
             $userData = [
-                ':user' => $user->getUserName(),
-                ':passwordHash' => $user->getPasswordHash(),
-                ':id' => $user->getIdUsuario()
+                ':user' => $user->getUser(),
+                ':passwordHash' => $user->getPassword(),
+                ':id' => $user->getId()
             ];
     
             try {
-                $conn = $this->connectionDB->getConnection();
+                $conn = $this ->$connectionBD->getConexion();
                 $stmt = $conn->prepare($sql);
                 $stmt->execute($userData);
     
@@ -219,7 +219,7 @@
                     throw new Exception("No pudo ser posible la edición del usuario");
                 }
                 
-                return $this->readUserById($user->getIdUsuario());
+                return $this->readUserById($user->getId());
 
             } catch (PDOException $e) {
                 throw new Exception("Error al intentar modificar datos del usuario por su ID".$e->getMessage());
@@ -231,10 +231,10 @@
         // ------------------------- DELETE USER -------------------------
     
         public function deleteUser(int $id): bool {
-            $sql = "DELETE FROM ".self::TBL_NAME." WHERE id = :id";
+            $sql = "DELETE FROM ".self::TBL_USER." WHERE id = :id";
     
             try {
-                $conn = $this->connectionDB->getConnection();
+                $conn = $this->connectionBD->getConexion();
                 $stmt = $conn->prepare($sql);
                 $stmt -> bindParam(':id', $id, PDO::PARAM_INT);
                 $stmt->execute();
@@ -256,7 +256,7 @@
             $sql = "SELECT * FROM ".self::TBL_NAME." WHERE userName = :userName LIMIT 1";
         
             try {
-                $conn = $this->connectionDB->getConnection();
+                $conn = $this->connectionBD->getConexion();
                 $stmt = $conn->prepare($sql);
                 $stmt->bindParam(':userName', $userName, PDO::PARAM_STR);
                 $stmt->execute();
@@ -311,9 +311,11 @@
         // ------------------------- GET USER BY ID -------------------------
 
         public function getUserById(int $id): ?UsuarioModelo {
-            $sql = "SELECT * FROM " . self::TBL_NAME . " WHERE idUsuario = :id LIMIT 1";
+            $sql = "SELECT idUsuario, userName, passwordHash, nombre, apellido, dni, email, 
+            telefono, direccion, fnacimiento, rol FROM " . self::TBL_NAME . " WHERE idUsuario = :id LIMIT 1";
+
             try {
-                $conn = $this->connectionDB->getConnection();
+                $conn = $this->connectionBD->getConexion();
                 $stmt = $conn->prepare($sql);
                 $stmt->bindParam(':id', $id, PDO::PARAM_INT);
                 $stmt->execute();
@@ -326,6 +328,8 @@
                 if ($row['rol'] === 'DOCENTE') {
                     return new DocenteModel(
                         $row['idUsuario'],
+                        $row['userName'],
+                        $row['passwordHash'],
                         $row['nombre'],
                         $row['apellido'],
                         $row['dni'],
@@ -333,13 +337,13 @@
                         $row['telefono'],
                         $row['direccion'],
                         $row['fnacimiento'],
-                        $row['passwordHash'],
-                        $row['userName'],
                         $row['rol']
                     );
                 } elseif ($row['rol'] === 'COORDINADOR') {
                     return new CoordinadorModel(
                         $row['idUsuario'],
+                        $row['userName'],
+                        $row['passwordHash'],
                         $row['nombre'],
                         $row['apellido'],
                         $row['dni'],
@@ -347,26 +351,11 @@
                         $row['telefono'],
                         $row['direccion'],
                         $row['fnacimiento'],
-                        $row['passwordHash'],
-                        $row['userName'],
-                        $row['rol']
-                    );
-                } else {
-                    return new UsuarioModelo(
-                        $row['idUsuario'],
-                        $row['nombre'],
-                        $row['apellido'],
-                        $row['dni'],
-                        $row['email'],
-                        $row['telefono'],
-                        $row['direccion'],
-                        $row['fnacimiento'],
-                        $row['passwordHash'],
-                        $row['userName'],
                         $row['rol']
                     );
                 }
-            } catch (PDOException $e) {
+
+                } catch (PDOException $e) {
                 throw new Exception("Error DB: " . $e->getMessage());
             }
         }
@@ -375,9 +364,9 @@
 
 
         public function updateProfile(int $id, string $userName, string $nombre, string $apellido, ?string $dni, ?string $email, ?string $telefono, ?string $direccion, ?string $fnacimiento): bool {
-            $sql = "UPDATE " . self::TBL_NAME . " SET userName = :userName, nombre = :nombre, apellido = :apellido, dni = :dni, email = :email, telefono = :telefono, direccion = :direccion, fnacimiento = :fnacimiento, WHERE idUsuario = :idUsuario";
+            $sql = "UPDATE " . self::TBL_NAME . " SET userName = :userName, nombre = :nombre, apellido = :apellido, dni = :dni, email = :email, telefono = :telefono, direccion = :direccion, fnacimiento = :fnacimiento WHERE idUsuario = :id";
             try {
-                $conn = $this->connectionDB->getConnection();
+                $conn = $this->connectionBD->getConexion();
                 $stmt = $conn->prepare($sql);
                 $stmt->execute([
                     ':userName' => $userName,
@@ -388,7 +377,7 @@
                     ':telefono' => $telefono ?: null,
                     ':direccion' => $direccion ?: null,
                     ':fnacimiento' => $fnacimiento ?: null,
-                    ':idUsuario' => $id
+                    ':id' => $id
                 ]);
                 return $stmt->rowCount() >= 0; // true si se ejecutó
             } catch (PDOException $e) {
@@ -400,18 +389,29 @@
 
         // updatePassword: guarda el nuevo hash
         public function updatePassword(int $id, string $newHash): bool {
-            $sql = "UPDATE " . self::TBL_NAME . " SET passwordHash = :passwordHash WHERE idUsuario = :idUsuario";
+            $sql = "UPDATE " . self::TBL_NAME . " SET passwordHash = :passwordHash WHERE idUsuario = :id";
             try {
-                $conn = $this->connectionDB->getConnection();
+                $conn = $this->connectionBD->getConexion();
                 $stmt = $conn->prepare($sql);
                 $stmt->execute([
                     ':passwordHash' => $newHash,
-                    ':idUsuario' => $id
+                    ':id' => $id
                 ]);
                 return $stmt->rowCount() > 0;
             } catch (PDOException $e) {
                 throw new Exception("Error al actualizar contraseña: " . $e->getMessage());
             }
+        }
+
+        public function existsUserName(string $userName): bool {
+            $sql = "SELECT COUNT(*) FROM " . self::TBL_NAME . " WHERE userName = :userName";
+            $stmt = $this->connectionBD->getConexion()->prepare($sql);
+            $stmt->execute([':userName' => $userName]);
+            return $stmt->fetchColumn() > 0;
+        }
+
+        public function getLastInsertId(): int {
+            return $this->connectionBD->getConexion()->lastInsertId();
         }
     }
 ?>

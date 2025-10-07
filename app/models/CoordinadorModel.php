@@ -6,6 +6,8 @@
     
     public function __construct(
         $idUsuario = null, 
+        $userName = null,
+        $passwordHash = null, 
         $nombre = null, 
         $apellido = null, 
         $dni = null, 
@@ -13,11 +15,9 @@
         $telefono = null, 
         $direccion = null, 
         $fnacimiento = null, 
-        $passwordHash = null, 
-        $userName = null,
         $rol = null
     ) {
-        parent::__construct($idUsuario, $nombre, $apellido, $dni, $email, $telefono, $direccion, $fnacimiento, $passwordHash, $userName, $rol);
+        parent::__construct($idUsuario, $userName, $passwordHash, $nombre, $apellido, $dni, $email, $telefono, $direccion, $fnacimiento, $rol);
     }
 
     public function darDeAltaDocente() {

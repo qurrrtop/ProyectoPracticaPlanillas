@@ -1,12 +1,19 @@
 <?php
 
   class MateriaModel {
-
     private $idMateria;
     private $nombre;
-    private $año;
+    private $anio;
     private $duracion;
     private $formato;
+
+    public function __construct($idMateria, $nombre, $anio, $duracion, $formato) {
+        $this->idMateria = $idMateria;
+        $this->nombre = $nombre;
+        $this->anio = $anio;
+        $this->duracion = $duracion;
+        $this->formato = $formato;
+    }
 
     public function getIdMateria() {
       return $this->idMateria;
@@ -16,8 +23,8 @@
       return $this->nombre;
     }
 
-    public function getAño() {
-      return $this->año;
+    public function getAnio() {
+      return $this->anio;
     }
   
     public function getDuracion() {

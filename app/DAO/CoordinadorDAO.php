@@ -245,5 +245,106 @@
         }
       }
 
+      // Métodos relacionados con la asignación de materias a usuarios (solo coordinador puede hacerlo).
+      // Aunque corresponden a la tabla intermedia usuario_materia, se mantienen aquí porque forman
+      // parte exclusiva de las funciones del coordinador.
+
+      // Asignar materia a un usuario
+      public function asignarMateria(int $idUsuario, int $idMateria): bool {
+          $sql = "INSERT INTO " . self::TBL_NAME_USER_MATERIA . " (idUsuario, idMateria) VALUES (:idUsuario, :idMateria)";
+          
+          try {
+              $conn = $this->connectionBD->getConexion();
+              $stmt = $conn->prepare($sql);
+              $stmt->bindParam(':idUsuario', $idUsuario, PDO::PARAM_INT);
+              $stmt->bindParam(':idMateria', $idMateria, PDO::PARAM_INT);
+              $stmt->execute();
+
+              return $stmt->rowCount() > 0;
+
+          } catch (PDOException $e) {
+              throw new Exception("No se pudo asignar la(s) materia(s)".$e->getMessage());
+          }
+      }
+
+      // Quitar materia de un usuario
+      public function quitarMateria(int $idUsuario, int $idMateria): bool {
+          $sql = "DELETE FROM " . self::TBL_NAME_USER_MATERIA . " WHERE idUsuario = :idUsuario AND idMateria = :idMateria";
+          
+          try {
+              $conn = $this->connectionBD->getConexion();
+              $stmt = $conn->prepare($sql);
+              $stmt->bindParam(':idUsuario', $idUsuario, PDO::PARAM_INT);
+              $stmt->bindParam(':idMateria', $idMateria, PDO::PARAM_INT);
+              $stmt->execute();
+
+              return $stmt->rowCount() > 0;
+
+          } catch (PDOException $e) {
+              throw new Exception("No se pudo quitar la(s) materia(s)".$e->getMessage());
+          }
+      }
+
+      // Traer IDs de materias asignadas a un usuario
+      public function traerMateriasPorUsuario(int $idUsuario): array {
+          $sql = "SELECT m.idMateria, m.nombre 
+                  FROM " . self::TBL_NAME_USER_MATERIA . " um
+                  JOIN materias m ON um.idMateria = m.idMateria
+                  WHERE um.idUsuario = :idUsuario";
+          
+          try {
+              $conn = $this->connectionBD->getConexion();
+              $stmt = $conn->prepare($sql);
+              $stmt->bindParam(':idUsuario', $idUsuario, PDO::PARAM_INT);
+              $stmt->execute();
+
+              $queryResult = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+              $materiasDeUsuario = [];
+              foreach($queryResult as $row) {
+                  $materiasDeUsuario[] = [
+                      'idMateria' => $row['idMateria'],
+                      'nombre' => $row['nombre']
+                  ];
+              }
+
+              return $materiasDeUsuario;
+
+          } catch(PDOException $e) {
+              throw new Exception("Error al listar las materias del usuario: " . $e->getMessage());
+          }
+      }
+
+      // traer todos los registros de usuario-materia
+      public function getAll(): array {
+          $sql = "SELECT um.idUsuario, m.idMateria, m.nombre AS nombreMateria
+                  FROM " . self::TBL_NAME_USER_MATERIA . " um
+                  JOIN materias m ON um.idMateria = m.idMateria
+                  ORDER BY um.idUsuario, m.nombre";
+
+          try {
+              $conn = $this->connectionBD->getConexion();
+              $stmt = $conn->prepare($sql);
+              $stmt->execute();
+
+              $queryResult = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+              $materiasDeTodosLosUsuarios = [];
+
+              foreach ($queryResult as $row) {
+                  $materiasDeTodosLosUsuarios[] = [
+                      'idUsuario' => $row['idUsuario'],
+                      'idMateria' => $row['idMateria'],
+                      'nombreMateria' => $row['nombreMateria']
+                  ];
+              }
+
+              return $materiasDeTodosLosUsuarios;
+
+          } catch (PDOException $e) {
+              throw new Exception("Error al listar todas las materias de los usuarios: " . $e->getMessage());
+          }
+      }
+
     }
     ?>

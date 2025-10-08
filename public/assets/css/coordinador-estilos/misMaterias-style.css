@@ -1,0 +1,104 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+main {
+    margin-top: 40px;
+    margin-left: 18%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+body {
+  font-family: Arial, sans-serif;
+}
+
+.card {
+  background: white;
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  border: solid 1px #969696ad;
+}
+
+h2 {
+  margin-top: 0;
+  text-align: center;
+}
+
+.columna {
+  margin-bottom: 1.5rem;
+}
+
+.columna h3 {
+  margin-bottom: 0.5rem;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 0.25rem;
+  font-size: 1.1rem;
+  color: #333;
+}
+
+.checkbox-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem 1rem;
+}
+
+.materia {
+  display: flex;
+  align-items: center;
+}
+
+.materia input[type="checkbox"] {
+  margin-right: 0.5rem;
+}
+
+.botones {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.btn-guardar,
+.btn-volver {
+  padding: 0.7rem 1.2rem;
+  border-radius: 6px;
+  font-size: .9rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  text-align: center;
+}
+
+.btn-guardar {
+  background: #4CAF50;
+  color: white;
+  border: none;
+}
+
+.btn-volver {
+  background: #696969;
+  color: #fff;
+  border: none;
+}
+
+.mensaje-exito {
+  background-color: #fff;
+  padding: 10px 20px;
+  margin-bottom: 15px;
+  border-radius: 10px;
+  border: 1px solid #2bcc30a1;
+}
+
+.mensaje-error {
+  background-color: #fff;
+  padding: 10px 20px;
+  margin-bottom: 15px;
+  border-radius: 10px;
+  border: 1px solid #cc3e2ba1;
+}

@@ -10,82 +10,69 @@
     <?php require_once __DIR__."/../template/sidebar.php"; ?>
 
     <main>
-        <?php if (!empty($mensaje)): ?>
-            <div class="<?php echo strpos($mensaje, 'Error') === 0 ? 'mensaje-error' : 'mensaje-exito'; ?>">
-                <?php echo $mensaje; ?>
+        <div class="card card-materias">
+            <h2>Mis Materias</h2>
+
+            <?php if (empty($materiasAsignadas)) : ?>
+                <p class="mensaje-no-materias">Aún no tienes materias asignadas.</p>
+            <?php else : ?>
+                <ul class="lista-materias">
+                    <?php foreach ($materiasAsignadas as $materia) : ?>
+                        <li class="materia-item"><?= htmlspecialchars($materia['nombre']) ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            <?php endif; ?>
+
+            <div class="acciones">
+                <a href="index.php?controller=Coordinador&action=misMaterias" class="btn-modificar">
+                    Modificar
+                </a>
             </div>
+        </div>
+
+        <?php if (!empty($mensaje) && $mensaje == 'Usuario creado correctamente.'): ?>
+            <div class="mensaje-exito"><?php echo $mensaje; ?></div>
+        <?php elseif (!empty($mensaje) && strpos($mensaje, 'Error al crear usuario: ') === 0): ?>
+            <div class="mensaje-error"><?php echo $mensaje; ?></div>
         <?php endif; ?>
 
-        <div class="panel-card">
-            <h1>Alta de Docente</h1>
-
-            <form action="index.php?controller=Coordinador&action=altaDocente" method="POST">
-                <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
-
-                <!-- Datos del docente -->
-                <div class="fila">
-                    <div class="campo">
-                        <label>Usuario</label>
-                        <input type="text" name="userName" required>
-                    </div>
-                    <div class="campo">
-                        <label>Nombre</label>
-                        <input type="text" name="nombre" required>
-                    </div>
+        <div class="card card-alta">
+            <h2>Alta de Usuarios</h2>
+            <form action="index.php?controller=Coordinador&action=darAltaUsuario" method="POST" class="form-alta">
+                <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+        
+                <div class="form-group">
+                    <label for="usuario">Usuario Inicial</label>
+                    <input type="text" id="userName" name="userName" required>
                 </div>
-
-                <div class="fila">
-                    <div class="campo">
-                        <label>Apellido</label>
-                        <input type="text" name="apellido" required>
-                    </div>
-                    <div class="campo">
-                        <label>DNI</label>
-                        <input type="text" name="dni" maxlength="8" required>
-                    </div>
+    
+                <div class="form-group">
+                    <label for="password">Contraseña Inicial</label>
+                    <input type="password" id="password" name="password" required>
                 </div>
-
-                <div class="fila">
-                    <div class="campo">
-                        <label>Email</label>
-                        <input type="email" name="email">
-                    </div>
-                    <div class="campo">
-                        <label>Teléfono</label>
-                        <input type="text" name="telefono">
-                    </div>
+    
+                <div class="form-group">
+                    <label for="nombre">Nombre</label>
+                    <input type="text" id="nombre" name="nombre" required>
                 </div>
-
-                <div class="fila">
-                    <div class="campo">
-                        <label>Dirección</label>
-                        <input type="text" name="direccion">
-                    </div>
-                    <div class="campo">
-                        <label>Contraseña inicial</label>
-                        <input type="password" name="password" required>
-                    </div>
+    
+                <div class="form-group">
+                    <label for="email">Correo Electrónico</label>
+                    <input type="email" id="email" name="email" required>
                 </div>
-
-                <!-- Asignar materias -->
-                <div class="fila-materias">
-                    <label>Materias asignadas</label>
-                    <?php foreach($materias as $materia): ?>
-                        <div class="materia-option">
-                            <input type="checkbox" name="materias[]" value="<?php echo $materia->getId(); ?>">
-                            <?php echo $materia->getNombre(); ?>
-                        </div>
-                    <?php endforeach; ?>
-                </div>
-
-                <!-- Botones -->
-                <div class="botones">
-                    <a href="index.php?controller=Coordinador&action=home" class="btn-cancelar">Cancelar</a>
-                    <button type="submit">Dar de alta</button>
+    
+                <div class="form-actions">
+                    <button type="submit" class="btn-alta">Dar Alta</button>
                 </div>
             </form>
         </div>
     </main>
+
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
 
 </body>
 </html>

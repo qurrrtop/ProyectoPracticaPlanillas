@@ -49,7 +49,7 @@
             throw new Exception("El archivo del controlador '$controllerFilePath' no existe");
         }
     } catch (Exception $e) {
-        // Manejo de errores simple
+        // para ver si ocurrió un error.
         echo "Error: " . $e->getMessage();
     }
 ?>

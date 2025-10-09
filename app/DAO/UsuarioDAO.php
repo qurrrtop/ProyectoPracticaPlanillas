@@ -1,5 +1,5 @@
 <?php
-    require_once __DIR__ . "/../config/ConenctionDB.php"; // referencia a la base de datos;
+    require_once __DIR__ . "/../config/ConnectionDB.php"; // referencia a la base de datos;
     require_once __DIR__ . "/../models/UsuarioModelo.php"; // referencia al Usuario Modelo;
     require_once __DIR__ . "/../models/DocenteModel.php"; // referencia al Usuario Modelo;
     require_once __DIR__ . "/../models/CoordinadorModel.php"; // referencia al Usuario Modelo;
@@ -130,6 +130,7 @@
 
                 if (!$queryResult) {
                     throw new Exception("No existe ningún usuario con el ID ingresado");
+                    return null;
                 }
 
                 if ($queryResult['rol'] === 'DOCENTE') {
@@ -147,6 +148,7 @@
                         $queryResult['rol']
                     );
                 }
+                return null;
 
             } catch(PDOException $e) {
                 error_log("No existe un usuario en la base de datos con el ID deseado");
@@ -354,6 +356,7 @@
                         $row['rol']
                     );
                 }
+                    return null;
 
                 } catch (PDOException $e) {
                 throw new Exception("Error DB: " . $e->getMessage());

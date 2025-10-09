@@ -1,4 +1,12 @@
 <?php
+    // Detectar el entorno automáticamente
+    if (strpos($_SERVER['HTTP_HOST'], 'localhost') !== false) {
+        // 💻 Si estás en local, podrías tener distintas rutas
+        define('BASE_URL', '/ProyectoPracticaPlanillas/public/'); // para XAMPP
+    } else {
+        // 🌐 Si luego lo subís a un hosting o servidor real
+        define('BASE_URL', '/');
+    }
 
     // Carpeta donde están los controladores
     define("CONTROLLER_FOLDER", __DIR__ . "/../app/controllers/");

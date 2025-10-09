@@ -96,7 +96,7 @@
     }
 
     public function setEmail($email) {
-      if (empty($email) || filter_var($email, '', FILTER_VALIDATE_EMAIL) !== false) {
+      if (empty($email) || filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
         throw new Exception("El correo electrónico ingresado no tiene un formato valido o está vacio");
       }
       $this -> email = trim($email);

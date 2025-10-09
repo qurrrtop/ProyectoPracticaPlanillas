@@ -8,6 +8,8 @@
 
       const TBL_NAME = "user"; #nombre de la tabla en la BD user es pa ponerle alguno, dsp vemos
 
+      const TBL_NAME_USER_MATERIA = "user_materia";
+
       // ------------- CONSTRUCTOR CON INYECCIÓN DE DEPENDENCIAS --------------
 
       public function __CONSTRUCT( ConnectionDB $connectionDB ) {
@@ -254,7 +256,7 @@
           $sql = "INSERT INTO " . self::TBL_NAME_USER_MATERIA . " (idUsuario, idMateria) VALUES (:idUsuario, :idMateria)";
           
           try {
-              $conn = $this->connectionBD->getConexion();
+              $conn = $this->connectionDB->getConnection();
               $stmt = $conn->prepare($sql);
               $stmt->bindParam(':idUsuario', $idUsuario, PDO::PARAM_INT);
               $stmt->bindParam(':idMateria', $idMateria, PDO::PARAM_INT);
@@ -272,7 +274,7 @@
           $sql = "DELETE FROM " . self::TBL_NAME_USER_MATERIA . " WHERE idUsuario = :idUsuario AND idMateria = :idMateria";
           
           try {
-              $conn = $this->connectionBD->getConexion();
+              $conn = $this->connectionDB->getConnection();
               $stmt = $conn->prepare($sql);
               $stmt->bindParam(':idUsuario', $idUsuario, PDO::PARAM_INT);
               $stmt->bindParam(':idMateria', $idMateria, PDO::PARAM_INT);
@@ -293,7 +295,7 @@
                   WHERE um.idUsuario = :idUsuario";
           
           try {
-              $conn = $this->connectionBD->getConexion();
+              $conn = $this->connectionDB->getConnection();
               $stmt = $conn->prepare($sql);
               $stmt->bindParam(':idUsuario', $idUsuario, PDO::PARAM_INT);
               $stmt->execute();
@@ -323,7 +325,7 @@
                   ORDER BY um.idUsuario, m.nombre";
 
           try {
-              $conn = $this->connectionBD->getConexion();
+              $conn = $this->connectionDB->getConnection();
               $stmt = $conn->prepare($sql);
               $stmt->execute();
 

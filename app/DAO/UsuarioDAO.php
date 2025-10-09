@@ -22,7 +22,7 @@
                     VALUES (:userName, :passwordHash, :nombre, :email, :rol)";
 
             try {
-                $conn = $this->connectionBD->getConexion();
+                $conn = $this->connectionDB->getConnection();
                 $stmt = $conn->prepare($sql);
 
                 $stmt->execute([
@@ -49,7 +49,7 @@
             $sql = "SELECT * FROM " . self::TBL_NAME . " WHERE dni = :dni LIMIT 1";
 
             try {
-                $conn = $this->connectionBD->getConexion();
+                $conn = $this->connectionDB->getConnection();
                 $stmt = $conn->prepare($sql);
                 $stmt->bindParam(':dni', $dni, PDO::PARAM_INT);
                 $stmt->execute();
@@ -120,7 +120,7 @@
             $sql = "SELECT idUsuario, userName, passwordHash, nombre, apellido, dni, email, telefono, direccion, fnacimiento, rol FROM ".self::TBL_NAME." WHERE idUsuario = :idUsuario LIMIT 1";
 
             try {
-                $conn = $this->connectionBD->getConexion();
+                $conn = $this->connectionDB->getConnection();
                 $stmt = $conn->prepare($sql);
 
                 $stmt->bindParam(':idUsuario', $id, PDO::PARAM_INT);
@@ -163,7 +163,7 @@
             $sql = "SELECT idUsuario, userName, nombre, apellido, dni, email, telefono, direccion, fnacimiento FROM ".self::TBL_NAME." ORDER BY apellido";
     
             try {
-                $conn = $this->connectionBD->getConexion();
+                $conn = $this->connectionDB->getConnection();
                 $stmt = $conn->prepare($sql);
                 $stmt->execute();
     
@@ -203,13 +203,13 @@
             $sql = "UPDATE ".self::TBL_NAME." SET user = :user, passwordHash = :passwordHash WHERE id = :id";
     
             $userData = [
-                ':user' => $user->getUser(),
-                ':passwordHash' => $user->getPassword(),
-                ':id' => $user->getId()
+                ':user' => $user->getUserName(),
+                ':passwordHash' => $user->getPasswordHash(),
+                ':id' => $user->getIdUsuario()
             ];
     
             try {
-                $conn = $this ->$connectionBD->getConexion();
+                $conn = $this ->connectionDB->getConnection();
                 $stmt = $conn->prepare($sql);
                 $stmt->execute($userData);
     
@@ -219,7 +219,7 @@
                     throw new Exception("No pudo ser posible la edición del usuario");
                 }
                 
-                return $this->readUserById($user->getId());
+                return $this->readUserById($user->getIdUsuario());
 
             } catch (PDOException $e) {
                 throw new Exception("Error al intentar modificar datos del usuario por su ID".$e->getMessage());
@@ -231,10 +231,10 @@
         // ------------------------- DELETE USER -------------------------
     
         public function deleteUser(int $id): bool {
-            $sql = "DELETE FROM ".self::TBL_USER." WHERE id = :id";
+            $sql = "DELETE FROM ".self::TBL_NAME." WHERE id = :id";
     
             try {
-                $conn = $this->connectionBD->getConexion();
+                $conn = $this->connectionDB->getConnection();
                 $stmt = $conn->prepare($sql);
                 $stmt -> bindParam(':id', $id, PDO::PARAM_INT);
                 $stmt->execute();
@@ -256,7 +256,7 @@
             $sql = "SELECT * FROM ".self::TBL_NAME." WHERE userName = :userName LIMIT 1";
         
             try {
-                $conn = $this->connectionBD->getConexion();
+                $conn = $this->connectionDB->getConnection();
                 $stmt = $conn->prepare($sql);
                 $stmt->bindParam(':userName', $userName, PDO::PARAM_STR);
                 $stmt->execute();
@@ -315,7 +315,7 @@
             telefono, direccion, fnacimiento, rol FROM " . self::TBL_NAME . " WHERE idUsuario = :id LIMIT 1";
 
             try {
-                $conn = $this->connectionBD->getConexion();
+                $conn = $this->connectionDB->getConnection();
                 $stmt = $conn->prepare($sql);
                 $stmt->bindParam(':id', $id, PDO::PARAM_INT);
                 $stmt->execute();
@@ -366,7 +366,7 @@
         public function updateProfile(int $id, string $userName, string $nombre, string $apellido, ?string $dni, ?string $email, ?string $telefono, ?string $direccion, ?string $fnacimiento): bool {
             $sql = "UPDATE " . self::TBL_NAME . " SET userName = :userName, nombre = :nombre, apellido = :apellido, dni = :dni, email = :email, telefono = :telefono, direccion = :direccion, fnacimiento = :fnacimiento WHERE idUsuario = :id";
             try {
-                $conn = $this->connectionBD->getConexion();
+                $conn = $this->connectionDB->getConnection();
                 $stmt = $conn->prepare($sql);
                 $stmt->execute([
                     ':userName' => $userName,
@@ -391,7 +391,7 @@
         public function updatePassword(int $id, string $newHash): bool {
             $sql = "UPDATE " . self::TBL_NAME . " SET passwordHash = :passwordHash WHERE idUsuario = :id";
             try {
-                $conn = $this->connectionBD->getConexion();
+                $conn = $this->connectionDB->getConnection();
                 $stmt = $conn->prepare($sql);
                 $stmt->execute([
                     ':passwordHash' => $newHash,
@@ -405,13 +405,13 @@
 
         public function existsUserName(string $userName): bool {
             $sql = "SELECT COUNT(*) FROM " . self::TBL_NAME . " WHERE userName = :userName";
-            $stmt = $this->connectionBD->getConexion()->prepare($sql);
+            $stmt = $this->connectionDB->getConnection()->prepare($sql);
             $stmt->execute([':userName' => $userName]);
             return $stmt->fetchColumn() > 0;
         }
 
         public function getLastInsertId(): int {
-            return $this->connectionBD->getConexion()->lastInsertId();
+            return $this->connectionDB->getConnection()->lastInsertId();
         }
     }
 ?>

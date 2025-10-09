@@ -19,7 +19,7 @@ require_once __DIR__."/../config/ConnectionDB.php";
 
       $materiaData = [
         ":nombre" => $materia->getNombre(),
-        ":año" => $materia->getAño(),
+        ":año" => $materia->getAnio(),
         "duracion" => $materia->getDuracion(),
         ":formato" => $materia->getFormato()
       ];
@@ -126,7 +126,7 @@ require_once __DIR__."/../config/ConnectionDB.php";
       $materiaData = [
         ":idMateria" => $materia->getIDMateria(),
         ":nombre" => $materia->getNombre(),
-        ":año" => $materia->getAño(),
+        ":año" => $materia->getAnio(),
         ":duracion" => $materia->getDuracion(),
         ":formato" => $materia->getFormato()
       ];

@@ -195,7 +195,7 @@
           ":telefono" => $docente->getTelefono(),
           ":direccion" => $docente->getDireccion(),
           ":fnacimiento" => $docente->getFnacimiento(),
-          "idUsuario" => $docente->getIdUsuario()
+          "idUsuario" => $docente->getIdPersona()
         ];
 
         try {
@@ -208,7 +208,7 @@
             throw new Exception("la modificacion no fue exitosa");
           }
 
-          return $this->readADocenteByDNI( $docente->getIdUsuario() );
+          return $this->readADocenteByDNI( $docente->getIdPersona() );
 
         } catch( PDOException $e ) {
           error_log("No se puede actualizar ese docente en la base de datos". $e->getMessage());

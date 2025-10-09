@@ -116,7 +116,7 @@
 
         // ------------------------- READ USER BY ID -------------------------
 
-        public function readUserById(int $id): ?UsuarioModelo {
+        public function readUserById(int $id): ?PersonaModel {
             $sql = "SELECT idUsuario, userName, passwordHash, nombre, apellido, dni, email, telefono, direccion, fnacimiento, rol FROM ".self::TBL_NAME." WHERE idUsuario = :idUsuario LIMIT 1";
 
             try {
@@ -205,7 +205,7 @@
             $userData = [
                 ':user' => $user->getUserName(),
                 ':passwordHash' => $user->getPasswordHash(),
-                ':id' => $user->getIdUsuario()
+                ':id' => $user->getIdPersona()
             ];
     
             try {
@@ -219,7 +219,7 @@
                     throw new Exception("No pudo ser posible la edición del usuario");
                 }
                 
-                return $this->readUserById($user->getIdUsuario());
+                return $this->readUserById($user->getIdPersona());
 
             } catch (PDOException $e) {
                 throw new Exception("Error al intentar modificar datos del usuario por su ID".$e->getMessage());
@@ -310,7 +310,7 @@
 
         // ------------------------- GET USER BY ID -------------------------
 
-        public function getUserById(int $id): ?UsuarioModelo {
+        public function getUserById(int $id): ?PersonaModel {
             $sql = "SELECT idUsuario, userName, passwordHash, nombre, apellido, dni, email, 
             telefono, direccion, fnacimiento, rol FROM " . self::TBL_NAME . " WHERE idUsuario = :id LIMIT 1";
 

@@ -197,7 +197,7 @@
           ":telefono" => $coordinador->getTelefono(),
           ":direccion" => $coordinador->getDireccion(),
           ":fnacimiento" => $coordinador->getFnacimiento(),
-          ":idUsuario" => $coordinador->getIdUsuario()
+          ":idUsuario" => $coordinador->getIdPersona()
         ];
 
         try {
@@ -210,7 +210,7 @@
             throw new Exception("la modificacion no fue exitosa");
           }
 
-          return $this->readACoordinadorByDNI( $coordinador->getIdUsuario() );
+          return $this->readACoordinadorByDNI( $coordinador->getIdPersona() );
 
         } catch( PDOException $e ) {
           error_log("No se puede actualizar ese coordiandor en la base de datos". $e->getMessage());

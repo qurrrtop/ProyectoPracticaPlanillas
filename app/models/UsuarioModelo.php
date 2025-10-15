@@ -4,9 +4,9 @@
     
   class UsuarioModelo extends PersonaModel {
 
-    protected string $passwordHash;
-    protected string $userName;
-    protected string $rol;
+    private string $passwordHash;
+    private string $userName;
+    private ?string $rol;
 
     
     // se coloca null los atributos por que se heredara

@@ -4,14 +4,14 @@
 
   abstract class PersonaModel {
 
-    protected int $idPersona;
-    protected string $nombre;
-    protected string $apellido;
-    protected int $dni;
-    protected string $email;
-    protected int $telefono;
-    protected string $direccion;
-    protected string $fnacimiento;
+    protected ?int $idPersona;
+    protected ?string $nombre;
+    protected ?string $apellido;
+    protected ?int $dni;
+    protected ?string $email;
+    protected ?int $telefono;
+    protected ?string $direccion;
+    protected ?string $fnacimiento;
 
     public function __construct($idPersona = null, $nombre = null, $apellido = null, $dni = null, $email = null, $telefono = null, $direccion = null, $fnacimiento = null, $rol = null) {
       

@@ -1,6 +1,6 @@
 <?php 
 
-require_once __DIR__."/../model/MateriaModel.php";
+require_once __DIR__."/../models/MateriaModel.php";
 require_once __DIR__."/../config/ConnectionDB.php";
 
   class MateriaDAO {

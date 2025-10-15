@@ -1,15 +1,15 @@
 <?php
     require_once __DIR__."/../config/ConnectionDB.php";
     require_once __DIR__."/../DAO/UsuarioDAO.php";
-    require_once __DIR__."/../service/UsuarioService.php";
+    require_once __DIR__."/../service/LoginService.php";
 
     class LoginController {
-        private $usuarioService;
+        private $LoginService;
 
         public function __construct() {
             $conexionBD = ConnectionDB::getInstancia();
             $usuarioDAO = new UsuarioDAO($conexionBD);
-            $this->usuarioService = new UsuarioService($usuarioDAO);
+            $this->LoginService = new LoginService($usuarioDAO);
         }
 
         // -------------------- INICIAR SESIÓN --------------------
@@ -34,10 +34,10 @@
                 }
 
                 try {
-                    $usuario = $this->usuarioService->login($userName, $password);
+                    $usuario = $this->LoginService->login($userName, $password);
 
                     $_SESSION['usuario'] = [
-                        'idUsuario' => $usuario->getIdUsuario(),
+                        'idPersona' => $usuario->getIdPersona(),
                         'userName'  => $usuario->getUserName(),
                         'rol'       => $usuario->getRol()
                     ];

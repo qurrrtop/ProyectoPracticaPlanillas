@@ -63,7 +63,7 @@
     public function setNombre( string $nombre ): void {
 
       if( !StringFieldType::stringToValidate( $nombre, StringFieldType::NAME ) ) {
-        throw new InvalidArgumentException( "Nombre ingresado no valido" );
+        throw new InvalidArgumentException( "Nombre ingresado no valido." );
       }
       //ya no es necesario el trim porq lo hace el enum
       $this->nombre = $nombre;
@@ -72,38 +72,39 @@
     public function setApellido( string $apellido ): void {
 
       if( !StringFieldType::stringToValidate( $apellido, StringFieldType::SURNAME ) ) {
-        throw new InvalidArgumentException( "Apellido ingresado no valido" );
+        throw new InvalidArgumentException( "Apellido ingresado no valido." );
       }
     
       $this -> apellido = $apellido;
     }
     //los enteros no se si es necesario hacer enum
     public function setDni( int $dni ): void {
-      if (!is_numeric($dni) || $dni <= 0) {
-        throw new InvalidArgumentException('El dni solo puede contener números cuyo valor siempre será mayor a 0');
-      } 
-      $this -> dni = $dni;
+
+      if( !IntFieldType::intToValidate( $dni, IntFieldType::DNI ) ) {
+        throw new InvalidArgumentException( "DNI ingresado no valido." );
+      }
     }
 
     public function setEmail( string $email ): void {
 
       if( !StringFieldType::stringToValidate( $email, StringFieldType::EMAIL ) ) {
-        throw new InvalidArgumentException( "Email ingresado no valido" );
+        throw new InvalidArgumentException( "Email ingresado no valido." );
       }
 
     }
 
     public function setTelefono( int $telefono ): void {
-      if (filter_var($telefono, '', FILTER_VALIDATE_INT) !== false) {
-        throw new InvalidArgumentException("El número de teléfono ingresado no es valido");
+
+      if( !IntFieldType::intToValidate( $telefono, IntFieldType::PHONE ) ) {
+        throw new InvalidArgumentException( "Telefono ingresado no valido." );
       }
-      $this -> telefono = trim($telefono);
+
     }
 
     public function setDireccion( string $direccion ) {
 
       if ( !StringFieldType::stringToValidate( $direccion, StringFieldType::ADDRESS ) ) {
-        throw new InvalidArgumentException( "Dirección ingresada no valida" );
+        throw new InvalidArgumentException( "Dirección ingresada no valida." );
       }
 
     }
@@ -114,13 +115,13 @@
         //valida el formato dia-mes-año
         $date = DateTime::createFromFormat( "d-m-Y", $fecha );
         if ( !$date || $date->format( 'd-m-Y' ) !== $fecha ) {
-            throw new InvalidArgumentException( "Fecha de nacimiento ingresada con formato invalido (DD-MM-YYYY)" );
+            throw new InvalidArgumentException( "Fecha de nacimiento ingresada con formato invalido (DD-MM-YYYY)." );
         }
 
         //no puede ser futura
         $today = new DateTime();
         if ( $date > $today ) {
-            throw new InvalidArgumentException( "Fecha de nacimiento no puede ser futura" );
+            throw new InvalidArgumentException( "Fecha de nacimiento no puede ser futura." );
         }
 
         //se guarda en formato año-mes-dia por si acaso

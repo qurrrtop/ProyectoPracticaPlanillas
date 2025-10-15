@@ -1,4 +1,6 @@
 <?php 
+  //require el enum de cadenas
+  require_once __DIR__."/../utilities/StringFieldType.php";
 
   abstract class PersonaModel {
 
@@ -9,8 +11,7 @@
     protected string $email;
     protected int $telefono;
     protected string $direccion;
-    protected DateTime $fnacimiento;
-    protected string $rol;
+    protected string $fnacimiento;
 
     public function __construct($idPersona = null, $nombre = null, $apellido = null, $dni = null, $email = null, $telefono = null, $direccion = null, $fnacimiento = null, $rol = null) {
       
@@ -27,100 +28,103 @@
 
 
 
-    public function getIdPersona() {
+    public function getIdPersona(): int {
       return $this->idPersona;
     }
 
-    public function getNombre() {
+    public function getNombre(): string {
       return $this->nombre;
     }
 
-    public function getApellido() {
+    public function getApellido(): string {
       return $this->apellido;
     }
 
-    public function getDni() {
+    public function getDni(): int {
       return $this->dni;
     }
 
-    public function getEmail() {
+    public function getEmail(): string {
       return $this->email;
     }
 
-    public function getTelefono() {
+    public function getTelefono(): int {
       return $this->telefono;
     }
 
-    public function getDireccion() {
+    public function getDireccion(): string {
       return $this->direccion;
     }
-
-    public function getFnacimiento() {
-      return $this->fnacimiento instanceof \DateTime 
-          ? $this->fnacimiento->format('Y-m-d') 
-          : $this->fnacimiento;
+    //lo cambie ya que se guarda como string, si lo guardamos como datetime lo cambiamos
+    public function getFnacimiento(): string {
+      return $this->fnacimiento;
     }
 
-    public function getRol(): ?string {
-      return $this->rol;
-    }
+    public function setNombre( string $nombre ): void {
 
-    public function setNombre($nombre) {
-      if (empty($nombre) || !is_string($nombre) || $nombre === null) {
-        throw new Exception('El nombre de la persona es una cadena de texto y no puede estar vacia');
+      if( !StringFieldType::stringToValidate( $nombre, StringFieldType::NAME ) ) {
+        throw new InvalidArgumentException( "Nombre ingresado no valido" );
       }
-      $this -> nombre = trim($nombre);
+      //ya no es necesario el trim porq lo hace el enum
+      $this->nombre = $nombre;
     }
 
-    public function setApellido($apeliido) {
-      if (empty($apeliido) || !is_string($apeliido) || $apeliido === null) {
-        throw new Exception('El apellido de la persona es una cadena de texto y no puede estar vacia');
+    public function setApellido( string $apellido ): void {
+
+      if( !StringFieldType::stringToValidate( $apellido, StringFieldType::SURNAME ) ) {
+        throw new InvalidArgumentException( "Apellido ingresado no valido" );
       }
-      $this -> apellido = trim($apeliido);
+    
+      $this -> apellido = $apellido;
     }
-
-    public function setDni($dni) {
+    //los enteros no se si es necesario hacer enum
+    public function setDni( int $dni ): void {
       if (!is_numeric($dni) || $dni <= 0) {
-        throw new Exception('El dni solo puede contener números cuyo valor siempre será mayor a 0');
+        throw new InvalidArgumentException('El dni solo puede contener números cuyo valor siempre será mayor a 0');
       } 
-      $this -> dni = trim($dni);
+      $this -> dni = $dni;
     }
 
-    public function setEmail($email) {
-      if (empty($email) || filter_var($email, '', FILTER_VALIDATE_EMAIL) !== false) {
-        throw new Exception("El correo electrónico ingresado no tiene un formato valido o está vacio");
+    public function setEmail( string $email ): void {
+
+      if( !StringFieldType::stringToValidate( $email, StringFieldType::EMAIL ) ) {
+        throw new InvalidArgumentException( "Email ingresado no valido" );
       }
-      $this -> email = trim($email);
+
     }
 
-    public function setTelefono($telefono) {
+    public function setTelefono( int $telefono ): void {
       if (filter_var($telefono, '', FILTER_VALIDATE_INT) !== false) {
-        throw new Exception("El número de teléfono ingresado no es valido");
+        throw new InvalidArgumentException("El número de teléfono ingresado no es valido");
       }
       $this -> telefono = trim($telefono);
     }
 
-    public function setDireccion($direccion) {
-      if (empty($direccion) || !is_string($direccion) || $direccion === false) {
-        throw new Exception("La dirección es una cadena de texto, no puede estar vacia");
+    public function setDireccion( string $direccion ) {
+
+      if ( !StringFieldType::stringToValidate( $direccion, StringFieldType::ADDRESS ) ) {
+        throw new InvalidArgumentException( "Dirección ingresada no valida" );
       }
-      $this -> direccion = trim($direccion);
+
     }
 
-    //filter var(filter_validate_email), verifica si tiene un formato valido para email
+    public function setFNacimiento( string $fecha ) {
+        $fecha = trim( $fecha );
 
-    //no es una forma apropiada de validar fechas;
-      //se puede mejorar haciendolo de otra manera;haciendo
-    //un objeto DataTime.
-    //el 'error.log' solo lo vé el desarrollador;
-    public function setFnacimiento($fnacimiento) {
-      try {
-        $date = new Datetime($fnacimiento);
-      } catch(Exception $e) {
-        error_log("El valor ingresado de la fecha de nacimiento no es valido". $e);
-        throw new Exception('El valor ingresado para la fecha de nacimiento no tiene un formato valido');
-      }
+        //valida el formato dia-mes-año
+        $date = DateTime::createFromFormat( "d-m-Y", $fecha );
+        if ( !$date || $date->format( 'd-m-Y' ) !== $fecha ) {
+            throw new InvalidArgumentException( "Fecha de nacimiento ingresada con formato invalido (DD-MM-YYYY)" );
+        }
 
+        //no puede ser futura
+        $today = new DateTime();
+        if ( $date > $today ) {
+            throw new InvalidArgumentException( "Fecha de nacimiento no puede ser futura" );
+        }
+
+        //se guarda en formato año-mes-dia por si acaso
+        $this->fnacimiento = $date->format('Y-m-d');
     }
 
   }

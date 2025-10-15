@@ -4,6 +4,7 @@
 
     protected string $passwordHash;
     protected string $userName;
+    protected string $rol;
 
     
     // se coloca null los atributos por que se heredara
@@ -14,30 +15,43 @@
       $this->rol = $rol;
     }
 
-    public function getPasswordHash() {
+    public function getPasswordHash(): string {
       return $this->passwordHash;
     }
 
-    public function getUserName() {
+    public function getUserName(): string {
       return $this->userName;
     }
 
-    // MÉTODO SET USUARIO - CONTRASEÑA;
-    //validación para el user y password (que no esté vacio, que sea string y que no sea nulo);
-    //la validación de longitud, caracteres, números, minúsculas y mayúsculas en otra capa.
+    public function getRol(): string {
+      return $this->rol;
+    }
 
-    public function setUserName( string $userName ): void {
-      if ( empty( $userName ) || $userName === null ) {
-        throw new InvalidArgumentException("El nombre de user es obligatorio y debe ser una cadena de texto");
+    public function setUserName( string $username ): void {
+
+      if( !StringFieldType::stringToValidate( $username, StringFieldType::USER_NAME ) ) {
+        throw new InvalidArgumentException( "Nombre de suario ingresado no valido" );
       }
-      $this->userName = trim( $userName );
+
+      $this->userName = $username;
     }
 
     public function setPassword( string $plaintext ): void {
-      if ( empty( $plaintext ) || $plaintext === null ) {
-        throw new InvalidArgumentException("La password no es valida y debe ser una cadena de texto");
+
+      if( !StringFieldType::stringToValidate( $plaintext, StringFieldType::PASSWORD ) ) {
+        throw new InvalidArgumentException( "Contraseña ingresada no valida" );
       }
+
       $this->passwordHash = password_hash( $plaintext, PASSWORD_DEFAULT );
+    }
+
+    public function setRol( string $rol ): void {
+
+      if( !StringFieldType::stringToValidate( $rol, StringFieldType::ROL ) ) {
+        throw new InvalidArgumentException( "Rol ingresado no valido" );
+      }
+
+      $this->rol = $rol;
     }
 
     public function verifyPassword( string $plaintext ): bool {

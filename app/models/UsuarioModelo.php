@@ -1,4 +1,6 @@
 <?php
+
+  require_once __DIR__ . "/PersonaModel.php";
     
   class UsuarioModelo extends PersonaModel {
 

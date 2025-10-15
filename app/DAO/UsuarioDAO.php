@@ -1,5 +1,5 @@
 <?php
-    require_once __DIR__ . "/../config/ConenctionDB.php"; // referencia a la base de datos;
+    require_once __DIR__ . "/../config/ConnectionDB.php"; // referencia a la base de datos;
     require_once __DIR__ . "/../models/UsuarioModelo.php"; // referencia al Usuario Modelo;
     require_once __DIR__ . "/../models/DocenteModel.php"; // referencia al Usuario Modelo;
     require_once __DIR__ . "/../models/CoordinadorModel.php"; // referencia al Usuario Modelo;

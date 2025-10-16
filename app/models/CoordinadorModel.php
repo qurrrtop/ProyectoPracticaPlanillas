@@ -5,7 +5,7 @@
   class CoordinadorModel extends UsuarioModelo {
     
     public function __construct(
-        $idUsuario = null, 
+        $idPersona = null, 
         $userName = null,
         $passwordHash = null, 
         $nombre = null, 
@@ -17,7 +17,7 @@
         $fnacimiento = null, 
         $rol = null
     ) {
-        parent::__construct($idUsuario, $userName, $passwordHash, $nombre, $apellido, $dni, $email, $telefono, $direccion, $fnacimiento, $rol);
+        parent::__construct($idPersona, $userName, $passwordHash, $nombre, $apellido, $dni, $email, $telefono, $direccion, $fnacimiento, $rol);
     }
 
     public function darDeAltaDocente() {

@@ -25,7 +25,7 @@
             <div class="fila">
                 <div class="campo">
                     <label>ID Usuario</label>
-                    <input type="text" name="idUsuario" value="<?php echo $usuarioDatos->getIdUsuario(); ?>" readonly>
+                    <input type="text" name="idPersona" value="<?php echo $usuarioDatos->getidPersona(); ?>" readonly>
                 </div>
                 <div class="campo">
                     <label>Rol</label>

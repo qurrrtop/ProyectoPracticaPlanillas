@@ -91,7 +91,7 @@
       // --------------------------- READ ALL ALUMNO X INCOMPLETO X---------------------------
 
       public function readAllAlumno(): array { #sera una coleccion de objetos lo que devuelve
-        $sql = "SELECT idUsuario, userName, passwordHash, nombre, apellido, dni, email, telefono, direccion, fnacimiento FROM ".self::TBL_NAME." ORDER BY idUsuario";
+        $sql = "SELECT idPersona, userName, passwordHash, nombre, apellido, dni, email, telefono, direccion, fnacimiento FROM ".self::TBL_NAME." ORDER BY idPersona";
 
         try {
 
@@ -106,7 +106,7 @@
           foreach( $queryResult as $row ) { #se usa para asignar a cada fila (resultado) al arreglo de alluser
 
             $allUser[] = new DocenteModel(
-              $row["idUsuario"],
+              $row["idPersona"],
               $row["userName"],
               $row["passwordHash"],
               $row["nombre"],

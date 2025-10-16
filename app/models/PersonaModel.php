@@ -7,9 +7,9 @@
     protected ?int $idPersona;
     protected ?string $nombre;
     protected ?string $apellido;
-    protected ?int $dni;
+    protected ?string $dni;
     protected ?string $email;
-    protected ?int $telefono;
+    protected ?string $telefono;
     protected ?string $direccion;
     protected ?string $fnacimiento;
 

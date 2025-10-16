@@ -60,9 +60,9 @@
         public function panelCoord() {
             $this -> verificarLogin();
 
-            $idUsuario = $_SESSION['usuario']['idUsuario'];
+            $idPersona = $_SESSION['usuario']['idPersona'];
 
-            $materiasAsignadas = $this->coordinadorService->getMateriasDelUsuario($idUsuario);
+            $materiasAsignadas = $this->coordinadorService->getMateriasDelUsuario($idPersona);
 
             $materiasAsignadasIds = array_column($materiasAsignadas, 'idMateria');
 
@@ -82,7 +82,7 @@
         public function misMaterias() {
             $this -> verificarLogin();
             
-            $idUsuario = $_SESSION['usuario']['idUsuario'];
+            $idPersona = $_SESSION['usuario']['idPersona'];
 
             // Trae todas las materias agrupadas por año
             $materiasPorAnio = $this->materiaService->getMateriasAgrupadasPorAnio();
@@ -90,7 +90,7 @@
             // Convierte a array de IDs para marcar los checkboxes
             $materiasAsignadas = array_map(
                 fn($m) => $m['idMateria'], 
-                $this->coordinadorService->getMateriasDelUsuario($idUsuario)
+                $this->coordinadorService->getMateriasDelUsuario($idPersona)
             );
 
             // CSRF
@@ -111,7 +111,7 @@
 
         public function guardarMisMaterias() {
             $this->verificarLogin();
-            $idUsuario = $_SESSION['usuario']['idUsuario'];
+            $idPersona = $_SESSION['usuario']['idPersona'];
 
             // CSRF
             if (empty($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
@@ -123,7 +123,7 @@
             $materiasSeleccionadas = $_POST['materias'] ?? [];
 
             try {
-                $this->coordinadorService->actualizarMateriasDelUsuario($idUsuario, $materiasSeleccionadas);
+                $this->coordinadorService->actualizarMateriasDelUsuario($idPersona, $materiasSeleccionadas);
 
                 $_SESSION['mensaje'] = "Materias actualizadas correctamente.";
             } catch (Exception $e) {
@@ -154,7 +154,7 @@
                 );
                 
                 $_SESSION['mensaje'] = "Usuario creado correctamente.";
-                header("Location: index.php?controller=Coordinador&action=asignarMaterias&idUsuario=" . $nuevoUsuario->getIdUsuario());
+                header("Location: index.php?controller=Coordinador&action=asignarMaterias&idPersona=" . $nuevoUsuario->getidPersona());
                 exit;
             } catch (Exception $e) {
                 $_SESSION['mensaje'] = "Error al crear usuario: " . $e->getMessage();
@@ -172,9 +172,9 @@
 
             if (empty($_SESSION['csrf_token'])) { $_SESSION['csrf_token'] = bin2hex(random_bytes(32)); }
 
-            $idUsuario = $_GET['idUsuario'] ?? $_POST['idUsuario'] ?? null;
+            $idPersona = $_GET['idPersona'] ?? $_POST['idPersona'] ?? null;
     
-            if (!$idUsuario) {
+            if (!$idPersona) {
                 $mensaje = "No se ha especificado el usuario para asignar materias.";
                 require __DIR__ . '/../views/coordinador/panelCoord.php';
                 return;
@@ -185,7 +185,7 @@
             
             $materiasAsignadas = array_map(
                 fn($m) => $m['idMateria'], 
-                $this->coordinadorService->getMateriasDelUsuario($idUsuario)
+                $this->coordinadorService->getMateriasDelUsuario($idPersona)
             );
     
             require __DIR__ . '/../views/coordinador/asignarMaterias.php';
@@ -204,24 +204,24 @@
                 exit;
             }
 
-            $idUsuario = isset($_POST['idUsuario']) ? intval($_POST['idUsuario']) : null;
+            $idPersona = isset($_POST['idPersona']) ? intval($_POST['idPersona']) : null;
             $materiasSeleccionadas = $_POST['materias'] ?? [];
 
-            if ($idUsuario === null) {
+            if ($idPersona === null) {
                 $_SESSION['mensaje'] = "Error: usuario inválido.";
                 header("Location: index.php?controller=Coordinador&action=panelCoord");
                 exit;
             }
 
             try {
-                $this->coordinadorService->actualizarMateriasDelUsuario($idUsuario, $materiasSeleccionadas);
+                $this->coordinadorService->actualizarMateriasDelUsuario($idPersona, $materiasSeleccionadas);
 
                 $_SESSION['mensaje'] = "Materias asignadas correctamente.";
-                header("Location: index.php?controller=Coordinador&action=asignarMaterias&idUsuario=" . $idUsuario);
+                header("Location: index.php?controller=Coordinador&action=asignarMaterias&idPersona=" . $idPersona);
                 exit;
             } catch (Exception $e) {
                 $_SESSION['mensaje'] = "Error al asignar materias: " . $e->getMessage();
-                header("Location: index.php?controller=Coordinador&action=asignarMaterias&idUsuario=" . $idUsuario);
+                header("Location: index.php?controller=Coordinador&action=asignarMaterias&idPersona=" . $idPersona);
                 exit;
             }
         }

@@ -1,17 +1,20 @@
 <?php
 require_once __DIR__ . "/../config/ConenctionDB.php";
 require_once __DIR__ . "/../DAO/UsuarioDAO.php";
-require_once __DIR__ . "/../service/UsuarioService.php";
+require_once __DIR__ . "/../service/ActualizarDatosService.php";
+require_once __DIR__ . "/../service/CambiarPassService.php";
 require_once __DIR__ . "/../service/validate/Validation.php";
 
 class UsuarioController {
-    private $usuarioService;
+    private $actualizarDatosService;
+    private $cambiarPassService;
     private $usuarioDAO;
 
     public function __construct() {
         $ConnectionDB = ConnectionDB::getInstancia();
         $this->usuarioDAO = new UsuarioDAO($ConnectionDB);
-        $this->usuarioService = new UsuarioService($this->usuarioDAO);
+        $this->actualizarDatosService = new ActualizarDatosService($this->usuarioDAO);
+        $this->cambiarPassService = new CambiarPassService($this->usuarioDAO);
     }
 
     // ---- Método que le permite actualizar sus datos personales ----
@@ -20,12 +23,12 @@ class UsuarioController {
     public function perfil() {
         if (session_status() === PHP_SESSION_NONE) session_start();
 
-        // usuario logueado (desde LoginController) con idUsuario
-        if (empty($_SESSION['usuario']['idUsuario'])) {
+        // usuario logueado (desde LoginController) con idPersona
+        if (empty($_SESSION['usuario']['idPersona'])) {
             header("Location: index.php?controller=Login&action=login");
             exit;
         }
-        $id = (int) $_SESSION['usuario']['idUsuario'];
+        $id = (int) $_SESSION['usuario']['idPersona'];
 
         // CSRF token
         if (empty($_SESSION['csrf_token'])) {
@@ -51,7 +54,7 @@ class UsuarioController {
                 $fnacimiento = trim($_POST['fnacimiento'] ?? '') ?: null;
 
                 try {
-                    $this->usuarioService->actualizarDatos($id, $userName, $nombre, $apellido, $dni, $email, $telefono, $direccion, $fnacimiento);
+                    $this->actualizarDatosService->actualizarDatos($id, $userName, $nombre, $apellido, $dni, $email, $telefono, $direccion, $fnacimiento);
                     $mensaje = "Datos actualizados correctamente.";
                 } catch (Exception $e) {
                     $mensaje = "Error al actualizar datos: " . $e->getMessage();
@@ -64,7 +67,7 @@ class UsuarioController {
 
                 if ($passwordActual !== '' || $passwordNuevo !== '' || $passwordNuevoConfirm !== '') {
                     try {
-                        $this->usuarioService->cambiarPassword($id, $passwordActual, $passwordNuevo, $passwordNuevoConfirm);
+                        $this->cambiarPassService->cambiarPassword($id, $passwordActual, $passwordNuevo, $passwordNuevoConfirm);
                         $mensaje .= " Contraseña cambiada correctamente.";
                     } catch (Exception $e) {
                         $mensaje .= " Error al cambiar contraseña: " . $e->getMessage();

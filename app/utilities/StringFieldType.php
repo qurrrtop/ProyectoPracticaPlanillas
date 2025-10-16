@@ -189,7 +189,7 @@
       //el valor ingresado lo pone en minusculas
       $value = strtolower( $value );
       //compara el valor con las opciones del array, si coincide es verdadero, si no, false
-      return in_array( $value, ["coordinador", "profesor"], true );
+      return in_array( $value, ["coordinador", "docente"], true );
 
     }
 

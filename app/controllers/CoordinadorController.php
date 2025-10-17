@@ -25,17 +25,10 @@
             }
 
             // Instanciar DAOs y Service
-<<<<<<< HEAD
             $connectionDB = ConnectionDB::getInstancia();
             $usuarioDAO = new UsuarioDAO($connectionDB);
             $coordinadorDAO = new CoordinadorDAO($connectionDB);
             $materiaDAO = new MateriaDAO($connectionDB);
-=======
-            $conexionBD = ConnectionDB::getInstancia();
-            $usuarioDAO = new UsuarioDAO($conexionBD);
-            $coordinadorDAO = new CoordinadorDAO($conexionBD);
-            $materiaDAO = new MateriaDAO($conexionBD);
->>>>>>> d6c51c697eba5c861e9013c931f3ac69886f901c
 
             $this->coordinadorService = new CoordinadorService($usuarioDAO, $coordinadorDAO);
             $this->materiaService = new MateriaService($materiaDAO);

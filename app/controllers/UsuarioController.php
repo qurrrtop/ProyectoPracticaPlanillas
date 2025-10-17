@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . "/../config/ConenctionDB.php";
+require_once __DIR__ . "/../config/ConnectionDB.php";
 require_once __DIR__ . "/../DAO/UsuarioDAO.php";
 require_once __DIR__ . "/../service/ActualizarDatosService.php";
 require_once __DIR__ . "/../service/CambiarPassService.php";

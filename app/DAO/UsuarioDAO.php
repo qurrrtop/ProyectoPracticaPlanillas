@@ -310,7 +310,7 @@
 
         // ------------------------- GET USER BY ID -------------------------
 
-        public function getUserById(int $id): ?PersonaModel {
+        public function getUserById(int $id): ?UsuarioModelo {
             $sql = "SELECT idPersona, userName, passwordHash, nombre, apellido, dni, email, 
             telefono, direccion, fnacimiento, rol FROM " . self::TBL_NAME . " WHERE idPersona = :id LIMIT 1";
 

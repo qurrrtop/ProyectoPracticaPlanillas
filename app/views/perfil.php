@@ -10,12 +10,14 @@
     <?php require_once __DIR__."/../views/template/sidebar.php"; ?>
 
     <main>
-        <?php if (!empty($mensaje) && $mensaje == 'Datos actualizados correctamente.'): ?>
-            <div class="mensaje-exito"><?php echo $mensaje; ?></div>
-        <?php elseif (!empty($mensaje) && strpos($mensaje, 'Error al actualizar datos:') === 0): ?>
-            <div class="mensaje-error"><?php echo $mensaje; ?></div>
+        <?php if (!empty($mensaje)): ?>
+            <?php if (str_contains($mensaje, 'correctamente')): ?>
+                <div class="mensaje mensaje-exito"><?= htmlspecialchars($mensaje) ?></div>
+            <?php elseif (str_contains($mensaje, 'Error')): ?>
+                <div class="mensaje mensaje-error"><?= htmlspecialchars($mensaje) ?></div>
+            <?php endif; ?>
         <?php endif; ?>
-        <div class="perfil-card">
+
         <h1>Mi Perfil</h1>
 
         <form action="index.php?controller=Usuario&action=perfil" method="POST">
@@ -25,7 +27,7 @@
             <div class="fila">
                 <div class="campo">
                     <label>ID Usuario</label>
-                    <input type="text" name="idUsuario" value="<?php echo $usuarioDatos->getIdUsuario(); ?>" readonly>
+                    <input type="text" name="idPersona" value="<?php echo $usuarioDatos->getidPersona(); ?>" readonly>
                 </div>
                 <div class="campo">
                     <label>Rol</label>

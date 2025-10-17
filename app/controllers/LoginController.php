@@ -37,7 +37,7 @@
                     $usuario = $this->LoginService->login($userName, $password);
 
                     $_SESSION['usuario'] = [
-                        'idUsuario' => $usuario->getIdUsuario(),
+                        'idPersona' => $usuario->getIdPersona(),
                         'userName'  => $usuario->getUserName(),
                         'rol'       => $usuario->getRol()
                     ];

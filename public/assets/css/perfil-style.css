@@ -102,18 +102,17 @@ button[type="submit"] {
     font-size: .8rem;
 }
 
-.mensaje-exito {
+.mensaje {
     background-color: #fff;
     padding: 10px 20px;
     margin-bottom: 15px;
     border-radius: 10px;
+}
+
+.mensaje-exito {
     border: 1px solid #2bcc30a1;
 }
 
 .mensaje-error {
-    background-color: #fff;
-    padding: 10px 20px;
-    margin-bottom: 15px;
-    border-radius: 10px;
     border: 1px solid #cc3e2ba1;
 }

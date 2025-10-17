@@ -58,7 +58,7 @@
       public function readADocenteByDNI( int $dni ): ?DocenteModel #el ? significa que puede no encontrarlo pero si lo encuentra retorna el objeto (usuario modelo)
       { 
 
-        $sql = "SELECT idUsuario, userName, passwordHash, nombre, apellido, dni, email, telefono, direccion, fnacimiento FROM ".self::TBL_NAME." WHERE dni = :dni";
+        $sql = "SELECT idPersona, userName, passwordHash, nombre, apellido, dni, email, telefono, direccion, fnacimiento FROM ".self::TBL_NAME." WHERE dni = :dni";
 
         try {
 
@@ -74,7 +74,7 @@
           }
 
           return new DocenteModel(
-            $queryResult["idUsuario"],
+            $queryResult["idPersona"],
             $queryResult["userName"],
             $queryResult["passwordHash"],
             $queryResult["nombre"],
@@ -98,14 +98,14 @@
       
       // ------------------------- READ A DOCENTE BY ID -------------------------
 
-      public function readADocenteByID( int $idUsuario ): ?DocenteModel {
-        $sql = "SELECT idUsuario, userName, passwordHash, nombre, apellido, dni, telefono, email, direccion, fnacimiento FROM ".self::TBL_NAME." WHERE idUsuario = :idUsuario";
+      public function readADocenteByID( int $idPersona ): ?DocenteModel {
+        $sql = "SELECT idPersona, userName, passwordHash, nombre, apellido, dni, telefono, email, direccion, fnacimiento FROM ".self::TBL_NAME." WHERE idPersona = :idPersona";
         
         try {
           #conn seria un objeto de clase PDO
           $conn = $this->connectionDB->getConnection(); #se inyecta la BD para entrar a sus metodos
           $stmt = $conn->prepare( $sql );
-          $stmt->bindParam( ":idUsuario", $idUsuario, PDO::PARAM_INT );
+          $stmt->bindParam( ":idPersona", $idPersona, PDO::PARAM_INT );
           $stmt->execute();
 
           $queryResult = $stmt->fetch( PDO::FETCH_ASSOC );
@@ -115,7 +115,7 @@
           } #si no recupera nada no hace nada de lo que sigue abajo
           #si encuentra un resultado en queryresult pasa esto=
           return new DocenteModel(
-            $queryResult["idUsuario"],
+            $queryResult["idPersona"],
             $queryResult["userName"],
             $queryResult["passwordHash"],
             $queryResult["nombre"],
@@ -140,7 +140,7 @@
       // --------------------------- READ ALL DOCENTES ---------------------------
 
       public function readAllDocente(): array { #sera una coleccion de objetos lo que devuelve
-        $sql = "SELECT idUsuario, userName, passwordHash, nombre, apellido, dni, email, telefono, direccion, fnacimiento FROM ".self::TBL_NAME." ORDER BY idUsuario";
+        $sql = "SELECT idPersona, userName, passwordHash, nombre, apellido, dni, email, telefono, direccion, fnacimiento FROM ".self::TBL_NAME." ORDER BY idPersona";
 
         try {
 
@@ -155,7 +155,7 @@
           foreach( $queryResult as $row ) { #se usa para asignar a cada fila (resultado) al arreglo de alluser
 
             $allUser[] = new DocenteModel(
-              $row["idUsuario"],
+              $row["idPersona"],
               $row["userName"],
               $row["passwordHash"],
               $row["nombre"],
@@ -185,7 +185,7 @@
 
       public function updateADocente( DocenteModel $docente ): DocenteModel {
 
-        $sql = "UPDATE ". self::TBL_NAME. " SET userName = :userName, passwordHash = :passwordHash, nombre = :nombre, apellido = :apellido, dni = :dni, email = :email, telefono = :telefono, direccion = :direccion, fnacimiento = :fnacimiento WHERE idUsuario = idUsuario";
+        $sql = "UPDATE ". self::TBL_NAME. " SET userName = :userName, passwordHash = :passwordHash, nombre = :nombre, apellido = :apellido, dni = :dni, email = :email, telefono = :telefono, direccion = :direccion, fnacimiento = :fnacimiento WHERE idPersona = idPersona";
 
         $docenteData = [
           ":nombre" => $docente->getNombre(),
@@ -195,7 +195,7 @@
           ":telefono" => $docente->getTelefono(),
           ":direccion" => $docente->getDireccion(),
           ":fnacimiento" => $docente->getFnacimiento(),
-          "idUsuario" => $docente->getIdUsuario()
+          "idPersona" => $docente->getIdPersona()
         ];
 
         try {
@@ -208,7 +208,7 @@
             throw new Exception("la modificacion no fue exitosa");
           }
 
-          return $this->readADocenteByDNI( $docente->getIdUsuario() );
+          return $this->readADocenteByDNI( $docente->getIdPersona() );
 
         } catch( PDOException $e ) {
           error_log("No se puede actualizar ese docente en la base de datos". $e->getMessage());
@@ -223,14 +223,14 @@
 
       // --------------------------- DELETE A DOCENTE --------------------------
 
-      public function deleteADocente( int $idUsuario): bool {
-        $sql = "DELETE FROM ".self::TBL_NAME." WHERE idUsuario = :idUsuario";
+      public function deleteADocente( int $idPersona): bool {
+        $sql = "DELETE FROM ".self::TBL_NAME." WHERE idPersona = :idPersona";
 
         try {
 
           $conn = $this->connectionDB->getConnection();
           $stmt = $conn->prepare( $sql );
-          $stmt->bindParam(":idUsuario", $idUsuario, PDO::PARAM_INT);
+          $stmt->bindParam(":idPersona", $idPersona, PDO::PARAM_INT);
           $stmt->execute();
           
           return $stmt->rowCount() > 0;

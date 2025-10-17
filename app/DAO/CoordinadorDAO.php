@@ -60,7 +60,7 @@
       public function readACoordinadorByDNI( int $dni ): ?CoordinadorModel #el ? significa que puede no encontrarlo pero si lo encuentra retorna el objeto (usuario modelo)
       { 
 
-        $sql = "SELECT idUsuario, userName, passwordHash, nombre, apellido, dni, email, telefono, direccion, fnacimiento FROM ".self::TBL_NAME." WHERE dni = :dni";
+        $sql = "SELECT idPersona, userName, passwordHash, nombre, apellido, dni, email, telefono, direccion, fnacimiento FROM ".self::TBL_NAME." WHERE dni = :dni";
 
         try {
 
@@ -76,7 +76,7 @@
           }
 
           return new CoordinadorModel(
-            $queryResult["idUsuario"],
+            $queryResult["idPersona"],
             $queryResult["userName"],
             $queryResult["passwordHash"],
             $queryResult["nombre"],
@@ -100,14 +100,14 @@
       
       // ------------------------- READ A COORDINADOR BY ID -------------------------
 
-      public function readACoordinadorByID( int $idUsuario ): ?CoordinadorModel {
-        $sql = "SELECT idUsuario, userName, passwordHash, nombre, apellido, dni, telefono, email, direccion, fnacimiento FROM ".self::TBL_NAME." WHERE idUsuario = :idUsuario";
+      public function readACoordinadorByID( int $idPersona ): ?CoordinadorModel {
+        $sql = "SELECT idPersona, userName, passwordHash, nombre, apellido, dni, telefono, email, direccion, fnacimiento FROM ".self::TBL_NAME." WHERE idPersona = :idPersona";
         
         try {
           #conn seria un objeto de clase PDO
           $conn = $this->connectionDB->getConnection(); #se inyecta la BD para entrar a sus metodos
           $stmt = $conn->prepare( $sql );
-          $stmt->bindParam( ":idUsuario", $idUsuario, PDO::PARAM_INT );
+          $stmt->bindParam( ":idPersona", $idPersona, PDO::PARAM_INT );
           $stmt->execute();
 
           $queryResult = $stmt->fetch( PDO::FETCH_ASSOC );
@@ -117,7 +117,7 @@
           } #si no recupera nada no hace nada de lo que sigue abajo
           #si encuentra un resultado en queryresult pasa esto=
           return new CoordinadorModel(
-            $queryResult["idUsuario"],
+            $queryResult["idPersona"],
             $queryResult["userName"],
             $queryResult["passwordHash"],
             $queryResult["nombre"],
@@ -142,7 +142,7 @@
       // --------------------------- READ ALL COORDINADOR ---------------------------
 
       public function readAllCoordinador(): array { #sera una coleccion de objetos lo que devuelve
-        $sql = "SELECT idUsuario, userName, passwordHash, nombre, apellido, dni, email, telefono, direccion, fnacimiento FROM ".self::TBL_NAME." ORDER BY idUsuario";
+        $sql = "SELECT idPersona, userName, passwordHash, nombre, apellido, dni, email, telefono, direccion, fnacimiento FROM ".self::TBL_NAME." ORDER BY idPersona";
 
         try {
 
@@ -157,7 +157,7 @@
           foreach( $queryResult as $row ) { #se usa para asignar a cada fila (resultado) al arreglo de alluser
 
             $allCoordinador[] = new CoordinadorModel(
-              $row["idUsuario"],
+              $row["idPersona"],
               $row["userName"],
               $row["passwordHash"],
               $row["nombre"],
@@ -187,7 +187,7 @@
 
       public function updateACoordinador( CoordinadorModel $coordinador ): CoordinadorModel {
 
-        $sql = "UPDATE ". self::TBL_NAME. " SET userName = :userName, passwordHash = :passwordHash, nombre = :nombre, apellido = :apellido, dni = :dni, email = :email, telefono = :telefono, direccion = :direccion, fnacimiento = :fnacimiento WHERE idUsuario = :idUsuario";
+        $sql = "UPDATE ". self::TBL_NAME. " SET userName = :userName, passwordHash = :passwordHash, nombre = :nombre, apellido = :apellido, dni = :dni, email = :email, telefono = :telefono, direccion = :direccion, fnacimiento = :fnacimiento WHERE idPersona = :idPersona";
 
         $coordinadorData = [
           ":nombre" => $coordinador->getNombre(),
@@ -197,7 +197,7 @@
           ":telefono" => $coordinador->getTelefono(),
           ":direccion" => $coordinador->getDireccion(),
           ":fnacimiento" => $coordinador->getFnacimiento(),
-          ":idUsuario" => $coordinador->getIdUsuario()
+          ":idPersona" => $coordinador->getIdPersona()
         ];
 
         try {
@@ -210,7 +210,7 @@
             throw new Exception("la modificacion no fue exitosa");
           }
 
-          return $this->readACoordinadorByDNI( $coordinador->getIdUsuario() );
+          return $this->readACoordinadorByDNI( $coordinador->getIdPersona() );
 
         } catch( PDOException $e ) {
           error_log("No se puede actualizar ese coordiandor en la base de datos". $e->getMessage());
@@ -225,14 +225,14 @@
 
       // --------------------------- DELETE A COORDINADOR --------------------------
 
-      public function deleteACoordinador( int $idUsuario ): bool {
-        $sql = "DELETE FROM ".self::TBL_NAME." WHERE idUsuario = :idUsuario";
+      public function deleteACoordinador( int $idPersona ): bool {
+        $sql = "DELETE FROM ".self::TBL_NAME." WHERE idPersona = :idPersona";
 
         try {
 
           $conn = $this->connectionDB->getConnection();
           $stmt = $conn->prepare( $sql );
-          $stmt->bindParam(":idUsuario", $idUsuario, PDO::PARAM_INT);
+          $stmt->bindParam(":idPersona", $idPersona, PDO::PARAM_INT);
           $stmt->execute();
           
           return $stmt->rowCount() > 0;
@@ -252,13 +252,13 @@
       // parte exclusiva de las funciones del coordinador.
 
       // Asignar materia a un usuario
-      public function asignarMateria(int $idUsuario, int $idMateria): bool {
-          $sql = "INSERT INTO " . self::TBL_NAME_USER_MATERIA . " (idUsuario, idMateria) VALUES (:idUsuario, :idMateria)";
+      public function asignarMateria(int $idPersona, int $idMateria): bool {
+          $sql = "INSERT INTO " . self::TBL_NAME_USER_MATERIA . " (idPersona, idMateria) VALUES (:idPersona, :idMateria)";
           
           try {
               $conn = $this->connectionDB->getConnection();
               $stmt = $conn->prepare($sql);
-              $stmt->bindParam(':idUsuario', $idUsuario, PDO::PARAM_INT);
+              $stmt->bindParam(':idPersona', $idPersona, PDO::PARAM_INT);
               $stmt->bindParam(':idMateria', $idMateria, PDO::PARAM_INT);
               $stmt->execute();
 
@@ -270,13 +270,13 @@
       }
 
       // Quitar materia de un usuario
-      public function quitarMateria(int $idUsuario, int $idMateria): bool {
-          $sql = "DELETE FROM " . self::TBL_NAME_USER_MATERIA . " WHERE idUsuario = :idUsuario AND idMateria = :idMateria";
+      public function quitarMateria(int $idPersona, int $idMateria): bool {
+          $sql = "DELETE FROM " . self::TBL_NAME_USER_MATERIA . " WHERE idPersona = :idPersona AND idMateria = :idMateria";
           
           try {
               $conn = $this->connectionDB->getConnection();
               $stmt = $conn->prepare($sql);
-              $stmt->bindParam(':idUsuario', $idUsuario, PDO::PARAM_INT);
+              $stmt->bindParam(':idPersona', $idPersona, PDO::PARAM_INT);
               $stmt->bindParam(':idMateria', $idMateria, PDO::PARAM_INT);
               $stmt->execute();
 
@@ -288,16 +288,16 @@
       }
 
       // Traer IDs de materias asignadas a un usuario
-      public function traerMateriasPorUsuario(int $idUsuario): array {
+      public function traerMateriasPorUsuario(int $idPersona): array {
           $sql = "SELECT m.idMateria, m.nombre 
                   FROM " . self::TBL_NAME_USER_MATERIA . " um
                   JOIN materias m ON um.idMateria = m.idMateria
-                  WHERE um.idUsuario = :idUsuario";
+                  WHERE um.idPersona = :idPersona";
           
           try {
               $conn = $this->connectionDB->getConnection();
               $stmt = $conn->prepare($sql);
-              $stmt->bindParam(':idUsuario', $idUsuario, PDO::PARAM_INT);
+              $stmt->bindParam(':idPersona', $idPersona, PDO::PARAM_INT);
               $stmt->execute();
 
               $queryResult = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -319,10 +319,10 @@
 
       // traer todos los registros de usuario-materia
       public function getAll(): array {
-          $sql = "SELECT um.idUsuario, m.idMateria, m.nombre AS nombreMateria
+          $sql = "SELECT um.idPersona, m.idMateria, m.nombre AS nombreMateria
                   FROM " . self::TBL_NAME_USER_MATERIA . " um
                   JOIN materias m ON um.idMateria = m.idMateria
-                  ORDER BY um.idUsuario, m.nombre";
+                  ORDER BY um.idPersona, m.nombre";
 
           try {
               $conn = $this->connectionDB->getConnection();
@@ -335,7 +335,7 @@
 
               foreach ($queryResult as $row) {
                   $materiasDeTodosLosUsuarios[] = [
-                      'idUsuario' => $row['idUsuario'],
+                      'idPersona' => $row['idPersona'],
                       'idMateria' => $row['idMateria'],
                       'nombreMateria' => $row['nombreMateria']
                   ];

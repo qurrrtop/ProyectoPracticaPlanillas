@@ -23,7 +23,7 @@
             <h2>Asignar Materias al usuario recién creado</h2>
             <form action="index.php?controller=Coordinador&action=guardarAsignacionMaterias" method="POST">
                 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
-                <input type="hidden" name="idUsuario" value="<?= htmlspecialchars($idUsuario) ?>">
+                <input type="hidden" name="idPersona" value="<?= htmlspecialchars($idPersona) ?>">
 
                 <div class="materias-grid">
                     <?php for ($anio = 1; $anio <= 4; $anio++): ?>

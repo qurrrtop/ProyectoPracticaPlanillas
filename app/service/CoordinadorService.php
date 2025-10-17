@@ -15,13 +15,13 @@
         }
     
         // Devuelve IDs de materias que tiene asignadas un usuario
-        public function getMateriasDelUsuario(int $idUsuario): array {
-            return $this->coordinadorDAO->traerMateriasPorUsuario($idUsuario); // array de int
+        public function getMateriasDelUsuario(int $idPersona): array {
+            return $this->coordinadorDAO->traerMateriasPorUsuario($idPersona); // array de int
         }
 
-        public function actualizarMateriasDelUsuario($idUsuario, $materiasSeleccionadas): bool {
+        public function actualizarMateriasDelUsuario($idPersona, $materiasSeleccionadas): bool {
             // materias actuales en BD
-            $materiasDeUsuario = $this->coordinadorDAO->traerMateriasPorUsuario($idUsuario);
+            $materiasDeUsuario = $this->coordinadorDAO->traerMateriasPorUsuario($idPersona);
             $materiasActuales = array_column($materiasDeUsuario, 'idMateria');
 
             // calcular diferencias
@@ -31,12 +31,12 @@
             try {
                 // asignar nuevas
                 foreach ($materiasAAgregar as $idMateria) {
-                    $this->coordinadorDAO->asignarMateria($idUsuario, $idMateria);
+                    $this->coordinadorDAO->asignarMateria($idPersona, $idMateria);
                 }
 
                 // quitar las desmarcadas
                 foreach ($materiasAQuitar as $idMateria) {
-                    $this->coordinadorDAO->quitarMateria($idUsuario, $idMateria);
+                    $this->coordinadorDAO->quitarMateria($idPersona, $idMateria);
                 }
 
                 return true;

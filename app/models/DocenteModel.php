@@ -5,7 +5,7 @@
   class DocenteModel extends UsuarioModelo {
     
     public function __construct(
-        $idUsuario = null, 
+        $idPersona = null, 
         $userName = null,
         $passwordHash = null, 
         $nombre = null, 
@@ -17,7 +17,7 @@
         $fnacimiento = null, 
         $rol = null
     ) {
-        parent::__construct($idUsuario, $nombre, $apellido, $dni, $email, $telefono, $direccion, $fnacimiento, $passwordHash, $userName, $rol);
+        parent::__construct($idPersona, $nombre, $apellido, $dni, $email, $telefono, $direccion, $fnacimiento, $passwordHash, $userName, $rol);
     }
 
     public function cargarNota() {

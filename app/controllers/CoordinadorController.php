@@ -1,5 +1,5 @@
 <?php
-    require_once __DIR__ . "/../config/ConexionBD.php";
+    require_once __DIR__ . "/../config/ConnectionDB.php";
     require_once __DIR__ . "/../DAO/UsuarioDAO.php";
     require_once __DIR__ . "/../DAO/CoordinadorDAO.php";
     require_once __DIR__ . "/../DAO/MateriaDAO.php";
@@ -25,10 +25,10 @@
             }
 
             // Instanciar DAOs y Service
-            $conexionBD = ConexionBD::getInstancia();
-            $usuarioDAO = new UsuarioDAO($conexionBD);
-            $coordinadorDAO = new CoordinadorDAO($conexionBD);
-            $materiaDAO = new MateriaDAO($conexionBD);
+            $connectionDB = ConnectionDB::getInstancia();
+            $usuarioDAO = new UsuarioDAO($connectionDB);
+            $coordinadorDAO = new CoordinadorDAO($connectionDB);
+            $materiaDAO = new MateriaDAO($connectionDB);
 
             $this->coordinadorService = new CoordinadorService($usuarioDAO, $coordinadorDAO);
             $this->materiaService = new MateriaService($materiaDAO);

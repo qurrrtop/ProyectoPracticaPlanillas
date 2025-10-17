@@ -30,4 +30,3 @@
 
   }
 ?>
-<!-- asi se hace para heredar de un modelo a otro -->

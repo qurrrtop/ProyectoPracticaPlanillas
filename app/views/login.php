@@ -13,7 +13,7 @@
 <body>
     <div class="form-card">
         <div class="presentation">
-            <img class="logo-isfd" src="/appwebplanilla/public/assets/img/login/logo-isfd.png">
+            <img class="logo-isfd" src="/ProyectoPracticaPlanillas/public/assets/img/login/logo-isfd.png">
 
             <p class="message">Inicie sesión para utilizar la Aplicación Web de Planillas de notas y asistencias!</p>
         </div>

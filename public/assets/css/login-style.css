@@ -7,7 +7,7 @@
 
 body {
     /* background-color: #4a4a4a; */
-    background-image: url('/appwebplanilla/public/assets/img/login/backg-blur.jpg');
+    background-image: url('/ProyectoPracticaPlanillas/public/assets/img/login/backg-blur.jpg');
     background-size: cover;
     background-repeat: no-repeat;
 }
@@ -33,7 +33,7 @@ body {
 }
 
 .presentation {
-    background-image: url('/appwebplanilla/public/assets/img/backg-isfd-green.jpg');
+    background-image: url('/ProyectoPracticaPlanillas/public/assets/img/backg-isfd-green.jpg');
     background-size: cover;
     width: 50%;
     text-align: center;

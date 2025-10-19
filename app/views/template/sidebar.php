@@ -7,13 +7,13 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Teachers:ital,wght@0,400..800;1,400..800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/appwebplanilla/public/assets/css/sidebar-style.css">
+    <link rel="stylesheet" href="/ProyectoPracticaPlanillas/public/assets/css/sidebar-style.css">
     <title>AppWebPlanilla</title>
 </head>
 <body>
     <nav class="nav">
         <div class="backg-sidebar">
-            <img draggable="false" class="logo-ingles" src="/appwebplanilla/public/assets/img/logo-ingles.png" alt="">
+            <img draggable="false" class="logo-ingles" src="/ProyectoPracticaPlanillas/public/assets/img/logo-ingles.png" alt="">
         </div>
 
         <ul class="list-sidebar">

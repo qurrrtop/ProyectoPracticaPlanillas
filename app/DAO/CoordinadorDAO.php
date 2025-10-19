@@ -6,9 +6,9 @@
     class CoordinadorDAO {
       private $connectionDB = null;
 
-      const TBL_NAME = "user"; #nombre de la tabla en la BD user es pa ponerle alguno, dsp vemos
+      const TBL_NAME = "usuarios"; #nombre de la tabla en la BD user es pa ponerle alguno, dsp vemos
 
-      const TBL_NAME_USER_MATERIA = "user_materia";
+      const TBL_NAME_USER_MATERIA = "usuario_materia";
 
       // ------------- CONSTRUCTOR CON INYECCIÓN DE DEPENDENCIAS --------------
 

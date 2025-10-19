@@ -7,7 +7,7 @@ require_once __DIR__."/../config/ConnectionDB.php";
 
     private $connectionDB = null;
 
-    const TBL_NAME = "materia";
+    const TBL_NAME = "materias";
 
     public function __construct( ConnectionDB $connectionDB) {
         $this->connectionDB = $connectionDB;
@@ -15,13 +15,13 @@ require_once __DIR__."/../config/ConnectionDB.php";
 
     public function createANewMateria( MateriaModel $materia ): MateriaModel {
       
-      $sql = "INSERT INTO " . self::TBL_NAME ."(nombre, año, duracion, formato) VALUES (:nombre, :año, :duracion, :formato)";
+      $sql = "INSERT INTO " . self::TBL_NAME ."(nombre, anio, idFormato, idDuracion) VALUES (:nombre, :anio, :idFormato, :idDuracion)";
 
       $materiaData = [
         ":nombre" => $materia->getNombre(),
-        ":año" => $materia->getAnio(),
-        "duracion" => $materia->getDuracion(),
-        ":formato" => $materia->getFormato()
+        ":anio" => $materia->getAnio(),
+        ":idFormato" => $materia->getDuracion(),
+        ":idDuracion" => $materia->getFormato()
       ];
 
       try {
@@ -47,7 +47,7 @@ require_once __DIR__."/../config/ConnectionDB.php";
 
     public function readAMateriaByID ( int $idMateria ): ?MateriaModel {
 
-      $sql = "SELECT idMateria, nombre, año, duracion, formato FROM ". self::TBL_NAME . " WHERE idMateria = :idMateria";
+      $sql = "SELECT idMateria, nombre, anio, idFormato, idDuracion FROM ". self::TBL_NAME . " WHERE idMateria = :idMateria";
 
       try {
 
@@ -65,9 +65,9 @@ require_once __DIR__."/../config/ConnectionDB.php";
         return new MateriaModel (
           $queryResult["idMateria"],
           $queryResult["nombre"],
-          $queryResult["año"],
-          $queryResult["duracion"],
-          $queryResult["formato"]
+          $queryResult["anio"],
+          $queryResult["idFormato"],
+          $queryResult["idDuracion"]
         );
 
       } catch ( PDOException $e ) {
@@ -83,7 +83,7 @@ require_once __DIR__."/../config/ConnectionDB.php";
     }
 
     public function readAllMateria(): array {
-      $sql = "SELECT idMateria, nombre, año, duracion, formato FROM ". self::TBL_NAME . " ORDER BY idMateria";
+      $sql = "SELECT idMateria, nombre, anio, idFormato, idDuracion FROM ". self::TBL_NAME . " ORDER BY idMateria";
 
       try {
 
@@ -100,9 +100,9 @@ require_once __DIR__."/../config/ConnectionDB.php";
           $allMateria[] = new MateriaModel(
             $row["idMateria"],
             $row["nombre"],
-            $row["año"],
-            $row["duracion"],
-            $row["formato"]
+            $row["anio"],
+            $row["idFormato"],
+            $row["idDuracion"]
           );
 
         }
@@ -121,14 +121,14 @@ require_once __DIR__."/../config/ConnectionDB.php";
 
     public function updateAMateria( MateriaModel $materia ): MateriaModel {
 
-      $sql = "UPDATE ". self::TBL_NAME . " SET nombre = :nombre, año = :año, duracion = :duracion, formato = :formato WHERE idMateria = :idMateria";
+      $sql = "UPDATE ". self::TBL_NAME . " SET nombre = :nombre, anio = :anio, idFormato = :idFormato, idDuracion = :idDuracion WHERE idMateria = :idMateria";
 
       $materiaData = [
         ":idMateria" => $materia->getIDMateria(),
         ":nombre" => $materia->getNombre(),
-        ":año" => $materia->getAnio(),
-        ":duracion" => $materia->getDuracion(),
-        ":formato" => $materia->getFormato()
+        ":anio" => $materia->getAnio(),
+        ":idFormato" => $materia->getDuracion(),
+        ":idDuracion" => $materia->getFormato()
       ];
 
       try {

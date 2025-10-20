@@ -5,13 +5,13 @@
     require_once __DIR__ . "/../DAO/MateriaDAO.php";
     require_once __DIR__ . "/../service/CoordinadorService.php";
     require_once __DIR__ . "/../service/MateriaService.php";
-    require_once __DIR__ . "/../service/UsuarioService.php";
+    require_once __DIR__ . "/../service/CreateUserService.php";
 
     class CoordinadorController {
 
         private $coordinadorService;
         private $materiaService;
-        private $usuarioService;
+        private $createUserService;
 
         // Constructor del controller:
         // 1. Se asegura de que la sesión esté iniciada.
@@ -32,7 +32,7 @@
 
             $this->coordinadorService = new CoordinadorService($usuarioDAO, $coordinadorDAO);
             $this->materiaService = new MateriaService($materiaDAO);
-            $this->usuarioService = new UsuarioService($usuarioDAO);
+            $this->createUserService = new CreateUserService($usuarioDAO);
         }
 
         // ----- Método que verifica si hay un usuario logueado en la sesión ------
@@ -146,7 +146,7 @@
             }
             
             try {
-                $nuevoUsuario = $this->usuarioService->createUser(
+                $nuevoUsuario = $this->createUserService->createUser(
                     $_POST['userName'],
                     $_POST['password'],
                     $_POST['nombre'],

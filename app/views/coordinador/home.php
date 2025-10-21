@@ -12,7 +12,6 @@
     <main>
         <div class="box-buttons">
             <button class="btn btn-ver">Ver planillas</button>
-            <button class="btn btn-cargar">Cargar Planilla</button>
         </div>
 
 

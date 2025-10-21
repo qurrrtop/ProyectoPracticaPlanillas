@@ -11,6 +11,14 @@
     <title>AppWebPlanilla</title>
 </head>
 <body>
+    <?php
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        $rol = $_SESSION['usuario']['rol'] ?? '';
+    ?>
+
     <nav class="nav">
         <div class="backg-sidebar">
             <img draggable="false" class="logo-ingles" src="/ProyectoPracticaPlanillas/public/assets/img/logo-ingles.png" alt="">
@@ -18,10 +26,15 @@
 
         <ul class="list-sidebar">
             <a href="index.php?controller=Coordinador&action=home"><li><i class="fa-solid fa-house"></i> Principal</li></a>
-            <a href="index.php?controller=Coordinador&action=verPlanillas"><li><i class="fa-solid fa-eye"></i> Ver Planillas</li></a>
-            <a href=""><li><i class="fa-solid fa-pencil"></i> Cargar Planilla</li></a>
-            <a href="index.php?controller=Usuario&action=perfil"><li><i class="fa-solid fa-circle-user"></i> Mi perfil</li></a>
-            <a href="index.php?controller=Coordinador&action=panelCoord"><li><i class="fa-solid fa-users-gear"></i> Panel Coord</li></a>
+
+            <?php if($rol === 'COORDINADOR'): ?>
+                <a href="index.php?controller=Coordinador&action=verPlanillas"><li><i class="fa-solid fa-eye"></i> Ver Planillas</li></a>
+                <a href="index.php?controller=Usuario&action=perfil"><li><i class="fa-solid fa-circle-user"></i> Mi perfil</li></a>
+                <a href="index.php?controller=Coordinador&action=panelCoord"><li><i class="fa-solid fa-users-gear"></i> Panel Coord</li></a>
+            <?php elseif($rol === 'DOCENTE'): ?>
+                <a href=""><li><i class="fa-solid fa-pencil"></i> Cargar Planilla</li></a>
+                <a href="index.php?controller=Usuario&action=perfil"><li><i class="fa-solid fa-circle-user"></i> Mi perfil</li></a>
+            <?php endif; ?>
             <!-- <a href=""><li><i class="fa-solid fa-chart-column"></i> Estadísticas</li></a> -->
         </ul>
         <a class="cerrar-sesion" href="index.php?controller=Login&action=logout"><li><i class="fa-solid fa-arrow-right-to-bracket"></i> Cerrar Sesión</li></a>

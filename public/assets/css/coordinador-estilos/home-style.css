@@ -21,9 +21,11 @@
 }
 
 main {
-    margin-top: 20px;
-    margin-left: 250px;
-    margin-right: 18px;
+  margin-top: 10px;
+  margin-left: 17vw;
+  margin-right: 2vw;
+  padding: 20px;
+  box-sizing: border-box;
 }
 
 .btn {

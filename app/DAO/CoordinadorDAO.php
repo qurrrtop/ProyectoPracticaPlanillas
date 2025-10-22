@@ -13,9 +13,10 @@
     class CoordinadorDAO {
       private $connectionDB = null;
 
-      const TBL_NAME = "usuarios"; #nombre de la tabla en la BD user es pa ponerle alguno, dsp vemos
+      const TBL_NAME_USERS = "usuarios"; #nombre de la tabla en la BD user es pa ponerle alguno, dsp vemos
 
       const TBL_NAME_USER_MATERIA = "usuario_materia";
+      const TBL_NAME_ALUMNOS = "alumnos";
 
       // ------------- CONSTRUCTOR CON INYECCIÓN DE DEPENDENCIAS --------------
 
@@ -26,7 +27,7 @@
       // ------------------------- CREATE A NEW COORDINADOR -------------------------
 
       public function createANewCoordinador( CoordinadorModel $coordinador): CoordinadorModel {
-        $sql = "INSERT INTO ".self::TBL_NAME." (userName, passwordHash, nombre, apellido, dni, email, telefono, direccion, fnacimiento) VALUES (:userName, :passwordHash, :nombre, :apellido, :dni, :email, :telefono, :direccion, :fnacimiento)";
+        $sql = "INSERT INTO ".self::TBL_NAME_USERS." (userName, passwordHash, nombre, apellido, dni, email, telefono, direccion, fnacimiento) VALUES (:userName, :passwordHash, :nombre, :apellido, :dni, :email, :telefono, :direccion, :fnacimiento)";
         
         $coordinadorData = [
           ":userName" => $coordinador->getUserName(),
@@ -67,7 +68,7 @@
       public function readACoordinadorByDNI( int $dni ): ?CoordinadorModel #el ? significa que puede no encontrarlo pero si lo encuentra retorna el objeto (usuario modelo)
       { 
 
-        $sql = "SELECT idPersona, userName, passwordHash, nombre, apellido, dni, email, telefono, direccion, fnacimiento FROM ".self::TBL_NAME." WHERE dni = :dni";
+        $sql = "SELECT idPersona, userName, passwordHash, nombre, apellido, dni, email, telefono, direccion, fnacimiento FROM ".self::TBL_NAME_USERS." WHERE dni = :dni";
 
         try {
 
@@ -108,7 +109,7 @@
       // ------------------------- READ A COORDINADOR BY ID -------------------------
 
       public function readACoordinadorByID( int $idPersona ): ?CoordinadorModel {
-        $sql = "SELECT idPersona, userName, passwordHash, nombre, apellido, dni, telefono, email, direccion, fnacimiento FROM ".self::TBL_NAME." WHERE idPersona = :idPersona";
+        $sql = "SELECT idPersona, userName, passwordHash, nombre, apellido, dni, telefono, email, direccion, fnacimiento FROM ".self::TBL_NAME_USERS." WHERE idPersona = :idPersona";
         
         try {
           #conn seria un objeto de clase PDO
@@ -149,7 +150,7 @@
       // --------------------------- READ ALL COORDINADOR ---------------------------
 
       public function readAllCoordinador(): array { #sera una coleccion de objetos lo que devuelve
-        $sql = "SELECT idPersona, userName, passwordHash, nombre, apellido, dni, email, telefono, direccion, fnacimiento FROM ".self::TBL_NAME." ORDER BY idPersona";
+        $sql = "SELECT idPersona, userName, passwordHash, nombre, apellido, dni, email, telefono, direccion, fnacimiento FROM ".self::TBL_NAME_USERS." ORDER BY idPersona";
 
         try {
 
@@ -194,7 +195,7 @@
 
       public function updateACoordinador( CoordinadorModel $coordinador ): CoordinadorModel {
 
-        $sql = "UPDATE ". self::TBL_NAME. " SET userName = :userName, passwordHash = :passwordHash, nombre = :nombre, apellido = :apellido, dni = :dni, email = :email, telefono = :telefono, direccion = :direccion, fnacimiento = :fnacimiento WHERE idPersona = :idPersona";
+        $sql = "UPDATE ". self::TBL_NAME_USERS. " SET userName = :userName, passwordHash = :passwordHash, nombre = :nombre, apellido = :apellido, dni = :dni, email = :email, telefono = :telefono, direccion = :direccion, fnacimiento = :fnacimiento WHERE idPersona = :idPersona";
 
         $coordinadorData = [
           ":nombre" => $coordinador->getNombre(),
@@ -233,7 +234,7 @@
       // --------------------------- DELETE A COORDINADOR --------------------------
 
       public function deleteACoordinador( int $idPersona ): bool {
-        $sql = "DELETE FROM ".self::TBL_NAME." WHERE idPersona = :idPersona";
+        $sql = "DELETE FROM ".self::TBL_NAME_USERS." WHERE idPersona = :idPersona";
 
         try {
 
@@ -353,6 +354,82 @@
           } catch (PDOException $e) {
               throw new Exception("Error al listar todas las materias de los usuarios: " . $e->getMessage());
           }
+      }
+
+      // ------ método que cuenta la cantidad de materias asignadas al coordinador -----
+
+      public function countMateriasCoord(int $idPersona) {
+        $sql = "SELECT COUNT(*) AS total FROM ".self::TBL_NAME_USER_MATERIA." WHERE idPersona = :idPersona";
+
+        try {
+          $conn = $this->connectionDB->getConnection();
+          $stmt = $conn->prepare($sql);
+          $stmt->bindParam(':idPersona', $idPersona, PDO::PARAM_INT);
+          $stmt->execute();
+          
+          $result = $stmt->fetch(PDO::FETCH_ASSOC);
+          // ------ operador ternario ---------
+          // si encontró algo que lo devuelva, si no encontró nada devuelve 0.
+          return $result ? $result['total'] : 0;
+
+        } catch(PDOException $e) {
+          error_log("No se puede traer la cantidad de materias del coordiandor de la base de datos". $e->getMessage());
+          throw new Exception("error al contar las materias del coordinador en la BD");
+
+        } catch (Exception $e) {
+          error_log("error al contar las materias del coordinador en la BD");
+          throw $e;
+        }
+      }
+
+      // ---- método que cuenta la cantidad de alumnos que hay en el sistema ----
+
+      public function countAlumnnos() {
+        $sql = "SELECT COUNT(*) AS total FROM ".self::TBL_NAME_ALUMNOS;
+
+        try {
+          $conn = $this->connectionDB->getConnection();
+          $stmt = $conn->prepare($sql);
+          $stmt->execute();
+          
+          $result = $stmt->fetch(PDO::FETCH_ASSOC);
+          // ------ operador ternario ---------
+          // si encontró algo que lo devuelva, si no encontró nada devuelve 0.
+          return $result ? $result['total'] : 0;
+
+        } catch(PDOException $e) {
+          error_log("No se puede traer la cantidad de alumnos de la base de datos". $e->getMessage());
+          throw new Exception("error al contar los alumnos en la base de datos");
+
+        } catch (Exception $e) {
+          error_log("error al contar los alumnos en la BD");
+          throw $e;
+        }
+      }
+
+      // ---- método que cuenta la cantidad de docentes que hay en el sistema ----
+
+      public function countDocentes() {
+        $sql = "SELECT COUNT(*) AS total FROM ".self::TBL_NAME_USERS." WHERE rol = 'DOCENTE'";
+
+        try {
+          $conn = $this->connectionDB->getConnection();
+          $stmt = $conn->prepare($sql);
+          $stmt->execute();
+          
+          $result = $stmt->fetch(PDO::FETCH_ASSOC);
+          // ------ operador ternario ---------
+          // si encontró algo que lo devuelva, si no encontró nada devuelve 0.
+          return $result ? $result['total'] : 0;
+
+        } catch(PDOException $e) {
+          error_log("No se puede traer la cantidad de docentes de la base de datos". $e->getMessage());
+          throw new Exception("error al contar los docentes en la base de datos");
+
+        } catch (Exception $e) {
+          error_log("error al contar los docentes en la BD");
+          throw $e;
+        }
       }
 
     }

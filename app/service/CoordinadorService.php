@@ -48,5 +48,16 @@
                 throw new Exception("Error al actualizar materias: " . $e->getMessage());
             }
         }
+
+        // método trae los datos del coordinadorDAO, los almacena en un array, y
+        // lo pasa al controlador para su posterior uso en la vista home.
+
+        public function getDataForHome(int $idPersona) {
+            return [
+                'materias' => $this->coordinadorDAO->countMateriasCoord($idPersona),
+                'alumnos' => $this->coordinadorDAO->countAlumnnos(),
+                'docentes' => $this->coordinadorDAO->countDocentes()
+            ];
+        }
     }
 ?>

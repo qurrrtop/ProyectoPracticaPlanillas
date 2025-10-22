@@ -57,6 +57,20 @@
         // ---------- de que este se haya logueado ----------------------------
 
         public function home() {
+            // estos dos if verifican la session para evitar errores
+            if (session_status() === PHP_SESSION_NONE) {
+                session_start();
+            }
+
+            if (!isset($_SESSION['usuario']['idPersona'])) {
+                header("Location: index.php?controller=Login&action=login");
+                exit;
+            }
+            
+            $idPersona = $_SESSION['usuario']['idPersona'];
+
+            $data = $this->coordinadorService->getDataForHome($idPersona);
+
             include __DIR__ . '/../views/coordinador/home.php';
         }
 

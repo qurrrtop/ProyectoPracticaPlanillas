@@ -20,10 +20,22 @@
     }
 
     // Formar el nombre de la clase del controlador
-    $controllerClass = ucfirst($controller) . 'Controller';
+    $controllerClass = 'app\controllers\\' .ucfirst($controller) . 'Controller';
 
     // Ruta al archivo del controlador
-    $controllerFilePath = CONTROLLER_FOLDER . $controllerClass . '.php';
+    $controllerFilePath = CONTROLLER_FOLDER . ucfirst( $controller ) . 'Controller.php';
+
+    //esto es una wea cosmica que no entiendo muy bien pero es para que carguen los namespaces o algo asi no se
+    //Es un autoloader que automáticamente busca y carga el archivo PHP correspondiente a una clase del namespace app cuando la usás, sin tener que hacer require_once manualmente. (lo invente yo un saludo)
+    spl_autoload_register(function (string $class) {
+        $prefix = 'app\\';
+        $baseDir = __DIR__ . '/../app/';
+        $len = strlen($prefix);
+        if (strncmp($prefix, $class, $len) !== 0) return;
+        $relative = substr($class, $len);
+        $file = $baseDir . str_replace('\\', '/', $relative) . '.php';
+        if (file_exists($file)) require_once $file;
+    });
 
     try {
         // Verificar si existe el archivo

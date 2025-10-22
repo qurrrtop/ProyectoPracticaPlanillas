@@ -1,5 +1,9 @@
 <?php 
 
+  declare( strict_types = 1 );
+
+  namespace app\utilities;
+
   enum StringFieldType: string {
 
     case NAME = "nombre";

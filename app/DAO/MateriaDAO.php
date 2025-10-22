@@ -1,7 +1,15 @@
 <?php 
 
-require_once __DIR__."/../models/MateriaModel.php";
-require_once __DIR__."/../config/ConnectionDB.php";
+  declare( strict_types = 1 );
+
+  namespace app\dao;
+
+  use app\config\ConnectionDB;
+  use app\models\MateriaModel;
+  use  Exception;
+  use PDOException;
+  use PDO;
+
 
   class MateriaDAO {
 
@@ -29,7 +37,7 @@ require_once __DIR__."/../config/ConnectionDB.php";
         $conn = $this->connectionDB->getConnection();
         $stmt = $conn->prepare( $sql );
         $materia = $stmt->execute( $materiaData );
-        $newID = $conn->lastInsertId();
+        $newID = ( int ) $conn->lastInsertId();
 
         return $this->readAMateriaByID( $newID );
 

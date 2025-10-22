@@ -1,5 +1,16 @@
 <?php 
 
+  declare( strict_types = 1 );
+
+  namespace app\dao;
+
+  use app\config\ConnectionDB;
+  use app\models\PlanillaModelo;
+  use Exception;
+  use PDOException;
+  use PDO;
+
+
   class PlanillaDAO {
 
     private $connectionDB = null;
@@ -25,7 +36,7 @@
         $conn = $this->connectionDB->getConnection();
         $stmt = $conn->prepare( $sql );
         $planilla = $stmt->execute( $planillaData );
-        $newID = $conn->lastInsertId();
+        $newID = ( int ) $conn->lastInsertId();
 
         return $this->readAPlanillaByID( $newID );
 

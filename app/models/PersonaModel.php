@@ -1,6 +1,14 @@
 <?php 
-  //require el enum de cadenas
-  require_once __DIR__."/../utilities/StringFieldType.php";
+
+  declare( strict_types = 1 );
+
+  namespace app\models;
+
+  use app\utilities\DateTimeValidator;
+  use app\utilities\IntFieldType;
+  use app\utilities\StringFieldType;
+  use InvalidArgumentException;
+
 
   abstract class PersonaModel {
 
@@ -40,7 +48,7 @@
       return $this->apellido;
     }
 
-    public function getDni(): int {
+    public function getDni(): string {
       return $this->dni;
     }
 
@@ -48,7 +56,7 @@
       return $this->email;
     }
 
-    public function getTelefono(): int {
+    public function getTelefono(): string {
       return $this->telefono;
     }
 
@@ -65,7 +73,6 @@
       if( !StringFieldType::stringToValidate( $nombre, StringFieldType::NAME ) ) {
         throw new InvalidArgumentException( "Nombre ingresado no valido." );
       }
-      //ya no es necesario el trim porq lo hace el enum
       $this->nombre = $nombre;
     }
 
@@ -110,22 +117,9 @@
     }
 
     public function setFNacimiento( string $fecha ) {
-        $fecha = trim( $fecha );
 
-        //valida el formato dia-mes-año
-        $date = DateTime::createFromFormat( "d-m-Y", $fecha );
-        if ( !$date || $date->format( 'd-m-Y' ) !== $fecha ) {
-            throw new InvalidArgumentException( "Fecha de nacimiento ingresada con formato invalido (DD-MM-YYYY)." );
-        }
+      $this->fnacimiento = DateTimeValidator::ValidateFNacimiento( $fecha );
 
-        //no puede ser futura
-        $today = new DateTime();
-        if ( $date > $today ) {
-            throw new InvalidArgumentException( "Fecha de nacimiento no puede ser futura." );
-        }
-
-        //se guarda en formato año-mes-dia por si acaso
-        $this->fnacimiento = $date->format('Y-m-d');
     }
 
   }

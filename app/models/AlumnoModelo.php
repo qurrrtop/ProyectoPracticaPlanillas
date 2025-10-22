@@ -1,4 +1,13 @@
 <?php 
+
+    declare( strict_types = 1 );
+
+    namespace app\models;
+
+    use InvalidArgumentException;
+    use app\utilities\StringFieldType;
+    use app\utilities\IntFieldType;
+    
     class AlumnoModelo {
         private $nombre;
         private $apellido;
@@ -47,36 +56,38 @@
         // -------------------- MÉTODOS SET --------------------
 
         public function setNombre($nombre) {
-            if (empty($nombre) || !is_string($nombre) || $nombre === null) {
-                throw new Exception("El nombre es invalido, debe ser una cadena de texto");
-            }
-            $this -> nombre = trim($nombre);
+            if( !StringFieldType::stringToValidate( $nombre, StringFieldType::NAME ) ) {
+            throw new InvalidArgumentException( "Nombre ingresado no valido." );
+        }
+        $this->nombre = $nombre;
         }
 
         public function setApellido($apellido) {
-            if (empty($apellido) || !is_string($apellido) || $apellido === null) {
-                throw new Exception("El apellido es invalido, debe ser una cadena de texto");
-            }
-            $this -> apellido = trim($apellido);
+            if( !StringFieldType::stringToValidate( $apellido, StringFieldType::SURNAME ) ) {
+            throw new InvalidArgumentException( "Apellido ingresado no valido." );
+        }
+    
+        $this -> apellido = $apellido;
         }
 
         public function setDni($dni) {
-            if (empty($dni) || !is_string($dni) || $dni <= 0) {
-                throw new Exception("El DNI es invalido, debe ser un número entero");
-            }
-            $this -> dni = trim($dni);
+
+            if( !IntFieldType::intToValidate( $dni, IntFieldType::DNI ) ) {
+            throw new InvalidArgumentException( "DNI ingresado no valido." );
+        }
+        $this->dni = $dni;
         }
 
         public function setLibreta($libreta) {
             if (!is_numeric($libreta) || intval($libreta) != $libreta || $libreta <= 0) {
-                throw new Exception("El nro de libreta es inválido, debe ser un número entero");
+                throw new InvalidArgumentException("El nro de libreta es inválido, debe ser un número entero");
             }
             $this->libreta = intval($libreta);
         }
 
         public function setCohorte($cohorte) {
             if (empty($cohorte) || !is_numeric($cohorte) || $cohorte <= 0) {
-                throw new Exception("El cohorte es inválido, debe ser un año válido");
+                throw new InvalidArgumentException("El cohorte es inválido, debe ser un año válido");
             }
             $this->cohorte = intval($cohorte);
 

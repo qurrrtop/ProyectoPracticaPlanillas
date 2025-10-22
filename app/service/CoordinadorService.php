@@ -1,9 +1,12 @@
 <?php
-    require_once __DIR__.'/../DAO/CoordinadorDAO.php';
-    require_once __DIR__ . '/../DAO/UsuarioDAO.php';
-    require_once __DIR__ . '/../models/CoordinadorModel.php';
-    require_once __DIR__ . '/validate/Validation.php';
 
+    declare( strict_types = 1 );
+
+    namespace app\service;
+
+    use app\dao\CoordinadorDAO;
+    use app\dao\UsuarioDAO;
+    use Exception;
     class CoordinadorService {
 
         private $usuarioDAO;

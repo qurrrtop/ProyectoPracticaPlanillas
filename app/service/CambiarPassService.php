@@ -1,8 +1,11 @@
 <?php 
 
-  require_once __DIR__.'/../DAO/UsuarioDAO.php';
-  require_once __DIR__ . '/../models/UsuarioModelo.php';
-  require_once __DIR__ . '/validate/Validation.php';
+    declare( strict_types = 1 );
+
+    namespace app\service;
+
+    use app\dao\UsuarioDAO;
+    use Exception;
 
   class CambiarPassService {
 

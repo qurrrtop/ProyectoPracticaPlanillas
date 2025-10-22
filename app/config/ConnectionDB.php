@@ -1,4 +1,11 @@
 <?php 
+
+    declare( strict_types = 1 );
+
+    namespace app\config;
+    use PDO;
+    use PDOException;
+
     class ConnectionDB {
         // Atributo que guarda la instancia única del singleton;
         private static $instancia = null;

@@ -1,9 +1,17 @@
 <?php
-    require_once __DIR__ . "/../config/ConnectionDB.php"; // referencia a la base de datos;
-    require_once __DIR__ . "/../models/UsuarioModelo.php"; // referencia al Usuario Modelo;
-    require_once __DIR__ . "/../models/DocenteModel.php"; // referencia al Usuario Modelo;
-    require_once __DIR__ . "/../models/CoordinadorModel.php"; // referencia al Usuario Modelo;
 
+    declare( strict_types = 1 );
+
+    namespace app\dao;
+
+    use app\config\ConnectionDB;
+    use app\models\UsuarioModelo;
+    use app\models\DocenteModel;
+    use app\models\CoordinadorModel;
+    use app\models\PersonaModel;
+    use Exception;
+    use PDOException;
+    use PDO;
 
     class UsuarioDAO {
         private $connectionDB = null;
@@ -33,7 +41,7 @@
                     ':rol'          => 'DOCENTE'
                 ]);
 
-                $newID = $conn->lastInsertId();
+                $newID = ( int ) $conn->lastInsertId();
                 return $this->readUserById($newID);
 
             } catch (PDOException $e) {
@@ -116,7 +124,7 @@
 
         // ------------------------- READ USER BY ID -------------------------
 
-        public function readUserById(int $id): ?PersonaModel {
+        public function readUserById(int $id): ?UsuarioModelo {
             $sql = "SELECT idPersona, userName, passwordHash, nombre, apellido, dni, email, telefono, direccion, fnacimiento, rol FROM ".self::TBL_NAME." WHERE idPersona = :idPersona LIMIT 1";
 
             try {
@@ -147,6 +155,8 @@
                         $queryResult['rol']
                     );
                 }
+
+                return null;
 
             } catch(PDOException $e) {
                 error_log("No existe un usuario en la base de datos con el ID deseado");
@@ -355,6 +365,8 @@
                     );
                 }
 
+                return null;
+
                 } catch (PDOException $e) {
                 throw new Exception("Error DB: " . $e->getMessage());
             }
@@ -411,7 +423,7 @@
         }
 
         public function getLastInsertId(): int {
-            return $this->connectionDB->getConnection()->lastInsertId();
+            return ( int ) $this->connectionDB->getConnection()->lastInsertId();
         }
     }
 ?>

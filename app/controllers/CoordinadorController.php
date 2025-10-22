@@ -192,13 +192,15 @@
 
             if (empty($_SESSION['csrf_token'])) { $_SESSION['csrf_token'] = bin2hex(random_bytes(32)); }
 
-            $idPersona = $_GET['idPersona'] ?? $_POST['idPersona'] ?? null;
-    
-            if (!$idPersona) {
-                $mensaje = "No se ha especificado el usuario para asignar materias.";
-                require __DIR__ . '/../views/coordinador/panelCoord.php';
-                return;
+            // obtener y validar idPersona desde request
+            $idPersonaRaw = $_POST['idPersona'] ?? $_GET['idPersona'] ?? null;
+            if ($idPersonaRaw === null) {
+                throw new \Exception('idPersona no proporcionado');
             }
+            if (!filter_var($idPersonaRaw, FILTER_VALIDATE_INT)) {
+                throw new \Exception('idPersona inválido');
+            }
+            $idPersona = (int) $idPersonaRaw;
     
             // obtener materias y asignadas
             $materiasPorAnio = $this->materiaService->getMateriasAgrupadasPorAnio();

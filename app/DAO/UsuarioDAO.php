@@ -8,7 +8,6 @@
     use app\models\UsuarioModelo;
     use app\models\DocenteModel;
     use app\models\CoordinadorModel;
-    use app\models\PersonaModel;
     use Exception;
     use PDOException;
     use PDO;

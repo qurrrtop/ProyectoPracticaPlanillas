@@ -5,8 +5,8 @@
   namespace app\service;
 
   use app\dao\UsuarioDAO;
-use app\utilities\DateTimeValidator;
-use app\utilities\StringFieldType;
+  use app\utilities\DateTimeValidator;
+  use app\utilities\StringFieldType;
   use app\utilities\IntFieldType;
   use InvalidArgumentException;
 

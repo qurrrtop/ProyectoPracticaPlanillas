@@ -6,7 +6,7 @@
 
   use app\config\ConnectionDB;
   use app\models\MateriaModel;
-  use  Exception;
+  use Exception;
   use PDOException;
   use PDO;
 
@@ -28,8 +28,8 @@
       $materiaData = [
         ":nombre" => $materia->getNombre(),
         ":anio" => $materia->getAnio(),
-        ":idFormato" => $materia->getDuracion(),
-        ":idDuracion" => $materia->getFormato()
+        ":idFormato" => $materia->getFormato(),
+        ":idDuracion" => $materia->getDuracion()
       ];
 
       try {
@@ -61,7 +61,7 @@
 
         $conn = $this->connectionDB->getConnection();
         $stmt = $conn->prepare( $sql );
-        $stmt->bindParam( ":idMateria", $idMateria, pdo::FETCH_ASSOC );
+        $stmt->bindParam( ":idMateria", $idMateria, PDO::PARAM_INT );
         $stmt->execute();
 
         $queryResult = $stmt->fetch( PDO::FETCH_ASSOC );
@@ -99,7 +99,7 @@
         $stmt = $conn->prepare( $sql );
         $stmt->execute();
 
-        $queryResult = $stmt->fetchAll( pdo::FETCH_ASSOC );
+        $queryResult = $stmt->fetchAll( PDO::FETCH_ASSOC );
 
         $allMateria = [];
 

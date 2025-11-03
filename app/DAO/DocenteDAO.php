@@ -1,7 +1,14 @@
 <?php
-  require_once __DIR__."/../models/DocenteModel.php";
-  require_once __DIR__."/../config/ConnectionDB.php";
 
+  declare( strict_types = 1 );
+
+  namespace app\dao;
+
+  use app\config\ConnectionDB;
+  use app\models\DocenteModel;
+  use Exception;
+  use PDOException;
+  use PDO;
 
     class DocenteDAO {
       private $connectionDB = null;
@@ -36,7 +43,7 @@
           $conn = $this->connectionDB->getConnection();
           $stmt = $conn->prepare( $sql );
           $usuario = $stmt->execute( $userData );
-          $newID = $conn->lastInsertId();
+          $newID = ( int ) $conn->lastInsertId();
          
           return $this->readADocenteByID( $newID );
 

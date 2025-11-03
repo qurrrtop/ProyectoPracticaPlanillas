@@ -1,6 +1,14 @@
 <?php
-    require_once __DIR__."/../model/AlumnoModelo.php";
-    require_once __DIR__."/../config/ConnectionDB.php";
+
+  declare( strict_types = 1 );
+
+  namespace app\dao;
+  
+  use app\config\ConnectionDB;
+  use app\models\AlumnoModelo;
+  use PDOException;
+  use Exception;
+  use PDO;
 
     class AlumnoDAO {
         private $connectionDB = null;
@@ -32,7 +40,7 @@
           $conn = $this->connectionDB->getConnection();
           $stmt = $conn->prepare( $sql );
           $alumno = $stmt->execute( $alumnoData );
-          $newID = $conn->lastInsertId();
+          $newID = ( int ) $conn->lastInsertId();
          
           return $this->readAAlumnoByDNI( $newID );
 
@@ -105,7 +113,7 @@
 
           foreach( $queryResult as $row ) { #se usa para asignar a cada fila (resultado) al arreglo de alluser
 
-            $allUser[] = new DocenteModel(
+            $allUser[] = new AlumnoModelo(
               $row["idPersona"],
               $row["userName"],
               $row["passwordHash"],

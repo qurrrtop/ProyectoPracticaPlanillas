@@ -1,85 +1,91 @@
 <?php
-require_once __DIR__ . "/../config/ConnectionDB.php";
-require_once __DIR__ . "/../DAO/UsuarioDAO.php";
-require_once __DIR__ . "/../service/ActualizarDatosService.php";
-require_once __DIR__ . "/../service/CambiarPassService.php";
-require_once __DIR__ . "/../service/validate/Validation.php";
 
-class UsuarioController {
-    private $actualizarDatosService;
-    private $cambiarPassService;
-    private $usuarioDAO;
+    declare( strict_types = 1 );
 
-    public function __construct() {
-        $ConnectionDB = ConnectionDB::getInstancia();
-        $this->usuarioDAO = new UsuarioDAO($ConnectionDB);
-        $this->actualizarDatosService = new ActualizarDatosService($this->usuarioDAO);
-        $this->cambiarPassService = new CambiarPassService($this->usuarioDAO);
-    }
+    namespace app\controllers;
 
-    // ---- Método que le permite actualizar sus datos personales ----
-    // ---- a cualquier usuario que necesite modificarlo ----
+    use app\config\ConnectionDB;
+    use app\dao\UsuarioDAO;
+    use app\service\ActualizarDatosService;
+    use app\service\CambiarPassService;
+    use Exception;
 
-    public function perfil() {
-        if (session_status() === PHP_SESSION_NONE) session_start();
 
-        // usuario logueado (desde LoginController) con idPersona
-        if (empty($_SESSION['usuario']['idPersona'])) {
-            header("Location: index.php?controller=Login&action=login");
-            exit;
-        }
-        $id = (int) $_SESSION['usuario']['idPersona'];
+    class UsuarioController {
+        private $actualizarDatosService;
+        private $cambiarPassService;
+        private $usuarioDAO;
 
-        // CSRF token
-        if (empty($_SESSION['csrf_token'])) {
-            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+        public function __construct() {
+            $ConnectionDB = ConnectionDB::getInstancia();
+            $this->usuarioDAO = new UsuarioDAO($ConnectionDB);
+            $this->actualizarDatosService = new ActualizarDatosService($this->usuarioDAO);
+            $this->cambiarPassService = new CambiarPassService($this->usuarioDAO);
         }
 
-        $mensaje = null;
+        // ---- Método que le permite actualizar sus datos personales ----
+        // ---- a cualquier usuario que necesite modificarlo ----
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            // validar CSRF
-            $csrf = $_POST['csrf_token'] ?? '';
-            if (!hash_equals($_SESSION['csrf_token'], $csrf)) {
-                $mensaje = "Token inválido.";
-            } else {
-                // recoger campos del perfil
-                $userName = trim($_POST['userName'] ?? '');
-                $nombre = trim($_POST['nombre'] ?? '');
-                $apellido = trim($_POST['apellido'] ?? '');
-                $dni = trim($_POST['dni'] ?? '') ?: null;
-                $email = trim($_POST['email'] ?? '') ?: null;
-                $telefono = trim($_POST['telefono'] ?? '') ?: null;
-                $direccion = trim($_POST['direccion'] ?? '') ?: null;
-                $fnacimiento = trim($_POST['fnacimiento'] ?? '') ?: null;
+        public function perfil() {
+            if (session_status() === PHP_SESSION_NONE) session_start();
 
-                try {
-                    $this->actualizarDatosService->actualizarDatos($id, $userName, $nombre, $apellido, $dni, $email, $telefono, $direccion, $fnacimiento);
-                    $mensaje = "Datos actualizados correctamente.";
-                } catch (Exception $e) {
-                    $mensaje = "Error al actualizar datos: " . $e->getMessage();
-                }
+            // usuario logueado (desde LoginController) con idPersona
+            if (empty($_SESSION['usuario']['idPersona'])) {
+                header("Location: index.php?controller=Login&action=login");
+                exit;
+            }
+            $id = (int) $_SESSION['usuario']['idPersona'];
 
-                // Si vinieron campos de contraseña (no vacíos), intentamos cambiar
-                $passwordActual = $_POST['password_actual'] ?? '';
-                $passwordNuevo = $_POST['password_nuevo'] ?? '';
-                $passwordNuevoConfirm = $_POST['password_nuevo_confirm'] ?? '';
+            // CSRF token
+            if (empty($_SESSION['csrf_token'])) {
+                $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+            }
 
-                if ($passwordActual !== '' || $passwordNuevo !== '' || $passwordNuevoConfirm !== '') {
+            $mensaje = null;
+
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                // validar CSRF
+                $csrf = $_POST['csrf_token'] ?? '';
+                if (!hash_equals($_SESSION['csrf_token'], $csrf)) {
+                    $mensaje = "Token inválido.";
+                } else {
+                    // recoger campos del perfil
+                    $userName = trim($_POST['userName'] ?? '');
+                    $nombre = trim($_POST['nombre'] ?? '');
+                    $apellido = trim($_POST['apellido'] ?? '');
+                    $dni = trim($_POST['dni'] ?? '') ?: null;
+                    $email = trim($_POST['email'] ?? '') ?: null;
+                    $telefono = trim($_POST['telefono'] ?? '') ?: null;
+                    $direccion = trim($_POST['direccion'] ?? '') ?: null;
+                    $fnacimiento = trim($_POST['fnacimiento'] ?? '') ?: null;
+
                     try {
-                        $this->cambiarPassService->cambiarPassword($id, $passwordActual, $passwordNuevo, $passwordNuevoConfirm);
-                        $mensaje .= " Contraseña cambiada correctamente.";
+                        $this->actualizarDatosService->actualizarDatos($id, $userName, $nombre, $apellido, $dni, $email, $telefono, $direccion, $fnacimiento);
+                        $mensaje = "Datos actualizados correctamente.";
                     } catch (Exception $e) {
-                        $mensaje .= " Error al cambiar contraseña: " . $e->getMessage();
+                        $mensaje = "Error al actualizar datos: " . $e->getMessage();
+                    }
+
+                    // Si vinieron campos de contraseña (no vacíos), intentamos cambiar
+                    $passwordActual = $_POST['password_actual'] ?? '';
+                    $passwordNuevo = $_POST['password_nuevo'] ?? '';
+                    $passwordNuevoConfirm = $_POST['password_nuevo_confirm'] ?? '';
+
+                    if ($passwordActual !== '' || $passwordNuevo !== '' || $passwordNuevoConfirm !== '') {
+                        try {
+                            $this->cambiarPassService->cambiarPassword($id, $passwordActual, $passwordNuevo, $passwordNuevoConfirm);
+                            $mensaje .= " Contraseña cambiada correctamente.";
+                        } catch (Exception $e) {
+                            $mensaje .= " Error al cambiar contraseña: " . $e->getMessage();
+                        }
                     }
                 }
             }
+
+            // Obtener datos actualizados
+            $usuarioDatos = $this->usuarioDAO->getUserById($id);
+
+            // En la vista se usa $usuarioDatos para rellenar los inputs y $mensaje para mostrar feedback
+            require __DIR__ . "/../views/perfil.php";
         }
-
-        // Obtener datos actualizados
-        $usuarioDatos = $this->usuarioDAO->getUserById($id);
-
-        // En la vista se usa $usuarioDatos para rellenar los inputs y $mensaje para mostrar feedback
-        require __DIR__ . "/../views/perfil.php";
     }
-}

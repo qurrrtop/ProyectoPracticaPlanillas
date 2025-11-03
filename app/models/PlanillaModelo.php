@@ -1,5 +1,12 @@
 <?php
-class PlanillaModelo {
+
+  declare( strict_types = 1 );
+
+  namespace app\models;
+  
+  use Exception;
+
+    class PlanillaModelo {
 
         private $idPlanilla;
         private $asistencia;

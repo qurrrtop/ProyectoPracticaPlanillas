@@ -1,6 +1,8 @@
 <?php
-  require_once __DIR__ . '/UsuarioModelo.php';
 
+  declare( strict_types = 1 );
+
+  namespace app\models;
 
   class CoordinadorModel extends UsuarioModelo {
     

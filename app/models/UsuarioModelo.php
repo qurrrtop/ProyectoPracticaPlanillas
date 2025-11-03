@@ -1,6 +1,13 @@
 <?php
 
-  require_once __DIR__ . "/PersonaModel.php";
+  declare( strict_types = 1 );
+
+  namespace app\models;
+  
+  use app\models\PersonaModel;
+  use app\utilities\StringFieldType;
+  use InvalidArgumentException;
+
     
   class UsuarioModelo extends PersonaModel {
 

@@ -1,5 +1,16 @@
 <?php 
 
+  declare( strict_types = 1 );
+
+  namespace app\dao;
+
+  use app\config\ConnectionDB;
+  use app\models\PlanillaModelo;
+  use Exception;
+  use PDOException;
+  use PDO;
+
+
   class PlanillaDAO {
 
     private $connectionDB = null;
@@ -25,7 +36,7 @@
         $conn = $this->connectionDB->getConnection();
         $stmt = $conn->prepare( $sql );
         $planilla = $stmt->execute( $planillaData );
-        $newID = $conn->lastInsertId();
+        $newID = ( int ) $conn->lastInsertId();
 
         return $this->readAPlanillaByID( $newID );
 
@@ -85,7 +96,7 @@
         $stmt = $conn->prepare( $sql );
         $stmt->execute();
 
-        $queryResult = $stmt->fetchAll( pdo::FETCH_ASSOC );
+        $queryResult = $stmt->fetchAll( PDO::FETCH_ASSOC );
 
         $allPlanilla = [];
 
@@ -117,9 +128,10 @@
       $sql = "UPDATE ". self::TBL_NAME . " SET asistencia = :asistencia, promedio = :promedio, condicion = :condicion WHERE idPlanilla = :idPlanilla";
 
       $planillaData = [
-      ":asistencia" => $planilla->getAsistencia(),
-      ":promedio" => $planilla->getPromedio(),
-      ":condicion" => $planilla->getCondicion()
+        ":idPlanilla" => $planilla->getIDPlanilla(),
+        ":asistencia" => $planilla->getAsistencia(),
+        ":promedio" => $planilla->getPromedio(),
+        ":condicion" => $planilla->getCondicion()
       ];
 
       try {
@@ -168,6 +180,24 @@
         throw $e;
 
       }
+    }
+
+    public function obtenerPlanillasPorMateria(int $idMateria): array {
+      $sql = "SELECT idPlanilla, asistencia, promedio, condicion, idMateria FROM " . self::TBL_NAME . " WHERE idMateria = :idMateria ORDER BY idPlanilla DESC";
+
+        try {
+            $conn = $this->connectionDB->getConnection();
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':idMateria', $idMateria, \PDO::PARAM_INT);
+            $stmt->execute();
+
+            $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            return $rows ?: [];
+
+        } catch ( PDOException $e ) {
+            error_log("error al obtener planillas por materia: " . $e->getMessage());
+            throw new Exception("Error al obtener planillas por materia");
+        }
     }
 
   }

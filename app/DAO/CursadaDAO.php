@@ -1,7 +1,14 @@
 <?php
 
-  require_once __DIR__."/../model/CursadaModelo.php";
-  require_once __DIR__."/../config/ConnectionDB.php";
+  declare( strict_types = 1 );
+
+  namespace app\dao;
+
+  use app\config\ConnectionDB;
+  use app\models\CursadaModelo;
+  use Exception;
+  use PDOException;
+  use PDO;
 
 
     class CursadaDAO {
@@ -29,7 +36,7 @@
           $conn = $this->connectionDB->getConnection();
           $stmt = $conn->prepare( $sql );
           $cursada = $stmt->execute( $cursadaData );
-          $newID = $conn->lastInsertId();
+          $newID = ( int ) $conn->lastInsertId();
          
           return $this->readACursadaByID( $newID ); 
 

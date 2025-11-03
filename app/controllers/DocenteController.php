@@ -1,7 +1,8 @@
 <?php
-    require_once __DIR__."/../config/ConnectionDB.php";
-    require_once __DIR__."/../DAO/DocenteDAO.php";
-    require_once __DIR__."/../service/DocenteService.php";
+
+    declare( strict_types = 1 );
+
+    namespace app\controllers;
 
     class DocenteController {
         public function home() {

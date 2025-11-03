@@ -1,7 +1,15 @@
 <?php 
 
-require_once __DIR__."/../models/MateriaModel.php";
-require_once __DIR__."/../config/ConnectionDB.php";
+  declare( strict_types = 1 );
+
+  namespace app\dao;
+
+  use app\config\ConnectionDB;
+  use app\models\MateriaModel;
+  use Exception;
+  use PDOException;
+  use PDO;
+
 
   class MateriaDAO {
 
@@ -20,8 +28,8 @@ require_once __DIR__."/../config/ConnectionDB.php";
       $materiaData = [
         ":nombre" => $materia->getNombre(),
         ":anio" => $materia->getAnio(),
-        ":idFormato" => $materia->getDuracion(),
-        ":idDuracion" => $materia->getFormato()
+        ":idFormato" => $materia->getFormato(),
+        ":idDuracion" => $materia->getDuracion()
       ];
 
       try {
@@ -29,7 +37,7 @@ require_once __DIR__."/../config/ConnectionDB.php";
         $conn = $this->connectionDB->getConnection();
         $stmt = $conn->prepare( $sql );
         $materia = $stmt->execute( $materiaData );
-        $newID = $conn->lastInsertId();
+        $newID = ( int ) $conn->lastInsertId();
 
         return $this->readAMateriaByID( $newID );
 
@@ -53,7 +61,7 @@ require_once __DIR__."/../config/ConnectionDB.php";
 
         $conn = $this->connectionDB->getConnection();
         $stmt = $conn->prepare( $sql );
-        $stmt->bindParam( ":idMateria", $idMateria, pdo::FETCH_ASSOC );
+        $stmt->bindParam( ":idMateria", $idMateria, PDO::PARAM_INT );
         $stmt->execute();
 
         $queryResult = $stmt->fetch( PDO::FETCH_ASSOC );
@@ -91,7 +99,7 @@ require_once __DIR__."/../config/ConnectionDB.php";
         $stmt = $conn->prepare( $sql );
         $stmt->execute();
 
-        $queryResult = $stmt->fetchAll( pdo::FETCH_ASSOC );
+        $queryResult = $stmt->fetchAll( PDO::FETCH_ASSOC );
 
         $allMateria = [];
 

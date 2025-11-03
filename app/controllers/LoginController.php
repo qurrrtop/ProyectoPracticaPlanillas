@@ -1,7 +1,14 @@
 <?php
-    require_once __DIR__."/../config/ConnectionDB.php";
-    require_once __DIR__."/../DAO/UsuarioDAO.php";
-    require_once __DIR__."/../service/LoginService.php";
+
+    declare( strict_types = 1 );
+
+    namespace app\controllers;
+
+    use app\config\ConnectionDB;
+    use app\dao\UsuarioDAO;
+    use app\service\LoginService;
+    use Exception;
+
 
     class LoginController {
         private $LoginService;

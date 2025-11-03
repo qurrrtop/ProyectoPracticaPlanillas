@@ -1,8 +1,13 @@
 <?php 
 
-  require_once __DIR__.'/../DAO/UsuarioDAO.php';
-  require_once __DIR__ . '/../models/UsuarioModelo.php';
-  require_once __DIR__ . '/validate/Validation.php';
+  declare( strict_types = 1 );
+
+  namespace app\service;
+
+  use app\dao\UsuarioDAO;
+  use app\models\DocenteModel;
+  use app\utilities\StringFieldType;
+  use Exception;
 
   class CreateUserService {
 
@@ -14,7 +19,7 @@
 
     public function createUser(string $userName, string $password, string $nombre, string $email) {
       try {
-        if (!Validation::validEmail($email)) {
+        if ( !StringFieldType::stringToValidate( $email, StringFieldType::EMAIL ) ) {
           throw new Exception("El email es invalido.");
         }
 

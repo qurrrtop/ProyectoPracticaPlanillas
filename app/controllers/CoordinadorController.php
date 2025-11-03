@@ -1,17 +1,27 @@
 <?php
-    require_once __DIR__ . "/../config/ConnectionDB.php";
-    require_once __DIR__ . "/../DAO/UsuarioDAO.php";
-    require_once __DIR__ . "/../DAO/CoordinadorDAO.php";
-    require_once __DIR__ . "/../DAO/MateriaDAO.php";
-    require_once __DIR__ . "/../service/CoordinadorService.php";
-    require_once __DIR__ . "/../service/MateriaService.php";
-    require_once __DIR__ . "/../service/CreateUserService.php";
+
+    declare( strict_types = 1 );
+
+    namespace app\controllers;
+
+    use app\config\ConnectionDB;
+    use app\dao\UsuarioDAO;
+    use app\dao\CoordinadorDAO;
+    use app\dao\MateriaDAO;
+    use app\dao\PlanillaDAO;
+    use app\service\CoordinadorService;
+    use app\service\MateriaService;
+    use app\service\CreateUserService;
+    use app\service\VerPlanillaService;
+    use Exception;
 
     class CoordinadorController {
 
         private $coordinadorService;
         private $materiaService;
         private $createUserService;
+        private $verPlanillaService;
+        private $MateriaDAO;
 
         // Constructor del controller:
         // 1. Se asegura de que la sesión esté iniciada.
@@ -29,10 +39,14 @@
             $usuarioDAO = new UsuarioDAO($connectionDB);
             $coordinadorDAO = new CoordinadorDAO($connectionDB);
             $materiaDAO = new MateriaDAO($connectionDB);
+            $planillaDAO = new PlanillaDAO($connectionDB);
 
+            $this->MateriaDAO = $materiaDAO;
             $this->coordinadorService = new CoordinadorService($usuarioDAO, $coordinadorDAO);
             $this->materiaService = new MateriaService($materiaDAO);
             $this->createUserService = new CreateUserService($usuarioDAO);
+            $this->verPlanillaService = new VerPlanillaService($planillaDAO);
+
         }
 
         // ----- Método que verifica si hay un usuario logueado en la sesión ------
@@ -186,13 +200,15 @@
 
             if (empty($_SESSION['csrf_token'])) { $_SESSION['csrf_token'] = bin2hex(random_bytes(32)); }
 
-            $idPersona = $_GET['idPersona'] ?? $_POST['idPersona'] ?? null;
-    
-            if (!$idPersona) {
-                $mensaje = "No se ha especificado el usuario para asignar materias.";
-                require __DIR__ . '/../views/coordinador/panelCoord.php';
-                return;
+            // obtener y validar idPersona desde request
+            $idPersonaRaw = $_POST['idPersona'] ?? $_GET['idPersona'] ?? null;
+            if ($idPersonaRaw === null) {
+                throw new \Exception('idPersona no proporcionado');
             }
+            if (!filter_var($idPersonaRaw, FILTER_VALIDATE_INT)) {
+                throw new \Exception('idPersona inválido');
+            }
+            $idPersona = (int) $idPersonaRaw;
     
             // obtener materias y asignadas
             $materiasPorAnio = $this->materiaService->getMateriasAgrupadasPorAnio();
@@ -240,11 +256,44 @@
             }
         }
 
-        // ------------- Método incompleto ----------------
-
         public function verPlanillas() {
             $this->verificarLogin();
-            include __DIR__ . '/../views/coordinador/verPlanillas.php';
+
+            $materias = [];
+            try {
+                $materias = $this->MateriaDAO->readAllMateria();
+            } catch ( Exception $e ) {
+                error_log("Error al obtener materias en la vista: " . $e->getMessage() );
+                $_SESSION['mensaje'] = "No se pudieron cargar las materias.";
+                $materias = [];
+            }
+
+            // Agrupar por año
+            $materiasPorAnio = [];
+            foreach ( $materias as $m ) {
+                $id = is_object( $m ) ? ( $m->getIDMateria() ?? null ) : ( $m['idMateria'] ?? null );
+                $nombre = is_object( $m ) ? ( $m->getNombre() ?? '' ) : ( $m['nombre'] ?? '' );
+                $anio = is_object( $m ) ? ( $m->getAnio() ?? '' ) : ( $m['anio'] ?? '' );
+                $materiasPorAnio[$anio][] = ['idMateria' => $id, 'nombre' => $nombre];
+            }
+
+            $anio = isset( $_GET['anio'] ) ? intval( $_GET['anio'] ) : null;
+            $idMateria = isset( $_GET['idMateria'] ) ? intval( $_GET['idMateria'] ) : null;
+
+            $planillas = [];
+            if (!empty( $idMateria ) ) {
+                try {
+                    $planillas = $this->verPlanillaService->obtenerPlanillasPorMateria( $idMateria );
+                } catch ( Exception $e ) {
+                    error_log("Error al obtener planillas: " . $e->getMessage() );
+                    $_SESSION['mensaje'] = "No se pudieron cargar las planillas.";
+                    $planillas = [];
+                }
+            }
+
+            if ( empty( $_SESSION['csrf_token'] ) ) { $_SESSION['csrf_token'] = bin2hex( random_bytes( 32 ) ); }
+
+            require __DIR__ . '/../views/coordinador/verPlanillas.php';
         }
 
 

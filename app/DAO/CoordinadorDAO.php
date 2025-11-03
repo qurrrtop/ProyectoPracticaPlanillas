@@ -1,7 +1,14 @@
 <?php
-  require_once __DIR__."/../models/CoordinadorModel.php";
-  require_once __DIR__."/../config/ConnectionDB.php";
 
+  declare( strict_types = 1 );
+
+  namespace app\dao;
+  
+  use app\config\ConnectionDB;
+  use app\models\CoordinadorModel;
+  use Exception;
+  use PDOException;
+  use PDO;
 
     class CoordinadorDAO {
       private $connectionDB = null;
@@ -39,7 +46,7 @@
           $conn = $this->connectionDB->getConnection();
           $stmt = $conn->prepare( $sql );
           $coordinador = $stmt->execute( $coordinadorData );
-          $newID = $conn->lastInsertId();
+          $newID = ( int ) $conn->lastInsertId();
          
           return $this->readACoordinadorByID( $newID ); 
 

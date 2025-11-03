@@ -1,5 +1,12 @@
 <?php
- class CursadaModelo {
+
+    declare( strict_types = 1 );
+
+    namespace app\models;
+    
+    use Exception;
+
+    class CursadaModelo {
         private $idCursada;
         private $añoCursada;
         private $FechaIni;

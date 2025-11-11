@@ -4,14 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/ProyectoPracticaPlanillas/public/assets/css/coordinador-estilos/home-style.css">
-    <title>prueba</title>
+    <title>AppWebPlanilla</title>
 </head>
 <body>
     <?php require_once __DIR__."/../template/sidebar.php"; ?>
 
     <main>
         <div class="box-buttons">
-            <button class="btn btn-ver">Ver planillas</button>
+            <button class="btn btn-ver"><a href="index.php?controller=Coordinador&action=verPlanillas">Ver planillas</a></button>
         </div>
 
 

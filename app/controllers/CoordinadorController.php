@@ -259,41 +259,63 @@
         public function verPlanillas() {
             $this->verificarLogin();
 
-            $materias = [];
             try {
-                $materias = $this->MateriaDAO->readAllMateria();
-            } catch ( Exception $e ) {
-                error_log("Error al obtener materias en la vista: " . $e->getMessage() );
-                $_SESSION['mensaje'] = "No se pudieron cargar las materias.";
-                $materias = [];
+                $anios = $this->materiaService->getAllAnioMateria();
+                $materiasPorAnio = $this->materiaService->getMateriasAgrupadasPorAnio();
+            } catch (Exception $e) {
+                error_log("Error al obtener datos para verPlanillas: " . $e->getMessage());
+                $_SESSION['mensaje'] = "No se pudieron cargar los datos de las materias.";
+                $anios = [];
+                $materiasPorAnio = [];
             }
 
-            // Agrupar por año
-            $materiasPorAnio = [];
-            foreach ( $materias as $m ) {
-                $id = is_object( $m ) ? ( $m->getIDMateria() ?? null ) : ( $m['idMateria'] ?? null );
-                $nombre = is_object( $m ) ? ( $m->getNombre() ?? '' ) : ( $m['nombre'] ?? '' );
-                $anio = is_object( $m ) ? ( $m->getAnio() ?? '' ) : ( $m['anio'] ?? '' );
-                $materiasPorAnio[$anio][] = ['idMateria' => $id, 'nombre' => $nombre];
+            if (empty($_SESSION['csrf_token'])) {
+                $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
             }
 
-            $anio = isset( $_GET['anio'] ) ? intval( $_GET['anio'] ) : null;
-            $idMateria = isset( $_GET['idMateria'] ) ? intval( $_GET['idMateria'] ) : null;
-
-            $planillas = [];
-            if (!empty( $idMateria ) ) {
-                try {
-                    $planillas = $this->verPlanillaService->obtenerPlanillasPorMateria( $idMateria );
-                } catch ( Exception $e ) {
-                    error_log("Error al obtener planillas: " . $e->getMessage() );
-                    $_SESSION['mensaje'] = "No se pudieron cargar las planillas.";
-                    $planillas = [];
-                }
-            }
-
-            if ( empty( $_SESSION['csrf_token'] ) ) { $_SESSION['csrf_token'] = bin2hex( random_bytes( 32 ) ); }
+            $anio = null;
+            $idMateria = null;
 
             require __DIR__ . '/../views/coordinador/verPlanillas.php';
+        }
+
+        // método que toma los datos de los select y trae toda la información
+        // de la materia conrrespondiente y lo muestra
+        public function getDataPlanilla() {
+            $this -> verificarLogin();
+
+            if (empty($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+                $_SESSION['mensaje'] = "Error: token CSRF inválido.";
+                header("Location: index.php?controller=Coordinador&action=verPlanillas");
+                exit;
+            }
+
+            // toma los datos de los select
+            $anio = $_POST['anio'] ?? null;
+            $idMateria = $_POST['idMateria'] ?? null;
+
+            // verificamos que no estén vacios
+            if (empty($anio) || empty($idMateria)) {
+                $_SESSION['mensaje'] = "Debe seleccionar un año y una materia.";
+                header("Location: index.php?controller=coordinador&action=verPlanillas");
+                exit();
+            }
+
+            try {
+                $datosMateria = $this->materiaService->getDataMateria((int)$idMateria);
+
+                $anios = $this->materiaService->getAllAnioMateria();
+                $materiasPorAnio = $this->materiaService->getMateriasAgrupadasPorAnio();
+
+                // Si todo está bien, se carga la vista con los datos obtenidos
+                require __DIR__ . '/../views/coordinador/verPlanillas.php';
+
+            } catch (Exception $e) {
+                error_log("Error al obtener datos de la materia en getDataPlanilla: " . $e->getMessage());
+                $_SESSION['mensaje'] = "Ocurrió un error al cargar los datos de la materia.";
+                header("Location: index.php?controller=Coordinador&action=verPlanillas");
+                exit();
+            }
         }
 
 

@@ -18,18 +18,21 @@
     }
     //rellena el select de materias segun el año seleccionado
     //selectid sirve para marca una materia como seleccionada
-    function populateMaterias( anio, selectedId ) {
-      if ( !selectMateria ) return;
+    function populateMaterias(anio, selectedId) {
+      if (!selectMateria) return;
       clearMateriaOptions();
-      if ( !anio || !materiasPorAnio[anio] ) return;
 
-      materiasPorAnio[anio].forEach( function (m) {
-        const opt = document.createElement( 'option' );
+      const anioKey = String(anio);
+
+      if (!anioKey || !materiasPorAnio[anioKey]) return;
+
+      materiasPorAnio[anioKey].forEach(function (m) {
+        const opt = document.createElement('option');
         opt.value = m.idMateria ?? m.id ?? '';
         opt.textContent = m.nombre ?? m.materia ?? 'Materia';
-        if ( String( opt.value ) === String( selectedId ) ) opt.selected = true;
-        selectMateria.appendChild( opt );
-      } );
+        if (String(opt.value) === String(selectedId)) opt.selected = true;
+        selectMateria.appendChild(opt);
+      });
     }
     //si se cambia el año seleccionado, recarga las materias
     if ( selectAnio ) {

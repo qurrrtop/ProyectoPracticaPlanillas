@@ -5,6 +5,8 @@
     namespace app\service;
 
     use app\dao\MateriaDAO;
+    use Exception;
+
 
 
     class MateriaService {
@@ -21,23 +23,59 @@
 
         // Devuelve todas las materias agrupadas por año
         public function getMateriasAgrupadasPorAnio(): array {
-            $materias = $this->getTodasLasMaterias(); // devuelve array de objetos MateriaModel
+            try {
+                $materias = $this->materiaDAO->readAllMateria();
+                $materiasPorAnio = [];
 
-            $materiasPorAnio = [
-                1 => [],
-                2 => [],
-                3 => [],
-                4 => []
-            ];
+                foreach ($materias as $m) {
+                    // si es objeto
+                    $anio = is_object($m) ? $m->getAnio() : $m['anio'];
+                    $id = is_object($m) ? $m->getIDMateria() : $m['idMateria'];
+                    $nombre = is_object($m) ? $m->getNombre() : $m['nombre'];
 
-            foreach ($materias as $materia) {
-                $anio = $materia->getAnio(); // llamá al getter que tengas en tu MateriaModel
-                if (isset($materiasPorAnio[$anio])) {
-                    $materiasPorAnio[$anio][] = $materia;
+                    if (!isset($materiasPorAnio[$anio])) {
+                        $materiasPorAnio[$anio] = [];
+                    }
+
+                    $materiasPorAnio[$anio][] = [
+                        'idMateria' => $id,
+                        'nombre' => $nombre
+                    ];
                 }
-            }
 
-            return $materiasPorAnio;
+                return $materiasPorAnio;
+
+            } catch (Exception $e) {
+                error_log("Error en getMateriasAgrupadasPorAnio: " . $e->getMessage());
+                throw $e;
+            }
+        }
+
+        // método que se comunica con el DAO para traer toda la información
+        // de la materia
+        public function getDataMateria(int $idMateria): array {
+            try {
+                $data = $this->materiaDAO->getDataMateria($idMateria);
+
+                if (empty($data)) {
+                    throw new Exception("No se encontraron datos para la materia seleccionada.");
+                }
+
+                return $data;
+
+            } catch (Exception $e) {
+                error_log("MateriaService -> Error al obtener datos de la materia: " . $e->getMessage());
+                throw $e;
+            }
+        }
+
+        public function getAllAnioMateria() {
+            try {
+                return $this->materiaDAO->getAllAnioMateria();
+            } catch (Exception $e) {
+                error_log("Error en MateriaService->getAllAnioMateria: " . $e->getMessage());
+                throw new Exception("No se pudieron obtener los años de las materias.");
+            }
         }
 
     }

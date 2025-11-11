@@ -177,13 +177,69 @@
         return $stmt->rowCount() > 0;
 
       } catch ( PDOException $e ) {
-        error_log("no se pudo eliminar la materia ". $e->getMessage() );
+        error_log("no se pudo eliminar la materia ". $e->getMessage());
         throw new Exception("no se pudo eliminar la materia");
           
       } catch ( Exception $e ) {
         error_log("no se pudo eliminar la materia");
         throw $e;
 
+      }
+    }
+
+    public function getDataMateria( int $idMateria ): array {
+      $sql = "SELECT 
+                m.nombre AS materia,
+                u.nombre AS docente_nombre,
+                u.apellido AS docente_apellido,
+                d.nombre AS duracion,
+                f.nombre AS formato,
+                r.nombre AS regimen
+            FROM " . self::TBL_NAME . " m
+            INNER JOIN usuario_materia um ON um.idMateria = m.idMateria
+            INNER JOIN usuarios u ON u.idPersona = um.idPersona
+            INNER JOIN duracion d ON d.idDuracion = m.idDuracion
+            INNER JOIN formato f ON f.idFormato = m.idFormato
+            INNER JOIN regimen r ON r.idRegimen = m.idRegimen
+            WHERE m.idMateria = :idMateria";
+
+      try {
+        $conn = $this->connectionDB->getConnection();
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(":idMateria", $idMateria, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return $result ?: [];
+
+      } catch (PDOException $e) {
+          error_log("Error al traer los datos de la materia ". $e->getMessage());
+          throw new Exception("no se pudo trare los datos de la materia");
+      } catch (Exception $e) {
+          error_log("no se pudo traer la información de la materia");
+          throw $e;
+      }
+    }
+
+    // método que obtiene todos los años de las materias
+    // para trabajar con el select
+    public function getAllAnioMateria() {
+      $sql = "SELECT DISTINCT anio FROM " . self::TBL_NAME . " ORDER BY anio";
+
+      try {
+        $conn = $this->connectionDB->getConnection();
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+
+        $anios = $stmt->fetchAll(PDO::FETCH_COLUMN); // devuelve solo los valores de la columna "anio"
+        return $anios;
+
+      } catch (PDOException $e) {
+          error_log("Error al obtener los años de materias: " . $e->getMessage());
+          throw new Exception("No se pudieron obtener los años de las materias.");
+      } catch (Exception $e) {
+          throw $e;
       }
     }
 

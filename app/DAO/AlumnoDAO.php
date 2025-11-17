@@ -13,11 +13,11 @@
     class AlumnoDAO {
         private $connectionDB = null;
 
-        const TBL_NAME = 'alumno';
+        const TBL_NAME = 'alumnos';
 
       // ------------- CONSTRUCTOR CON INYECCIÓN DE DEPENDENCIAS --------------
 
-      public function __CONSTRUCT( ConnectionDB $connectionDB ) {
+      public function __construct( ConnectionDB $connectionDB ) {
         $this->connectionDB = $connectionDB;
       }
 
@@ -201,6 +201,32 @@
          throw $e;
         }
       }
+
+      /**
+       * Obtiene todos los alumnos inscritos en una materia y año.
+       * Usa la tabla cursada como relación (alumno-materia).
+       */
+    public function readAlumnosByMateria(int $idMateria ): array {
+        $sql = "SELECT c.idCursada, a.idAlumno, a.nombre, a.apellido, a.dni, a.cohorte, c.condicion
+                FROM cursada c
+                INNER JOIN alumnos a ON a.idAlumno = c.idAlumno
+                WHERE c.idMateria = :idMateria
+                ORDER BY a.apellido, a.nombre";
+        try {
+            $conn = $this->connectionDB->getConnection();
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':idMateria', $idMateria, PDO::PARAM_INT);
+
+            $stmt->execute();
+            $rows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+            error_log("DEBUG AlumnoDAO - filas obtenidas: " . count($rows) . " -- firstRow: " . ($rows[0]['nombre'] ?? 'NONE'));
+            return $rows;
+        } catch (PDOException $e) {
+            error_log("ERROR AlumnoDAO: " . $e->getMessage());
+            throw new Exception("Error al obtener alumnos");
+        }
+    }
+
     }
 
 

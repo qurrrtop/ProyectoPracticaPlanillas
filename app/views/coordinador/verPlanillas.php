@@ -104,39 +104,74 @@
             <p class="parrafo-mensaje">Seleccione un año y una materia para ver los datos.</p>
         <?php endif; ?>
 
-        <!-- <table id="tablaAlumnos">
-            <thead>
-                <tr>
-                <th>N°</th><th>Nombre</th><th>Apellido</th><th>DNI</th><th>Cohorte</th><th>Condición</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr data-id="1"><td>1</td><td>Javier José</td><td>Maidana</td><td>46.074.909</td><td>2024</td><td>Regular</td></tr>
-                <tr class="card-finales" id="finales-1">
-                <td colspan="7">
-                    <strong>Detalles de exámenes finales - Javier Maidana</strong>
-                    <table>
-                    <tr><th>Intento</th><th>Nota</th><th>Fecha</th></tr>
-                    <tr><td>1</td><td>5</td><td>2025-07-15</td></tr>
-                    <tr><td>2</td><td>7</td><td>2025-12-18</td></tr>
+            <?php if (!empty($alumnos)): ?>
+                <div class="table-container">
+                    <h3>Lista de Alumnos</h3>
+                    <table id="tablaAlumnos" class="alumnos-table">
+                        <thead>
+                            <tr>
+                                <th>N°</th>
+                                <th>Nombre</th>
+                                <th>Apellido</th>
+                                <th>DNI</th>
+                                <th>Cohorte</th>
+                                <th>Condición</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($alumnos as $index => $alumno): ?>
+                                <tr data-id="<?= $alumno['idCursada'] ?? $index + 1 ?>">
+                                    <td><?= $index + 1 ?></td>
+                                    <td><?= htmlspecialchars($alumno['nombre'] ?? '') ?></td>
+                                    <td><?= htmlspecialchars($alumno['apellido'] ?? '') ?></td>
+                                    <td><?= htmlspecialchars($alumno['dni'] ?? '') ?></td>
+                                    <td><?= htmlspecialchars($alumno['cohorte'] ?? '') ?></td>
+                                    <td>
+                                        <span class="condicion-badge <?= strtolower($alumno['condicion'] ?? '') ?>">
+                                            <?= htmlspecialchars($alumno['condicion'] ?? 'Sin definir') ?>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <!-- Fila expandible para detalles de finales (opcional) -->
+                                <?php if (isset($alumno['mostrar_detalles']) && $alumno['mostrar_detalles']): ?>
+                                    <tr class="card-finales" id="finales-<?= $alumno['idCursada'] ?? $index + 1 ?>">
+                                        <td colspan="6">
+                                            <div class="finales-container">
+                                                <strong>Detalles de exámenes finales - <?= htmlspecialchars($alumno['nombre'] ?? '') ?> <?= htmlspecialchars($alumno['apellido'] ?? '') ?></strong>
+                                                <table class="finales-table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Intento</th>
+                                                            <th>Nota</th>
+                                                            <th>Fecha</th>
+                                                            <th>Observaciones</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <!-- Aquí irían los datos de los finales si los tienes -->
+                                                        <tr>
+                                                            <td colspan="4" class="no-data">No hay exámenes finales registrados</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                        </tbody>
                     </table>
-                </td>
-                </tr>
-
-                <tr data-id="2"><td>2</td><td>Román Alberto</td><td>Maidana</td><td>46.074.909</td><td>2024</td><td>Regular</td></tr>
-                <tr class="card-finales" id="finales-2">
-                <td colspan="7">
-                    <h4>Detalles de exámenes finales - Román Maidana</h4>
-                    <table>
-                    <tr><th>Intento</th><th>Nota</th><th>Fecha</th></tr>
-                    <tr><td>1</td><td>7</td><td>2025-08-30</td></tr>
-
-                    </table>
-                </td>
-                </tr>
-            </tbody>
-        </table> -->
-
+                    
+                    <!-- Resumen -->
+                    <div class="resumen-alumnos">
+                        <p>Total de alumnos: <strong><?= count($alumnos) ?></strong></p>
+                    </div>
+                </div>
+            <?php else: ?>
+                <div class="no-alumnos">
+                    <p>No hay alumnos inscritos en esta materia para el año seleccionado.</p>
+                </div>
+            <?php endif; ?>
 
     </main>
 
@@ -147,6 +182,7 @@ window.SELECTED_ANIO = <?= json_encode( $anio ?? null ) ?>;
 window.SELECTED_IDMATERIA = <?= json_encode( $idMateria ?? null ) ?>;
 </script>
 <script src="/ProyectoPracticaPlanillas/public/assets/js/verPlanillas.js"></script>
+<script src="/ProyectoPracticaPlanillas/public/assets/js/verPlanillaDetail.js"></script>
 
 </body>
 </html>

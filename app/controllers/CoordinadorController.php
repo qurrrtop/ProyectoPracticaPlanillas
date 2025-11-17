@@ -9,10 +9,12 @@
     use app\dao\CoordinadorDAO;
     use app\dao\MateriaDAO;
     use app\dao\PlanillaDAO;
+    use app\dao\AlumnoDAO;
     use app\service\CoordinadorService;
     use app\service\MateriaService;
     use app\service\CreateUserService;
     use app\service\VerPlanillaService;
+    use app\service\AlumnoService;
     use Exception;
 
     class CoordinadorController {
@@ -22,6 +24,7 @@
         private $createUserService;
         private $verPlanillaService;
         private $MateriaDAO;
+        private $alumnoService;
 
         // Constructor del controller:
         // 1. Se asegura de que la sesión esté iniciada.
@@ -40,13 +43,17 @@
             $coordinadorDAO = new CoordinadorDAO($connectionDB);
             $materiaDAO = new MateriaDAO($connectionDB);
             $planillaDAO = new PlanillaDAO($connectionDB);
-
+            $alumnoDAO = new AlumnoDAO($connectionDB);
+            $this->alumnoService = new AlumnoService($alumnoDAO);
             $this->MateriaDAO = $materiaDAO;
             $this->coordinadorService = new CoordinadorService($usuarioDAO, $coordinadorDAO);
             $this->materiaService = new MateriaService($materiaDAO);
             $this->createUserService = new CreateUserService($usuarioDAO);
             $this->verPlanillaService = new VerPlanillaService($planillaDAO);
 
+            if (empty($_SESSION['csrf_token'])) {
+                $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+            }
         }
 
         // ----- Método que verifica si hay un usuario logueado en la sesión ------
@@ -282,7 +289,7 @@
         // método que toma los datos de los select y trae toda la información
         // de la materia conrrespondiente y lo muestra
         public function getDataPlanilla() {
-            $this -> verificarLogin();
+            $this->verificarLogin();
 
             if (empty($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
                 $_SESSION['mensaje'] = "Error: token CSRF inválido.";
@@ -301,15 +308,22 @@
                 exit();
             }
 
-            try {
-                $datosMateria = $this->materiaService->getDataMateria((int)$idMateria);
+            // aceptar también un hidden 'anioCursada' si la vista lo envía (si no, usamos $anio)
+            $anioCursada = isset($_POST['anioCursada']) && !empty($_POST['anioCursada'])
+                ? (int) $_POST['anioCursada']
+                : (int) $anio;
 
+            try {
+                // datos para selects y encabezado
+                $datosMateria = $this->materiaService->getDataMateria((int)$idMateria);
                 $anios = $this->materiaService->getAllAnioMateria();
                 $materiasPorAnio = $this->materiaService->getMateriasAgrupadasPorAnio();
 
-                // Si todo está bien, se carga la vista con los datos obtenidos
-                require __DIR__ . '/../views/coordinador/verPlanillas.php';
+                // TRUCO: pedir los alumnos por idMateria + anioCursada
+                $alumnos = $this->alumnoService->obtenerAlumnosByMateria((int)$idMateria, (int)$anioCursada);
 
+                // pasar variables esperadas a la vista
+                require __DIR__ . '/../views/coordinador/verPlanillas.php';
             } catch (Exception $e) {
                 error_log("Error al obtener datos de la materia en getDataPlanilla: " . $e->getMessage());
                 $_SESSION['mensaje'] = "Ocurrió un error al cargar los datos de la materia.";

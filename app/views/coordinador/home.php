@@ -18,7 +18,7 @@
         <div class="stats-grid">
             <div class="stat-card green" role="group" aria-label="Materias">
                 <div>
-                    <p class="stat-title">MÍS Materias</p>
+                    <p class="stat-title">Mis Materias</p>
                     <p class="stat-number" id="materias-count"><?= $data['materias'] ?></p>
                 </div>
                 <div class="stat-hint">Última actualización: hoy</div>

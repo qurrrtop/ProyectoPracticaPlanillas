@@ -132,7 +132,7 @@
                                         </span>
                                     </td>
                                 </tr>
-                                <!-- Fila expandible para detalles de finales (opcional) -->
+                                <!-- Fila expandible para detalles de finales -->
                                 <?php if (isset($alumno['mostrar_detalles']) && $alumno['mostrar_detalles']): ?>
                                     <tr class="card-finales" id="finales-<?= $alumno['idCursada'] ?? $index + 1 ?>">
                                         <td colspan="6">
@@ -144,11 +144,10 @@
                                                             <th>Intento</th>
                                                             <th>Nota</th>
                                                             <th>Fecha</th>
-                                                            <th>Observaciones</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        <!-- Aquí irían los datos de los finales si los tienes -->
+                                                        <!-- aca aparecen los datos si los hay -->
                                                         <tr>
                                                             <td colspan="4" class="no-data">No hay exámenes finales registrados</td>
                                                         </tr>

@@ -308,10 +308,7 @@
                 exit();
             }
 
-            // aceptar también un hidden 'anioCursada' si la vista lo envía (si no, usamos $anio)
-            $anioCursada = isset($_POST['anioCursada']) && !empty($_POST['anioCursada'])
-                ? (int) $_POST['anioCursada']
-                : (int) $anio;
+
 
             try {
                 // datos para selects y encabezado
@@ -319,8 +316,8 @@
                 $anios = $this->materiaService->getAllAnioMateria();
                 $materiasPorAnio = $this->materiaService->getMateriasAgrupadasPorAnio();
 
-                // TRUCO: pedir los alumnos por idMateria + anioCursada
-                $alumnos = $this->alumnoService->obtenerAlumnosByMateria((int)$idMateria, (int)$anioCursada);
+                // datos de los alumnos de la materia seleccionada
+                $alumnos = $this->alumnoService->obtenerAlumnosByMateria((int)$idMateria);
 
                 // pasar variables esperadas a la vista
                 require __DIR__ . '/../views/coordinador/verPlanillas.php';

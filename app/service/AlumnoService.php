@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace app\service;
 
 use app\dao\AlumnoDAO;
-use Exception;
 
 class AlumnoService {
     private AlumnoDAO $alumnoDAO;

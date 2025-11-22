@@ -5,16 +5,21 @@
     namespace app\controllers;
 
     use app\config\ConnectionDB;
+
     use app\dao\UsuarioDAO;
     use app\dao\CoordinadorDAO;
     use app\dao\MateriaDAO;
     use app\dao\PlanillaDAO;
     use app\dao\AlumnoDAO;
+    use app\dao\ExamenDAO;
+
     use app\service\CoordinadorService;
     use app\service\MateriaService;
     use app\service\CreateUserService;
     use app\service\VerPlanillaService;
     use app\service\AlumnoService;
+    use app\service\ExamenService;
+
     use Exception;
 
     class CoordinadorController {
@@ -25,6 +30,7 @@
         private $verPlanillaService;
         private $MateriaDAO;
         private $alumnoService;
+        private $examenService;
 
         // Constructor del controller:
         // 1. Se asegura de que la sesión esté iniciada.
@@ -44,12 +50,15 @@
             $materiaDAO = new MateriaDAO($connectionDB);
             $planillaDAO = new PlanillaDAO($connectionDB);
             $alumnoDAO = new AlumnoDAO($connectionDB);
+            $examenDAO = new ExamenDAO( $connectionDB );
+
             $this->alumnoService = new AlumnoService($alumnoDAO);
             $this->MateriaDAO = $materiaDAO;
             $this->coordinadorService = new CoordinadorService($usuarioDAO, $coordinadorDAO);
             $this->materiaService = new MateriaService($materiaDAO);
             $this->createUserService = new CreateUserService($usuarioDAO);
             $this->verPlanillaService = new VerPlanillaService($planillaDAO);
+            $this->examenService = new ExamenService( $examenDAO );
 
             if (empty($_SESSION['csrf_token'])) {
                 $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
@@ -329,7 +338,48 @@
             }
         }
 
+  public function getExamen() {
+    $this->verificarLogin();
 
+    $idAlumno = (int)$_POST['idAlumno'];
+    $idMateria = (int)$_POST['idMateria'];
+    $anio = (int)$_POST['anio'];
+
+    if (!$idAlumno || !$idMateria) {
+        $_SESSION['mensaje'] = "Datos incompletos.";
+        header("Location: index.php?controller=Coordinador&action=verPlanillas");
+        exit;
     }
+
+    try {
+        // 1) Traer exámenes
+        $examenes = $this->examenService->obtenerExamenByAlumno($idAlumno, $idMateria);
+
+        // 2) Cargar todo como en getDataPlanilla
+        $datosMateria   = $this->materiaService->getDataMateria($idMateria);
+        $anios          = $this->materiaService->getAllAnioMateria();
+        $materiasPorAnio = $this->materiaService->getMateriasAgrupadasPorAnio();
+        $alumnos        = $this->alumnoService->obtenerAlumnosByMateria($idMateria);
+
+        // 3) Marcar el alumno seleccionado
+        foreach ($alumnos as &$a) {
+            if ((int)$a['idAlumno'] === $idAlumno) {
+                $a['mostrar_detalles'] = true;
+                $a['examenes'] = $examenes;
+            }
+        }
+        unset($a);
+
+        include __DIR__ . '/../views/coordinador/verPlanillas.php';
+
+    } catch (Exception $e) {
+        error_log("Error al obtener finales: " . $e->getMessage());
+        $_SESSION['mensaje'] = "Ocurrió un error.";
+        header("Location: index.php?controller=Coordinador&action=verPlanillas");
+        exit;
+    }
+  }
+
+}
 
 ?>

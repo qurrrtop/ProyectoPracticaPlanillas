@@ -206,7 +206,7 @@
        * Obtiene todos los alumnos inscritos en una materia y año.
        * Usa la tabla cursada como relación (alumno-materia).
        */
-    public function readAlumnosByMateria(int $idMateria ): array {
+      public function readAlumnosByMateria(int $idMateria ): array {
         $sql = "SELECT c.idCursada, a.idAlumno, a.nombre, a.apellido, a.dni, a.cohorte, c.condicion
                 FROM cursada c
                 INNER JOIN alumnos a ON a.idAlumno = c.idAlumno
@@ -219,15 +219,13 @@
 
             $stmt->execute();
             $rows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
-            error_log("DEBUG AlumnoDAO - filas obtenidas: " . count($rows) . " -- firstRow: " . ($rows[0]['nombre'] ?? 'NONE'));
+
             return $rows;
         } catch (PDOException $e) {
             error_log("ERROR AlumnoDAO: " . $e->getMessage());
             throw new Exception("Error al obtener alumnos");
         }
-    }
-
-    }
-
-
+      }
+    
+  }
 ?>

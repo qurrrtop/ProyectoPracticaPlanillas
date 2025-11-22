@@ -12,14 +12,13 @@ if (session_status() === PHP_SESSION_NONE) session_start();
 
 try {
 
-    $idMateria = 1;
-    $anioCursada = 2025;
+    $idAlumno = 1;
 
     // Obtener conexión e instanciar DAO
     $connection = ConnectionDB::getInstancia();
     $dao = new AlumnoDAO($connection);
 
-    $rows = $dao->readAlumnosByMateria((int)$idMateria, (int)$anioCursada);
+    $rows = $dao->readExamenByAlumno( (int) $idAlumno );
 
     header('Content-Type: application/json; charset=utf-8');
     echo json_encode($rows, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);

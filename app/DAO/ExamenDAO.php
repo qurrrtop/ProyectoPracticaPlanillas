@@ -176,6 +176,36 @@
 
     }
 
+    public function readExamenByAlumno( int $idAlumno, int $idMateria ): array {
+      $sql = "SELECT e.oportunidad, e.nota, e.fechaExamen
+              FROM examen e
+              JOIN cursada c ON e.idCursada = c.idCursada
+              WHERE c.idAlumno = :idAlumno
+              AND c.idMateria = :idMateria
+              AND anioCursada = 2025
+              ORDER BY e.oportunidad ASC";
+
+      try {
+        $conn = $this->connectionDB->getConnection();
+        $stmt = $conn->prepare( $sql );
+        $stmt->bindParam( ':idAlumno', $idAlumno, PDO::PARAM_INT );
+        $stmt->bindParam( ':idMateria', $idMateria, PDO::PARAM_INT );
+        $stmt->execute();
+
+        $rows = $stmt->fetchAll( PDO::FETCH_ASSOC ) ?: [];
+        return $rows;
+        echo "dao";
+
+      } catch ( PDOException $e ) {
+        error_log("ERROR AlumnoDAO: " . $e->getMessage());
+        throw new Exception("Error al obtener examenes del alumno");
+
+      } catch ( Exception $e ) {
+        error_log("Error al obtener examenes del alumno");
+        throw $e;
+      }
+    }
+
   }
 
 ?>

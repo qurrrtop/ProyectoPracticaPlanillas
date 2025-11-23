@@ -1,4 +1,3 @@
-
 <?php
 
     declare( strict_types = 1 );
@@ -26,8 +25,8 @@
 
         public function createANewUser(UsuarioModelo $user): UsuarioModelo {
             $sql = "INSERT INTO " . self::TBL_NAME . " 
-                    (userName, passwordHash, nombre, apellido, rol)
-                    VALUES (:userName, :passwordHash, :nombre, :apellido, :rol)";
+                    (userName, passwordHash, nombre, apellido, email, rol)
+                    VALUES (:userName, :passwordHash, :nombre, :apellido, :email, :rol)";
 
             try {
                 $conn = $this->connectionDB->getConnection();
@@ -38,6 +37,7 @@
                     ':passwordHash' => $user->getPasswordHash(),
                     ':nombre'       => $user->getNombre(),
                     ':apellido'        => $user->getApellido(),
+                    ':email'        => $user->getEmail(),
                     ':rol'          => 'DOCENTE'
                 ]);
 

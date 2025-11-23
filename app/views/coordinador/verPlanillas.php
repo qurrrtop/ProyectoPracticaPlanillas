@@ -124,63 +124,31 @@
                     </tr>
                 </thead>
 
-                <tbody>
-                    <?php foreach ($alumnos as $index => $alumno): ?>
-                        <tr class="fila-alumno" data-id="<?= $alumno['idAlumno'] ?>">
+<tbody>
+<?php foreach ($alumnos as $index => $alumno): ?>
+    <tr class="fila-alumno"
+        data-id="<?= $alumno['idAlumno'] ?>"
+        data-nombre="<?= htmlspecialchars($alumno['nombre']) ?>"
+        data-apellido="<?= htmlspecialchars($alumno['apellido']) ?>">
 
-                            <form method="POST" action="index.php?controller=Coordinador&action=getExamen">
-                                <input type="hidden" name="idAlumno" value="<?= $alumno['idAlumno'] ?>">
-                                <input type="hidden" name="idMateria" value="<?= $idMateria ?>">
-                                <input type="hidden" name="anio" value="<?= $anio ?>">
-                            </form>
+        <td><?= $index + 1 ?></td>
+        <td><?= htmlspecialchars($alumno['nombre']) ?></td>
+        <td><?= htmlspecialchars($alumno['apellido']) ?></td>
+        <td><?= htmlspecialchars($alumno['dni']) ?></td>
+        <td><?= htmlspecialchars($alumno['cohorte']) ?></td>
+        <td><?= htmlspecialchars($alumno['condicion']) ?></td>
+    </tr>
 
-                            <td><?= $index + 1 ?></td>
-                            <td><?= htmlspecialchars($alumno['nombre']) ?></td>
-                            <td><?= htmlspecialchars($alumno['apellido']) ?></td>
-                            <td><?= htmlspecialchars($alumno['dni']) ?></td>
-                            <td><?= htmlspecialchars($alumno['cohorte']) ?></td>
-                            <td><?= htmlspecialchars($alumno['condicion']) ?></td>
-                        </tr>
-
-                        <!-- FILA CON DETALLES DE EXÁMENES -->
-                        <?php if (!empty($alumno['mostrar_detalles'])): ?>
-                        <tr class="card-finales">
-                          <td colspan="6">
-                            <div class="finales-container">
-                              <strong>Detalles de exámenes finales - 
-                                <?= htmlspecialchars($alumno['nombre']) ?> 
-                                <?= htmlspecialchars($alumno['apellido']) ?>
-                              </strong>
-                            <table class="finales-table">
-                              <thead>
-                                <tr>
-                                  <th>Intento</th>
-                                  <th>Nota</th>
-                                  <th>Fecha</th>
-                                </tr>
-                              </thead>
-                                <tbody>
-                                      <?php if (!empty($alumno['examenes'])): ?>
-                                      <?php foreach ($alumno['examenes'] as $f): ?>
-                                    <tr>
-                                      <td><?= htmlspecialchars($f['oportunidad']) ?></td>
-                                      <td><?= htmlspecialchars($f['nota']) ?></td>
-                                      <td><?= htmlspecialchars($f['fechaExamen']) ?></td>
-                                    </tr>
-                                      <?php endforeach; ?>
-                                      <?php else: ?>
-                                    <tr>
-                                      <td colspan="3" class="no-data">No hay exámenes finales registrados</td>
-                                    </tr>
-                                  <?php endif; ?>
-                                </tbody>
-                              </table>
-                            </div>
-                          </td>
-                        </tr>
-                      <?php endif; ?>
-                    <?php endforeach; ?>
-                </tbody>
+    <!-- fila oculta donde se van a mostrar los finales -->
+    <tr id="finales-<?= $alumno['idAlumno'] ?>" class="fila-finales" style="display:none;">
+        <td colspan="6">
+            <div class="finales-container" data-container-for="<?= $alumno['idAlumno'] ?>">
+                <!-- acá se insertará el contenido con JS -->
+            </div>
+        </td>
+    </tr>
+<?php endforeach; ?>
+</tbody>
             </table>
 
             <div class="resumen-alumnos">
@@ -197,27 +165,14 @@
 </main>
 
 <script>
-document.querySelectorAll(".fila-alumno").forEach(fila => {
-    fila.addEventListener("click", () => {
-        fila.querySelector("form").submit();
-    });
-});
-</script>
-
-<script>
 window.MATERIAS_POR_ANIO = <?= json_encode($materiasPorAnio ?? []) ?>;
 window.SELECTED_ANIO = <?= json_encode($anio ?? null) ?>;
 window.SELECTED_IDMATERIA = <?= json_encode($idMateria ?? null) ?>;
 </script>
 
 <script src="/ProyectoPracticaPlanillas/public/assets/js/verPlanillas.js"></script>
-<script>
-document.querySelectorAll(".fila-alumno").forEach(fila => {
-    fila.addEventListener("click", () => {
-        fila.querySelector("form").submit();
-    });
-});
-</script>
+<script src="/ProyectoPracticaPlanillas/public/assets/js/ajaxFinales.js"></script>
+
 
 </body>
 </html>

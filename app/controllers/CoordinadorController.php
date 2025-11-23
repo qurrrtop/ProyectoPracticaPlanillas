@@ -318,48 +318,66 @@
             }
         }
 
-  public function getExamen() {
+public function getExamen()
+{
     $this->verificarLogin();
 
-    $idAlumno = (int)$_POST['idAlumno'];
-    $idMateria = (int)$_POST['idMateria'];
-    $anio = (int)$_POST['anio'];
+$idAlumno = (int) ($_POST["idAlumno"] ?? 0);
+$idMateria = (int) ($_POST["idMateria"] ?? 0);
+$anio      = (int) ($_POST["anio"] ?? 0);
 
-    if (!$idAlumno || !$idMateria) {
-        $_SESSION['mensaje'] = "Datos incompletos.";
-        header("Location: index.php?controller=Coordinador&action=verPlanillas");
-        exit;
-    }
+    $esAjax = !empty($_SERVER["HTTP_X_REQUESTED_WITH"]) &&
+              strtolower($_SERVER["HTTP_X_REQUESTED_WITH"]) === "xmlhttprequest";
 
     try {
-        // 1) Traer exámenes
-        $examenes = $this->examenService->obtenerExamenByAlumno($idAlumno, $idMateria);
 
-        // 2) Cargar todo como en getDataPlanilla
-        $datosMateria   = $this->materiaService->getDataMateria($idMateria);
-        $anios          = $this->materiaService->getAllAnioMateria();
-        $materiasPorAnio = $this->materiaService->getMateriasAgrupadasPorAnio();
-        $alumnos        = $this->alumnoService->obtenerAlumnosByMateria($idMateria);
-
-        // 3) Marcar el alumno seleccionado
-        foreach ($alumnos as &$a) {
-            if ((int)$a['idAlumno'] === $idAlumno) {
-                $a['mostrar_detalles'] = true;
-                $a['examenes'] = $examenes;
+        if (!$idAlumno || !$idMateria) {
+            if ($esAjax) {
+                echo json_encode([
+                    "success" => false,
+                    "message" => "Faltan datos."
+                ]);
+                return;
             }
-        }
-        unset($a);
 
-        include __DIR__ . '/../views/coordinador/verPlanillas.php';
+            $_SESSION["mensaje"] = "Datos incompletos.";
+            header("Location: index.php?controller=coordinador&action=getDataPlanilla");
+            exit;
+        }
+
+        // SIEMPRE ENVIAR INTS AL SERVICE
+        $finales = $this->examenService->obtenerExamenByAlumno((int)$idAlumno, (int)$idMateria);
+
+        if ($esAjax) {
+            header("Content-Type: application/json");
+            echo json_encode([
+                "success" => true,
+                "finales" => $finales ?? []
+            ]);
+            return;
+        }
+
+        $_SESSION["mostrarAlumno"] = $idAlumno;
+
+        header("Location: index.php?controller=coordinador&action=getDataPlanilla&anio=".$anio."&idMateria=".$idMateria);
+        exit;
 
     } catch (Exception $e) {
-        error_log("Error al obtener finales: " . $e->getMessage());
-        $_SESSION['mensaje'] = "Ocurrió un error.";
-        header("Location: index.php?controller=Coordinador&action=verPlanillas");
+
+        if ($esAjax) {
+            echo json_encode([
+                "success" => false,
+                "message" => $e->getMessage()
+            ]);
+            return;
+        }
+
+        $_SESSION["mensaje"] = "Error al obtener exámenes: " . $e->getMessage();
+        header("Location: index.php?controller=coordinador&action=getDataPlanilla");
         exit;
     }
-  }
-
 }
+
+  }
 
 ?>

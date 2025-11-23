@@ -54,8 +54,8 @@
 
             $this->alumnoService = new AlumnoService($alumnoDAO);
             $this->MateriaDAO = $materiaDAO;
-            $this->coordinadorService = new CoordinadorService($usuarioDAO, $coordinadorDAO);
-            $this->materiaService = new MateriaService($materiaDAO);
+            $this->coordinadorService = new CoordinadorService($usuarioDAO, $coordinadorDAO, $alumnoDAO, $materiaDAO);
+            $this->materiaService = new MateriaService($materiaDAO, $coordinadorDAO);
             $this->createUserService = new CreateUserService($usuarioDAO);
             $this->verPlanillaService = new VerPlanillaService($planillaDAO);
             $this->examenService = new ExamenService( $examenDAO );
@@ -93,49 +93,64 @@
             
             $idPersona = $_SESSION['usuario']['idPersona'];
 
-            $data = $this->coordinadorService->getDataForHome($idPersona);
+            $data = $this->coordinadorService->getDataForHome();
 
             include __DIR__ . '/../views/coordinador/home.php';
         }
 
-        // -------- Método que redirecciona al panel panel del coordinadir y
-        // ---------- muestra las materias del coordinador ---------
+        // -------- Método que redirecciona al panel del coordinador --------
         
         public function panelCoord() {
-            $this -> verificarLogin();
+            $this->verificarLogin();
 
-            $idPersona = $_SESSION['usuario']['idPersona'];
+            // se guardan mensajes que estan en la sesión (si vienen)
+            $mensaje = $_SESSION['mensaje'] ?? '';
+            $mensaje_error = $_SESSION['mensaje_error'] ?? '';
+            // eliminamos los mensajes despues de leerlos para que no se repitan al refrescar
+            unset($_SESSION['mensaje'], $_SESSION['mensaje_error']);
 
-            $materiasAsignadas = $this->coordinadorService->getMateriasDelUsuario($idPersona);
+            // obtenemos los IDs de las materias seleccionadas desde la sesión (array)
+            $materiasSeleccionadasIds = $_SESSION['materias_seleccionadas'] ?? [];
 
-            $materiasAsignadasIds = array_column($materiasAsignadas, 'idMateria');
+            $nombreMateriasSeleccionadas = [];
+            // pedimos al service los nombres de dichas materias por media de sus ID's
+            if (!empty($materiasSeleccionadasIds)) {
+                try {
+                    // getMateriasByIds debe devolver un array de arrays con idMateria y nombre de las materias
+                    $nombreMateriasSeleccionadas = $this->materiaService->getMateriasByIds($materiasSeleccionadasIds);
+                } catch (Exception $e) {
+                    error_log("Error al obtener materias por IDs en panelCoord: " . $e->getMessage());
+                    $mensaje_error = "No se pudieron cargar las materias seleccionadas.";
+                }
+            }
 
+            // con esto se cuenta las cantidad de materias que se seleccionaron,
+            // útil para el el formulario de dar de alta docentes
+            $cantidadMateriasSeleccionadas = count($materiasSeleccionadasIds);
+
+            // CSRF (si no existe, crearlo)
             if (empty($_SESSION['csrf_token'])) {
                 $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
             }
 
-            $mensaje = $_SESSION['mensaje'] ?? '';
-            unset($_SESSION['mensaje']);
-
+            // ahora require de la vista (la vista usará $materiasSeleccionadasInfo)
             require __DIR__ . '/../views/coordinador/panelCoord.php';
         }
 
-        // ---- Método que redirecciona a una vista que muestra las materias del coordinador ----
-        // ---- y marca con un check los ya asignados a él ------
+        // ---- Método que redirecciona a una vista que muestra todas las materias de la carrera ----
+        // ---- para asignarle al docente a dar de alta ------
 
-        public function misMaterias() {
+        public function materias() {
             $this -> verificarLogin();
             
             $idPersona = $_SESSION['usuario']['idPersona'];
 
             // Trae todas las materias agrupadas por año
             $materiasPorAnio = $this->materiaService->getMateriasAgrupadasPorAnio();
+            // trae todas las materias que ya estén ocupadas
+            $materiasOcupadas = $this->materiaService->getMateriasOcupadas();
 
-            // Convierte a array de IDs para marcar los checkboxes
-            $materiasAsignadas = array_map(
-                fn($m) => $m['idMateria'], 
-                $this->coordinadorService->getMateriasDelUsuario($idPersona)
-            );
+            $materiasSeleccionadasIds = $_SESSION['materias_seleccionadas'] ?? [];
 
             // CSRF
             if (empty($_SESSION['csrf_token'])) {
@@ -146,36 +161,50 @@
             $mensaje = $_SESSION['mensaje'] ?? '';
             unset($_SESSION['mensaje']);
 
-            require __DIR__ . '/../views/coordinador/misMaterias.php';
+            require __DIR__ . '/../views/coordinador/materias.php';
         }
 
         // --------- (Método relacionado con la anterior) -----------
         // ----- Método que guarda los cambios al seleccioanar o quitar una materia ----
         // --------- (marcar o desmarcar checkbox's) ---------------
 
-        public function guardarMisMaterias() {
+        public function seleccionarMaterias() {
             $this->verificarLogin();
-            $idPersona = $_SESSION['usuario']['idPersona'];
+            
+            try {
+                // verifica método
+                if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+                    throw new Exception("Acceso inválido al formulario.");
+                }
 
-            // CSRF
-            if (empty($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
-                $_SESSION['mensaje'] = "Error: token CSRF inválido.";
-                header("Location: index.php?controller=Coordinador&action=misMaterias");
+                // valida el token CSRF
+                if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+                    throw new Exception("Token CSRF inválido.");
+                }
+
+                // recibe las materias seleccionadas de los checkbox's
+                $materiasSeleccionadas = isset($_POST['materias']) ? $_POST['materias'] : [];
+
+                // se guardan en sesión
+                $_SESSION['materias_seleccionadas'] = $materiasSeleccionadas;
+                // pequeño mensaje
+                $_SESSION['mensaje'] = "Materias seleccionadas correctamente.";
+
+                // redirige
+                header("Location: index.php?controller=Coordinador&action=panelCoord");
+                exit;
+
+            } catch (Exception $e) {
+
+                error_log("Error en seleccionarMaterias: " . $e->getMessage());
+
+                // guarda el mensaje de error en sesión para luego mostrarlo
+                $_SESSION['mensaje_error'] = $e->getMessage();
+
+                // redirige igual a la vista
+                header("Location: index.php?controller=Coordinador&action=panelCoord");
                 exit;
             }
-
-            $materiasSeleccionadas = $_POST['materias'] ?? [];
-
-            try {
-                $this->coordinadorService->actualizarMateriasDelUsuario($idPersona, $materiasSeleccionadas);
-
-                $_SESSION['mensaje'] = "Materias actualizadas correctamente.";
-            } catch (Exception $e) {
-                $_SESSION['mensaje'] = "Error al actualizar materias: " . $e->getMessage();
-            }
-
-            header("Location: index.php?controller=Coordinador&action=misMaterias");
-            exit;
         }
 
         // ---- Método que le permite al coordinador dar de alta a nuevos usuarios ----
@@ -183,6 +212,7 @@
         public function darAltaUsuario() {
             $this->verificarLogin();
             
+            // validamos el token CSRF como siempre
             if (empty($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
                 $_SESSION['mensaje'] = "Error: token CSRF inválido.";
                 header("Location: index.php?controller=Coordinador&action=panelCoord");
@@ -190,84 +220,34 @@
             }
             
             try {
+                // se crea el usuario nuevo
                 $nuevoUsuario = $this->createUserService->createUser(
                     $_POST['userName'],
                     $_POST['password'],
                     $_POST['nombre'],
+                    $_POST['apellido'],
                     $_POST['email']
                 );
-                
-                $_SESSION['mensaje'] = "Usuario creado correctamente.";
-                header("Location: index.php?controller=Coordinador&action=asignarMaterias&idPersona=" . $nuevoUsuario->getidPersona());
+
+                // obtenemos las materias seleccionadas desde la sesión
+                $materiasSeleccionadas = $_SESSION['materias_seleccionadas'] ?? [];
+
+                if (!empty($materiasSeleccionadas)) {
+                    $this->coordinadorService->asignarMaterias(
+                        $nuevoUsuario->getIdPersona(),
+                        $materiasSeleccionadas
+                    );
+                }
+
+                // limpiamos la sesión para evitar que queden materias viejas
+                unset($_SESSION['materias_seleccionadas']);
+
+                $_SESSION['mensaje_exito'] = "Docente creado y materias asignadas correctamente.";
+                header("Location: index.php?controller=Coordinador&action=panelCoord");
                 exit;
             } catch (Exception $e) {
-                $_SESSION['mensaje'] = "Error al crear usuario: " . $e->getMessage();
+                $_SESSION['mensaje_error'] = "Error al crear usuario o al asignar materias: " . $e->getMessage();
                 header("Location: index.php?controller=Coordinador&action=panelCoord");
-                exit;
-            }
-        }
-
-        // --------- (Método relacionado con la anterior) -----------
-        // ----- Luego de dar de alta un usuario, el método redirecciona a una ----
-        // ----- vista con la lista de materias, para asignarle al nuevo usuario ----
-
-        public function asignarMaterias() {
-            $this->verificarLogin();
-
-            if (empty($_SESSION['csrf_token'])) { $_SESSION['csrf_token'] = bin2hex(random_bytes(32)); }
-
-            // obtener y validar idPersona desde request
-            $idPersonaRaw = $_POST['idPersona'] ?? $_GET['idPersona'] ?? null;
-            if ($idPersonaRaw === null) {
-                throw new \Exception('idPersona no proporcionado');
-            }
-            if (!filter_var($idPersonaRaw, FILTER_VALIDATE_INT)) {
-                throw new \Exception('idPersona inválido');
-            }
-            $idPersona = (int) $idPersonaRaw;
-    
-            // obtener materias y asignadas
-            $materiasPorAnio = $this->materiaService->getMateriasAgrupadasPorAnio();
-            
-            $materiasAsignadas = array_map(
-                fn($m) => $m['idMateria'], 
-                $this->coordinadorService->getMateriasDelUsuario($idPersona)
-            );
-    
-            require __DIR__ . '/../views/coordinador/asignarMaterias.php';
-        }
-
-        // --------- (Método relacionado con la anterior) -----------
-        // ----- Método que guarda los cambios al asignarle las materias ----
-        // ----------- al usuario recien dado de alta ---------
-            
-        public function guardarAsignacionMaterias() {
-            $this->verificarLogin();
-
-            if (empty($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
-                $_SESSION['mensaje'] = "Error: token CSRF inválido.";
-                header("Location: index.php?controller=Coordinador&action=panelCoord");
-                exit;
-            }
-
-            $idPersona = isset($_POST['idPersona']) ? intval($_POST['idPersona']) : null;
-            $materiasSeleccionadas = $_POST['materias'] ?? [];
-
-            if ($idPersona === null) {
-                $_SESSION['mensaje'] = "Error: usuario inválido.";
-                header("Location: index.php?controller=Coordinador&action=panelCoord");
-                exit;
-            }
-
-            try {
-                $this->coordinadorService->actualizarMateriasDelUsuario($idPersona, $materiasSeleccionadas);
-
-                $_SESSION['mensaje'] = "Materias asignadas correctamente.";
-                header("Location: index.php?controller=Coordinador&action=asignarMaterias&idPersona=" . $idPersona);
-                exit;
-            } catch (Exception $e) {
-                $_SESSION['mensaje'] = "Error al asignar materias: " . $e->getMessage();
-                header("Location: index.php?controller=Coordinador&action=asignarMaterias&idPersona=" . $idPersona);
                 exit;
             }
         }

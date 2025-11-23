@@ -17,7 +17,7 @@
       $this->usuarioDAO = $usuarioDAO;
     }
 
-    public function createUser(string $userName, string $password, string $nombre, string $email) {
+    public function createUser(string $userName, string $password, string $nombre, string $apellido, string $email) {
       try {
         if ( !StringFieldType::stringToValidate( $email, StringFieldType::EMAIL ) ) {
           throw new Exception("El email es invalido.");
@@ -34,7 +34,7 @@
           $userName,
           $passwordHash,
           $nombre,
-          null,
+          $apellido,
           $email,
           null,
           null,

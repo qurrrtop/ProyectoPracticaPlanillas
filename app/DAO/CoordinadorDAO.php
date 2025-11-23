@@ -16,7 +16,6 @@
       const TBL_NAME_USERS = "usuarios"; #nombre de la tabla en la BD user es pa ponerle alguno, dsp vemos
 
       const TBL_NAME_USER_MATERIA = "usuario_materia";
-      const TBL_NAME_ALUMNOS = "alumnos";
 
       // ------------- CONSTRUCTOR CON INYECCIÓN DE DEPENDENCIAS --------------
 
@@ -255,46 +254,6 @@
         }
       }
 
-      // Métodos relacionados con la asignación de materias a usuarios (solo coordinador puede hacerlo).
-      // Aunque corresponden a la tabla intermedia usuario_materia, se mantienen aquí porque forman
-      // parte exclusiva de las funciones del coordinador.
-
-      // Asignar materia a un usuario
-      public function asignarMateria(int $idPersona, int $idMateria): bool {
-          $sql = "INSERT INTO " . self::TBL_NAME_USER_MATERIA . " (idPersona, idMateria) VALUES (:idPersona, :idMateria)";
-          
-          try {
-              $conn = $this->connectionDB->getConnection();
-              $stmt = $conn->prepare($sql);
-              $stmt->bindParam(':idPersona', $idPersona, PDO::PARAM_INT);
-              $stmt->bindParam(':idMateria', $idMateria, PDO::PARAM_INT);
-              $stmt->execute();
-
-              return $stmt->rowCount() > 0;
-
-          } catch (PDOException $e) {
-              throw new Exception("No se pudo asignar la(s) materia(s)".$e->getMessage());
-          }
-      }
-
-      // Quitar materia de un usuario
-      public function quitarMateria(int $idPersona, int $idMateria): bool {
-          $sql = "DELETE FROM " . self::TBL_NAME_USER_MATERIA . " WHERE idPersona = :idPersona AND idMateria = :idMateria";
-          
-          try {
-              $conn = $this->connectionDB->getConnection();
-              $stmt = $conn->prepare($sql);
-              $stmt->bindParam(':idPersona', $idPersona, PDO::PARAM_INT);
-              $stmt->bindParam(':idMateria', $idMateria, PDO::PARAM_INT);
-              $stmt->execute();
-
-              return $stmt->rowCount() > 0;
-
-          } catch (PDOException $e) {
-              throw new Exception("No se pudo quitar la(s) materia(s)".$e->getMessage());
-          }
-      }
-
       // Traer IDs de materias asignadas a un usuario
       public function traerMateriasPorUsuario(int $idPersona): array {
           $sql = "SELECT m.idMateria, m.nombre 
@@ -356,57 +315,6 @@
           }
       }
 
-      // ------ método que cuenta la cantidad de materias asignadas al coordinador -----
-
-      public function countMateriasCoord(int $idPersona) {
-        $sql = "SELECT COUNT(*) AS total FROM ".self::TBL_NAME_USER_MATERIA." WHERE idPersona = :idPersona";
-
-        try {
-          $conn = $this->connectionDB->getConnection();
-          $stmt = $conn->prepare($sql);
-          $stmt->bindParam(':idPersona', $idPersona, PDO::PARAM_INT);
-          $stmt->execute();
-          
-          $result = $stmt->fetch(PDO::FETCH_ASSOC);
-          // ------ operador ternario ---------
-          // si encontró algo que lo devuelva, si no encontró nada devuelve 0.
-          return $result ? $result['total'] : 0;
-
-        } catch(PDOException $e) {
-          error_log("No se puede traer la cantidad de materias del coordiandor de la base de datos". $e->getMessage());
-          throw new Exception("error al contar las materias del coordinador en la BD");
-
-        } catch (Exception $e) {
-          error_log("error al contar las materias del coordinador en la BD");
-          throw $e;
-        }
-      }
-
-      // ---- método que cuenta la cantidad de alumnos que hay en el sistema ----
-
-      public function countAlumnnos() {
-        $sql = "SELECT COUNT(*) AS total FROM ".self::TBL_NAME_ALUMNOS;
-
-        try {
-          $conn = $this->connectionDB->getConnection();
-          $stmt = $conn->prepare($sql);
-          $stmt->execute();
-          
-          $result = $stmt->fetch(PDO::FETCH_ASSOC);
-          // ------ operador ternario ---------
-          // si encontró algo que lo devuelva, si no encontró nada devuelve 0.
-          return $result ? $result['total'] : 0;
-
-        } catch(PDOException $e) {
-          error_log("No se puede traer la cantidad de alumnos de la base de datos". $e->getMessage());
-          throw new Exception("error al contar los alumnos en la base de datos");
-
-        } catch (Exception $e) {
-          error_log("error al contar los alumnos en la BD");
-          throw $e;
-        }
-      }
-
       // ---- método que cuenta la cantidad de docentes que hay en el sistema ----
 
       public function countDocentes() {
@@ -428,6 +336,77 @@
 
         } catch (Exception $e) {
           error_log("error al contar los docentes en la BD");
+          throw $e;
+        }
+      }
+
+      // método dinámico que sirve para asignar materias a usuarios nuevos y
+      // a usuarios ya existentes
+      public function asignarMaterias(int $idPersona, array $materias): bool {
+        // consulta SQL que verifica si el usuario es nuevo (sin materias asignadas)
+        // o uno ya existente (con materias asignadas)
+        $sqlCheck = "SELECT COUNT(*) FROM ".self::TBL_NAME_USER_MATERIA. " WHERE idPersona = :idPersona";
+
+        // consulta SQL que elimina las materias que ya tiene asignado, para asignar las nuevas
+        $sqlDelete = "DELETE FROM ".self::TBL_NAME_USER_MATERIA." WHERE idPersona = :idPersona";
+
+        // consulta SQL que inserta las materias (o nuevas materias) al docente
+        $sqlInsert = "INSERT INTO ".self::TBL_NAME_USER_MATERIA." (idPersona, idMateria) VALUES
+                      (:idPersona, :idMateria)";
+        try {
+          $conn = $this->connectionDB->getConnection();
+
+          // verificamos si ya tiene materias asignadas
+          $stmtCheck = $conn->prepare( $sqlCheck );
+          $stmtCheck->bindParam( ":idPersona", $idPersona, PDO::PARAM_INT );
+          $stmtCheck->execute();
+
+          $tieneMaterias = $stmtCheck->fetchColumn() > 0;
+
+          // si tiene materias asignadas se eliminan
+          if ( $tieneMaterias ) {
+            $stmtDelete = $conn->prepare( $sqlDelete );
+            $stmtDelete->bindParam( ":idPersona", $idPersona, PDO::PARAM_INT );
+
+            $stmtDelete->execute();
+          }
+
+          // se inserta(n) la(s) materia(s) al docente
+          $stmtInsert = $conn->prepare( $sqlInsert );
+
+          $stmtInsert->bindParam( ":idPersona", $idPersona, PDO::PARAM_INT );
+          $stmtInsert->bindParam( ":idMateria", $idMateria, PDO::PARAM_INT );
+
+          foreach ($materias as $idMateria) {
+            $stmtInsert->execute();
+          }
+
+          return true;
+
+        } catch (PDOException $e) {
+          error_log("Error en asignarMaterias: " . $e->getMessage());
+          return false;
+        } catch (Exception $e) {
+          error_log("Error inesperado en asignarMaterias: " . $e->getMessage());
+          return false;
+        }
+      }
+
+      public function getMateriasOcupadas() {
+        $sql = "SELECT idMateria FROM ".self::TBL_NAME_USER_MATERIA;
+
+        try {
+          $conn = $this->connectionDB->getConnection();
+          $stmt = $conn->prepare( $sql );
+          $stmt->execute();
+
+          return $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+        } catch (PDOException $e) {
+          error_log("No se pudo traer las materias ocupadas". $e->getMessage());
+          throw new Exception("error al traer las materias ocupadas");
+        } catch (Exception $e) {
+          error_log("error al traer las materias ocupadas desde la BD");
           throw $e;
         }
       }

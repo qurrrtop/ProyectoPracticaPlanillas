@@ -46,7 +46,7 @@
 
                 <br>
 
-                <a class="link-pass" href="">Recuperar contraseña</a>
+                <!-- <a class="link-pass" href="">Recuperar contraseña</a> -->
 
             </form>
         </div>

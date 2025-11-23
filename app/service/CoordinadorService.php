@@ -5,16 +5,22 @@
     namespace app\service;
 
     use app\dao\CoordinadorDAO;
+    use app\dao\AlumnoDAO;
     use app\dao\UsuarioDAO;
+    use app\dao\MateriaDAO;
     use Exception;
     class CoordinadorService {
 
         private $usuarioDAO;
         private $coordinadorDAO;
+        private $alumnoDAO;
+        private $materiaDAO;
 
-        public function __construct(UsuarioDAO $usuarioDAO, CoordinadorDAO $coordinadorDAO) {
+        public function __construct(UsuarioDAO $usuarioDAO, CoordinadorDAO $coordinadorDAO, AlumnoDAO $alumnoDAO, MateriaDAO $materiaDAO) {
             $this->usuarioDAO = $usuarioDAO;
             $this->coordinadorDAO = $coordinadorDAO;
+            $this->alumnoDAO = $alumnoDAO;
+            $this->materiaDAO = $materiaDAO;
         }
     
         // Devuelve IDs de materias que tiene asignadas un usuario
@@ -22,42 +28,25 @@
             return $this->coordinadorDAO->traerMateriasPorUsuario($idPersona); // array de int
         }
 
-        public function actualizarMateriasDelUsuario($idPersona, $materiasSeleccionadas): bool {
-            // materias actuales en BD
-            $materiasDeUsuario = $this->coordinadorDAO->traerMateriasPorUsuario($idPersona);
-            $materiasActuales = array_column($materiasDeUsuario, 'idMateria');
-
-            // calcular diferencias
-            $materiasAAgregar = array_diff($materiasSeleccionadas, $materiasActuales);
-            $materiasAQuitar  = array_diff($materiasActuales, $materiasSeleccionadas);
-
-            try {
-                // asignar nuevas
-                foreach ($materiasAAgregar as $idMateria) {
-                    $this->coordinadorDAO->asignarMateria($idPersona, $idMateria);
-                }
-
-                // quitar las desmarcadas
-                foreach ($materiasAQuitar as $idMateria) {
-                    $this->coordinadorDAO->quitarMateria($idPersona, $idMateria);
-                }
-
-                return true;
-
-            } catch (Exception $e) {
-                throw new Exception("Error al actualizar materias: " . $e->getMessage());
-            }
-        }
-
         // método trae los datos del coordinadorDAO, los almacena en un array, y
         // lo pasa al controlador para su posterior uso en la vista home.
-
-        public function getDataForHome(int $idPersona) {
+        public function getDataForHome() {
             return [
-                'materias' => $this->coordinadorDAO->countMateriasCoord($idPersona),
-                'alumnos' => $this->coordinadorDAO->countAlumnnos(),
+                'materias' => $this->materiaDAO->countMateriasTotal(),
+                'alumnos' => $this->alumnoDAO->countAlumnos(),
                 'docentes' => $this->coordinadorDAO->countDocentes()
             ];
+        }
+
+        public function asignarMaterias(int $idPersona, array $materias): bool {
+            try {
+                $result = $this->coordinadorDAO->asignarMaterias($idPersona, $materias);
+                return $result;
+  
+            } catch (Exception $e) {
+                error_log("CoordinadorService -> Error general al asignar materias: " . $e->getMessage());
+                throw $e;
+            }
         }
     }
 ?>

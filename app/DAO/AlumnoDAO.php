@@ -226,6 +226,31 @@
             throw new Exception("Error al obtener alumnos");
         }
       }
+
+      // ---- método que cuenta la cantidad de alumnos que hay en el sistema ----
+
+      public function countAlumnos(): int {
+        $sql = "SELECT COUNT(*) AS total FROM ".self::TBL_NAME;
+
+        try {
+          $conn = $this->connectionDB->getConnection();
+          $stmt = $conn->prepare($sql);
+          $stmt->execute();
+          
+          $result = $stmt->fetch(PDO::FETCH_ASSOC);
+          // ------ operador ternario ---------
+          // si encontró algo que lo devuelva, si no encontró nada devuelve 0.
+          return $result ? $result['total'] : 0;
+
+        } catch(PDOException $e) {
+          error_log("No se puede traer la cantidad de alumnos de la base de datos". $e->getMessage());
+          throw new Exception("error al contar los alumnos en la base de datos");
+
+        } catch (Exception $e) {
+          error_log("error al contar los alumnos en la BD");
+          throw $e;
+        }
+      }
     
   }
 ?>

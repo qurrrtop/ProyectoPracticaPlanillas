@@ -127,6 +127,38 @@
       }
     }
 
+    public function readMateriasByIds( array $materiasId): array {
+      // si el array viene vacío, evitamos la consulta
+      if (empty($materiasId)) {
+          return [];
+      }
+
+      // se arma los placeholders (?, ?, ?, ...)
+      $placeholders = implode(',', array_fill(0, count($materiasId), '?'));
+
+      $sql = "SELECT idMateria, nombre 
+              FROM " . self::TBL_NAME . " 
+              WHERE idMateria IN ($placeholders)";
+      
+      try {
+        $conn = $this->connectionDB->getConnection();
+        $stmt = $conn->prepare($sql);
+
+        // ejecutamos con los IDs como parámetros
+        $stmt->execute($materiasId);
+
+        // devuelve arreglo de materias con sus campos
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+      } catch (PDOException $e) {
+
+        error_log("MateriaDAO -> Error al obtener materias por IDs: " . $e->getMessage());
+        throw new Exception("No se pudieron obtener las materias seleccionadas.");
+
+      } catch (Exception $e) {
+        throw $e;
+      }
+    }
+
     public function updateAMateria( MateriaModel $materia ): MateriaModel {
 
       $sql = "UPDATE ". self::TBL_NAME . " SET nombre = :nombre, anio = :anio, idFormato = :idFormato, idDuracion = :idDuracion WHERE idMateria = :idMateria";
@@ -223,8 +255,8 @@
     }
 
     // método que obtiene todos los años de las materias
-    // para trabajar con el select
-    public function getAllAnioMateria() {
+    // para trabajar con el select (soluciona un bug)
+    public function getAllAnioMateria(): array {
       $sql = "SELECT DISTINCT anio FROM " . self::TBL_NAME . " ORDER BY anio";
 
       try {
@@ -240,6 +272,26 @@
           throw new Exception("No se pudieron obtener los años de las materias.");
       } catch (Exception $e) {
           throw $e;
+      }
+    }
+
+    public function countMateriasTotal() : int {
+      $sql = "SELECT COUNT(*) AS totalMaterias FROM ".self::TBL_NAME;
+
+      try {
+        $conn = $this->connectionDB->getConnection();
+        $stmt = $conn->prepare( $sql );
+        $stmt->execute();
+
+        $queryResult = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return $queryResult ? $queryResult['totalMaterias'] : 0;
+
+      } catch (PDOException $e) {
+        error_log("Error al obtener todas las materias: " . $e->getMessage());
+        throw new Exception("No se pudieron obtener todas las materias.");
+      } catch (Exception $e) {
+        throw $e;
       }
     }
 

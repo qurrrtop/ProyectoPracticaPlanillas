@@ -8,71 +8,118 @@
 </head>
 <body>
     <?php require_once __DIR__."/../template/sidebar.php"; ?>
-
+    
     <main>
-        <div class="card card-materias">
-            <h2>Mis Materias</h2>
+        <?php if (!empty($_SESSION['mensaje_exito']) || !empty($_SESSION['mensaje_error'])): ?>
+            <div id="modalMensaje" class="modal">
+                <div class="modal-contenido">
 
-            <?php if (empty($materiasAsignadas)) : ?>
-                <p class="mensaje-no-materias">Aún no tienes materias asignadas.</p>
+                    <?php if (!empty($_SESSION['mensaje_exito'])): ?>
+                        <i class="fa-solid fa-check icono-exito"></i>
+                        <p><?= $_SESSION['mensaje_exito'] ?></p>
+
+                    <?php else: ?>
+                        <i class="fa-solid fa-xmark icono-error"></i>
+                        <p><?= $_SESSION['mensaje_error'] ?></p>
+                    <?php endif; ?>
+
+                    <button id="cerrarModal">Aceptar</button>
+                </div>
+            </div>
+
+            <?php 
+                unset($_SESSION['mensaje_exito']);
+                unset($_SESSION['mensaje_error']);
+            ?>
+        <?php endif; ?>
+        
+        <h2>Alta de Usuarios</h2>
+
+        <div class="card card-materias">
+            <div class="box-title">
+                <p class="title-card">Lista de materias a asignar al docente</p>
+            </div>
+
+            <?php if (empty($nombreMateriasSeleccionadas)) : ?>
+                <p class="mensaje-no-materias">No hay materias seleccionadas.</p>
             <?php else : ?>
                 <ul class="lista-materias">
-                    <?php foreach ($materiasAsignadas as $materia) : ?>
+                    <?php foreach ($nombreMateriasSeleccionadas as $materia) : ?>
                         <li class="materia-item"><?= htmlspecialchars($materia['nombre']) ?></li>
                     <?php endforeach; ?>
                 </ul>
             <?php endif; ?>
 
             <div class="acciones">
-                <a href="index.php?controller=Coordinador&action=misMaterias" class="btn-modificar">
-                    Modificar
+                <a href="index.php?controller=Coordinador&action=materias" class="btn-seleccionar">
+                    Seleccionar
                 </a>
             </div>
         </div>
 
-        <?php if (!empty($mensaje) && $mensaje == 'Usuario creado correctamente.'): ?>
-            <div class="mensaje-exito"><?php echo $mensaje; ?></div>
-        <?php elseif (!empty($mensaje) && strpos($mensaje, 'Error al crear usuario: ') === 0): ?>
-            <div class="mensaje-error"><?php echo $mensaje; ?></div>
-        <?php endif; ?>
 
         <div class="card card-alta">
-            <h2>Alta de Usuarios</h2>
+            <div class="box-title">
+                <p class="title-card">Crear nuevo usuario</p>
+            </div>
             <form action="index.php?controller=Coordinador&action=darAltaUsuario" method="POST" class="form-alta">
                 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
-        
-                <div class="form-group">
-                    <label for="usuario">Usuario Inicial</label>
-                    <input type="text" id="userName" name="userName" required>
+                
+                <!-- Primera fila -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="userName">Usuario Inicial</label>
+                        <input type="text" id="userName" name="userName" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">Contraseña Inicial</label>
+                        <input type="password" id="password" name="password" required>
+                    </div>
                 </div>
-    
-                <div class="form-group">
-                    <label for="password">Contraseña Inicial</label>
-                    <input type="password" id="password" name="password" required>
+                
+                <!-- Segunda fila -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nombre">Nombre</label>
+                        <input type="text" id="nombre" name="nombre" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="apellido">Apellido</label>
+                        <input type="text" id="apellido" name="apellido" required>
+                    </div>
                 </div>
-    
-                <div class="form-group">
-                    <label for="nombre">Nombre</label>
-                    <input type="text" id="nombre" name="nombre" required>
+                
+                <!-- Tercera fila -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="materias">Cantidad de materias a asignar</label>
+                        <input type="number" id="materias" name="materias" readonly value="<?= $cantidadMateriasSeleccionadas ?>">
+                    </div>
                 </div>
-    
-                <div class="form-group">
-                    <label for="email">Correo Electrónico</label>
-                    <input type="email" id="email" name="email" required>
-                </div>
-    
+                
                 <div class="form-actions">
-                    <button type="submit" class="btn-alta">Dar Alta</button>
+                    <button type="submit" class="btn-alta">Dar de Alta</button>
                 </div>
             </form>
         </div>
+
+
+        <h2>Lista de usuarios</h2>
+
+        <div class="card card-list-users">
+
+        </div>
+
     </main>
 
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
 
+    <script src="assets/js/panelCoord.js"></script>
 </body>
 </html>

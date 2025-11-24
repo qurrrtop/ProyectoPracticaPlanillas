@@ -19,6 +19,23 @@
 
     public function createUser(string $userName, string $password, string $nombre, string $apellido, string $email) {
       try {
+
+        if (!StringFieldType::stringToValidate($userName, StringFieldType::USER_NAME)) {
+            throw new Exception("El nombre de usuario es inválido.");
+          }      
+        
+        if (!StringFieldType::stringToValidate($password, StringFieldType::PASSWORD)) {
+            throw new Exception("La contraseña no cumple los requisitos mínimos.");
+          }
+
+        if (!StringFieldType::stringToValidate($nombre, StringFieldType::NAME)) {
+          throw new Exception("El nombre es inválido.");
+          }
+
+        if (!StringFieldType::stringToValidate($apellido, StringFieldType::SURNAME)) {
+          throw new Exception("El apellido es inválido.");
+          }
+
         if ( !StringFieldType::stringToValidate( $email, StringFieldType::EMAIL ) ) {
           throw new Exception("El email es invalido.");
         }

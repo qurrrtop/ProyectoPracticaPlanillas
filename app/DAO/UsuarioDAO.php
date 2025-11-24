@@ -184,15 +184,17 @@
                  
                 foreach($queryResult as $row) {
                     $allUsers[] = new UsuarioModelo(
-                        $row['idPersona'],
-                        $row['userName'],
-                        $row['nombre'],
-                        $row['apellido'],
-                        $row['dni'],
-                        $row['email'],
-                        $row['telefono'],
-                        $row['direccion'],
-                        $row['fnacimiento']
+                        $row['idPersona'],   // idPersona
+                        $row['nombre'],      // nombre
+                        $row['apellido'],    // apellido
+                        $row['dni'],         // dni
+                        $row['email'],       // email
+                        $row['telefono'],    // telefono
+                        $row['direccion'],   // direccion
+                        $row['fnacimiento'], // fnacimiento
+                        null,                // passwordHash
+                        $row['userName'],    // userName
+                        null                 // rol
                     );
                 }
     

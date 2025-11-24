@@ -102,6 +102,11 @@
         
         public function panelCoord() {
             $this->verificarLogin();
+            
+            // CSRF (si no existe, crearlo)
+            if (empty($_SESSION['csrf_token'])) {
+                $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+            }
 
             // se guardan mensajes que estan en la sesión (si vienen)
             $mensaje = $_SESSION['mensaje'] ?? '';
@@ -118,20 +123,23 @@
                 try {
                     // getMateriasByIds debe devolver un array de arrays con idMateria y nombre de las materias
                     $nombreMateriasSeleccionadas = $this->materiaService->getMateriasByIds($materiasSeleccionadasIds);
+                    
+
                 } catch (Exception $e) {
                     error_log("Error al obtener materias por IDs en panelCoord: " . $e->getMessage());
                     $mensaje_error = "No se pudieron cargar las materias seleccionadas.";
                 }
             }
 
+            // array de objetos usuarios, para mostrar en la lista de usuarios 
+            $usuarios = $this->usuarioService->getAllUsers();
+
+            $materiasOfUsers = $this->materiaService->getAllMateriasByUsers();
+
+
             // con esto se cuenta las cantidad de materias que se seleccionaron,
             // útil para el el formulario de dar de alta docentes
             $cantidadMateriasSeleccionadas = count($materiasSeleccionadasIds);
-
-            // CSRF (si no existe, crearlo)
-            if (empty($_SESSION['csrf_token'])) {
-                $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-            }
 
             // ahora require de la vista (la vista usará $materiasSeleccionadasInfo)
             require __DIR__ . '/../views/coordinador/panelCoord.php';

@@ -411,5 +411,52 @@
         }
       }
 
+      public function getAllMateriasByUsers(): array {
+        $sql = "SELECT
+                    u.idPersona,
+                    m.idMateria,
+                    m.nombre AS nombreMateria
+                  FROM ".self::TBL_NAME_USERS. " u
+                  LEFT JOIN ".self::TBL_NAME_USER_MATERIA. " um ON um.idPersona = u.idPersona
+                  LEFT JOIN materias m ON m.idMateria = um.idMateria";
+        
+        try {
+          $conn = $this->connectionDB->getConnection();
+          $stmt = $conn->prepare( $sql );
+          $stmt->execute();
+
+          $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+          // Agrupar materias por idPersona
+          $materiasPorUsuario = [];
+
+          foreach ($rows as $row) {
+              $idPersona = $row['idPersona'];
+
+              // inicializar si no existe
+              if (!isset($materiasPorUsuario[$idPersona])) {
+                  $materiasPorUsuario[$idPersona] = [];
+              }
+
+              // Si NO tiene materias (LEFT JOIN) → no agregamos nada
+              if ($row['idMateria'] !== null) {
+                  $materiasPorUsuario[$idPersona][] = [
+                      'idMateria' => $row['idMateria'],
+                      'nombreMateria' => $row['nombreMateria']
+                  ];
+              }
+          }
+
+          return $materiasPorUsuario;
+
+        } catch (PDOException $e) {
+            error_log("No se pudo traer las materias de los docentes". $e->getMessage());
+            throw new Exception("error al traer las materias de los docentes");
+        } catch (Exception $e) {
+            error_log("error al traer las materias de docentes desde la BD");
+            throw $e;
+        }
+      }
+
     }
     ?>

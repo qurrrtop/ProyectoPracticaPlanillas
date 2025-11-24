@@ -40,31 +40,31 @@
       return $this->idPersona;
     }
 
-    public function getNombre(): string {
+    public function getNombre(): ?string {
       return $this->nombre;
     }
 
-    public function getApellido(): string {
+    public function getApellido(): ?string {
       return $this->apellido;
     }
 
-    public function getDni(): string {
+    public function getDni(): ?string {
       return $this->dni;
     }
 
-    public function getEmail(): string {
+    public function getEmail(): ?string {
       return $this->email;
     }
 
-    public function getTelefono(): string {
+    public function getTelefono(): ?string {
       return $this->telefono;
     }
 
-    public function getDireccion(): string {
+    public function getDireccion(): ?string {
       return $this->direccion;
     }
     //lo cambie ya que se guarda como string, si lo guardamos como datetime lo cambiamos
-    public function getFnacimiento(): string {
+    public function getFnacimiento(): ?string {
       return $this->fnacimiento;
     }
 

@@ -350,6 +350,12 @@ input[readonly] {
           padding 200ms ease;
 }
 
+.sin-materias {
+  text-align: center;
+  margin: 0 auto;
+  font-weight: 400;
+}
+
 .fila-content.open {
   max-height: 400px;
   opacity: 1;

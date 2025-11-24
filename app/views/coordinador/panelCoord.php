@@ -128,52 +128,54 @@
                 </tr>
             </thead>
 
-            <tbody>
-                <!-- EJEMPLO DE REGISTRO -->
+             <tbody>
+            <?php $i = 1; ?>
+            <?php foreach ($usuarios as $usuario): ?>
+
                 <tr class="fila-usuario">
-                    <td>1</td>
-                    <td>Javier</td>
-                    <td>Maidana</td>
-                    <td class="toggle" data-id="1"><i class="fa-solid fa-angle-right"></i></td>
+                    <td><?= $i ?></td>
+                    <td><?= $usuario->getNombre() ?? '---' ?></td>
+                    <td><?= $usuario->getApellido() ?? '---' ?></td>
+
+                    <td class="toggle" data-id="<?= $usuario->getIdPersona() ?>">
+                        <i class="fa-solid fa-angle-right"></i>
+                    </td>
                 </tr>
 
-                <!-- Fila expandible con mini cards -->
-                <tr class="fila-materias" id="materias-1">
+                <?php
+                    $id = $usuario->getIdPersona();
+                    $materias = $materiasOfUsers[$id] ?? []; // SI NO TIENE → array vacío
+                ?>
+
+                <tr class="fila-materias" id="materias-<?= $id ?>">
                     <td colspan="4">
                         <div class="fila-content">
                             <div class="materias-container">
-    
-                                <div class="materia-card">Matemática I</div>
-                                <div class="materia-card">Estadística</div>
-                                <div class="materia-card">Programación I</div>
-    
+
+                                <?php if (empty($materias)): ?>
+
+                                    <div class="sin-materias">
+                                        No tiene materias asignadas
+                                    </div>
+
+                                <?php else: ?>
+
+                                    <?php foreach ($materias as $m): ?>
+                                        <div class="materia-card">
+                                            <?= $m['nombreMateria'] ?>
+                                        </div>
+                                    <?php endforeach; ?>
+
+                                <?php endif; ?>
+
                             </div>
                         </div>
                     </td>
                 </tr>
 
-                <tr class="fila-usuario">
-                    <td>2</td>
-                    <td>Román</td>
-                    <td>Maidana</td>
-                    <td class="toggle" data-id="2"><i class="fa-solid fa-angle-right"></i></td>
-                </tr>
-
-                <tr class="fila-materias" id="materias-2">
-                    <td colspan="4">
-                        <div class="fila-content">
-                            <div class="materias-container">
-    
-                                <div class="materia-card">Base de Datos</div>
-                                <div class="materia-card">Programación II</div>
-    
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-
-            </tbody>
-        </table>
+            <?php $i++; endforeach; ?>
+        </tbody>
+    </table>
         
         <br>
         <br>

@@ -11,8 +11,8 @@
     
   class UsuarioModelo extends PersonaModel {
 
-    private string $passwordHash;
-    private string $userName;
+    private ?string $passwordHash;
+    private ?string $userName;
     private ?string $rol;
 
     

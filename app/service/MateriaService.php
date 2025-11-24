@@ -101,4 +101,14 @@
             }
         }
 
+        public function getAllMateriasByUsers(): array {
+            try {
+                return $this->coordinadorDAO->getAllMateriasByUsers();
+
+            } catch (Exception $e) {
+                error_log("MateriaService -> Error al obtener las materias por usuario: ".$e->getMessage());
+                throw $e;
+            }
+        }
+
     }

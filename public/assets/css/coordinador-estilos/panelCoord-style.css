@@ -17,6 +17,17 @@ body {
   font-family: 'Teachers', Arial, Helvetica, sans-serif;
 }
 
+.title-head {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 10px;
+}
+
+.title-head i {
+  font-size: 1.8rem;
+  margin-right: 15px;
+}
+
 .card {
   background: #ebebeb;
   text-align: center;
@@ -244,4 +255,113 @@ input[readonly] {
 @keyframes aparecer {
   from { transform: scale(0.8); opacity: 0; }
   to   { transform: scale(1); opacity: 1; }
+}
+
+.title-listUser {
+  font-family: 'Teachers', sans-serif;
+  font-size: 1.5rem;
+  margin-bottom: 30px;
+}
+
+.tabla-usuarios {
+  width: 80%;
+  margin: 0 auto;
+  font-family: 'Teachers', sans-serif;
+  font-weight: 500;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  border-radius: 8px;
+  overflow: hidden;
+
+  border: solid 1px #969696ad; 
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.tabla-usuarios th {
+  background: #4CAF50;
+  color: white;
+  padding: 12px;
+  font-weight: 500;
+  text-align: center;
+}
+
+.tabla-usuarios td {
+  padding: 12px;
+  border-bottom: 1px solid #ddd;
+  text-align: center;
+}
+
+.toggle {
+  cursor: pointer;
+  font-weight: bold;
+  text-align: center;
+  font-size: 18px;
+}
+
+.toggle:hover {
+  color: #0d6efd;
+}
+
+/* FILA OCULTA */
+.fila-materias {
+  background: #dfdfdfb9;
+}
+
+/* CONTENEDOR DE MINI CARDS */
+.materias-container {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 13px 13px;
+}
+
+/* MINI CARDS DE MATERIAS */
+.materia-card {
+  background: white;
+  border: 1px solid #3a9c6b;
+  padding: 8px 14px;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  font-size: 14px;
+  transition: 0.2s;
+}
+
+.materia-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
+.fila-materias td {
+  padding: 0 !important;
+}
+
+.fila-content {
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+
+  transition:
+          max-height 350ms ease,
+          opacity 250ms ease,
+          padding 200ms ease;
+}
+
+.fila-content.open {
+  max-height: 400px;
+  opacity: 1;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.fa-angle-right {
+  display: inline-block;
+  transition: transform 0.4s ease;
+}
+
+.fa-angle-right.open {
+  transform: rotate(90deg);
 }

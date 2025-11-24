@@ -32,8 +32,11 @@
                 unset($_SESSION['mensaje_error']);
             ?>
         <?php endif; ?>
-        
-        <h2>Alta de Usuarios</h2>
+
+        <div class="box-title-alta title-head">
+            <i class="fa-solid fa-users-line"></i>
+            <h2>Alta de Usuarios</h2>
+        </div>
 
         <div class="card card-materias">
             <div class="box-title">
@@ -110,12 +113,73 @@
             </form>
         </div>
 
-
-        <h2>Lista de usuarios</h2>
-
-        <div class="card card-list-users">
-
+        <div class="box-title-list title-head">
+            <i class="fa-solid fa-table-list"></i>
+            <h3 class="title-listUser">Lista de usuarios</h3>
         </div>
+
+        <table class="tabla-usuarios">
+            <thead>
+                <tr>
+                    <th>N°</th>
+                    <th>Nombre</th>
+                    <th>Apellido</th>
+                    <th>Materias</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <!-- EJEMPLO DE REGISTRO -->
+                <tr class="fila-usuario">
+                    <td>1</td>
+                    <td>Javier</td>
+                    <td>Maidana</td>
+                    <td class="toggle" data-id="1"><i class="fa-solid fa-angle-right"></i></td>
+                </tr>
+
+                <!-- Fila expandible con mini cards -->
+                <tr class="fila-materias" id="materias-1">
+                    <td colspan="4">
+                        <div class="fila-content">
+                            <div class="materias-container">
+    
+                                <div class="materia-card">Matemática I</div>
+                                <div class="materia-card">Estadística</div>
+                                <div class="materia-card">Programación I</div>
+    
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+
+                <tr class="fila-usuario">
+                    <td>2</td>
+                    <td>Román</td>
+                    <td>Maidana</td>
+                    <td class="toggle" data-id="2"><i class="fa-solid fa-angle-right"></i></td>
+                </tr>
+
+                <tr class="fila-materias" id="materias-2">
+                    <td colspan="4">
+                        <div class="fila-content">
+                            <div class="materias-container">
+    
+                                <div class="materia-card">Base de Datos</div>
+                                <div class="materia-card">Programación II</div>
+    
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+        
+        <br>
+        <br>
+        <br>
+        <br>
+        
 
     </main>
 

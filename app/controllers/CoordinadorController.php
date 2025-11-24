@@ -19,6 +19,7 @@
     use app\service\VerPlanillaService;
     use app\service\AlumnoService;
     use app\service\ExamenService;
+    use app\service\UsuarioService;
 
     use Exception;
 
@@ -31,6 +32,7 @@
         private $MateriaDAO;
         private $alumnoService;
         private $examenService;
+        private $usuarioService;
 
         // Constructor del controller:
         // 1. Se asegura de que la sesión esté iniciada.
@@ -59,6 +61,7 @@
             $this->createUserService = new CreateUserService($usuarioDAO);
             $this->verPlanillaService = new VerPlanillaService($planillaDAO);
             $this->examenService = new ExamenService( $examenDAO );
+            $this->usuarioService = new UsuarioService( $usuarioDAO );
 
             if (empty($_SESSION['csrf_token'])) {
                 $_SESSION['csrf_token'] = bin2hex(random_bytes(32));

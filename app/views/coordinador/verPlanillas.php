@@ -110,7 +110,6 @@
     <!-- TABLA DE ALUMNOS -->
     <?php if (!empty($alumnos)): ?>
         <div class="table-container">
-            <h3>Lista de Alumnos</h3>
 
             <table id="tablaAlumnos" class="alumnos-table">
                 <thead>
@@ -150,10 +149,6 @@
 <?php endforeach; ?>
 </tbody>
             </table>
-
-            <div class="resumen-alumnos">
-                <p>Total de alumnos: <strong><?= count($alumnos) ?></strong></p>
-            </div>
         </div>
 
     <?php else: ?>

@@ -114,8 +114,6 @@
             // se guardan mensajes que estan en la sesión (si vienen)
             $mensaje = $_SESSION['mensaje'] ?? '';
             $mensaje_error = $_SESSION['mensaje_error'] ?? '';
-            // eliminamos los mensajes despues de leerlos para que no se repitan al refrescar
-            unset($_SESSION['mensaje'], $_SESSION['mensaje_error']);
 
             // obtenemos los IDs de las materias seleccionadas desde la sesión (array)
             $materiasSeleccionadasIds = $_SESSION['materias_seleccionadas'] ?? [];

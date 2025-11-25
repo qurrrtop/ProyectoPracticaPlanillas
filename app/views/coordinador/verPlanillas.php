@@ -140,10 +140,10 @@
     </tr>
 
     <!-- fila oculta donde se van a mostrar los finales -->
-    <tr id="finales-<?= $alumno['idAlumno'] ?>" class="fila-finales" style="display:none;">
-        <td colspan="6">
-            <div class="finales-container" data-container-for="<?= $alumno['idAlumno'] ?>">
-                <!-- acá se insertará el contenido con JS -->
+    <tr id="finales-<?= $alumno['idAlumno'] ?>" class="fila-finales">
+        <td class="td-finales" colspan="6">
+            <div class="finales-container collapse">
+            <!-- aquí se cargan los finales -->
             </div>
         </td>
     </tr>

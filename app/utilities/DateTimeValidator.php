@@ -24,11 +24,11 @@
       foreach ($formats as $format) {
         $d = DateTime::createFromFormat($format, $value);
         $errors = DateTime::getLastErrors();
-        if ($d && $errors['warning_count'] === 0 && $errors['error_count'] === 0 && $d->format($format) === $value) {
-          $date = $d;
-          break;
-        }
-      }
+       if ($d && is_array($errors) && $errors['warning_count'] === 0 && $errors['error_count'] === 0 && $d->format($format) === $value) {
+    $date = $d;
+    break;
+          }
+   }
 
       if (!$date) {
         // Intentar un parseo más flexible como último recurso

@@ -118,8 +118,13 @@ div #materia {
   font-weight: 500;
 }
 
+.no-alumnos p {
+  font-family: 'Teachers', sans-serif;
+}
+
 .table-container {
   width: 75%;
+  margin-bottom: 50px;
 }
 
 table {

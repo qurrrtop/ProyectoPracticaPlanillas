@@ -170,7 +170,7 @@
         // ------------------------- READ ALL USER -------------------------
     
         public function readAllUser(): array {
-            $sql = "SELECT idPersona, userName, nombre, apellido, dni, email, telefono, direccion, fnacimiento FROM ".self::TBL_NAME." ORDER BY apellido";
+            $sql = "SELECT idPersona, userName, nombre, apellido, dni, email, telefono, direccion, fnacimiento FROM ".self::TBL_NAME." WHERE rol = 'DOCENTE' AND activo = 1 ORDER BY apellido";
     
             try {
                 $conn = $this->connectionDB->getConnection();

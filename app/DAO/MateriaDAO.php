@@ -221,19 +221,19 @@
 
     public function getDataMateria( int $idMateria ): array {
       $sql = "SELECT 
-                m.nombre AS materia,
-                u.nombre AS docente_nombre,
-                u.apellido AS docente_apellido,
-                d.nombre AS duracion,
-                f.nombre AS formato,
-                r.nombre AS regimen
-            FROM " . self::TBL_NAME . " m
-            INNER JOIN usuario_materia um ON um.idMateria = m.idMateria
-            INNER JOIN usuarios u ON u.idPersona = um.idPersona
-            INNER JOIN duracion d ON d.idDuracion = m.idDuracion
-            INNER JOIN formato f ON f.idFormato = m.idFormato
-            INNER JOIN regimen r ON r.idRegimen = m.idRegimen
-            WHERE m.idMateria = :idMateria";
+            m.nombre AS materia,
+            u.nombre AS docente_nombre,
+            u.apellido AS docente_apellido,
+            d.nombre AS duracion,
+            f.nombre AS formato,
+            r.nombre AS regimen
+        FROM " . self::TBL_NAME . " m
+        LEFT JOIN usuario_materia um ON um.idMateria = m.idMateria
+        LEFT JOIN usuarios u ON u.idPersona = um.idPersona
+        INNER JOIN duracion d ON d.idDuracion = m.idDuracion
+        INNER JOIN formato f ON f.idFormato = m.idFormato
+        INNER JOIN regimen r ON r.idRegimen = m.idRegimen
+        WHERE m.idMateria = :idMateria";
 
       try {
         $conn = $this->connectionDB->getConnection();

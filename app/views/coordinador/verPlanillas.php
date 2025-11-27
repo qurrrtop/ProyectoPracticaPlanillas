@@ -90,7 +90,15 @@
             </div>
             <div class="info-box">
                 <div class="info-title">Docente</div>
-                <div class="info-value"><?= formatValue($datosMateria['docente_nombre'] . " " . $datosMateria['docente_apellido']) ?></div>
+                
+                <?php $docente = trim(($datosMateria['docente_nombre'] ?? '') . ' ' . ($datosMateria['docente_apellido'] ?? ''));
+
+                if ($docente === '') {
+                    $docente = 'Sin docente asignado';
+                }
+                ?>
+
+                <div class="info-value"><?= formatValue($docente) ?></div>
             </div>
             <div class="info-box">
                 <div class="info-title">Duración</div>
@@ -110,7 +118,6 @@
     <!-- TABLA DE ALUMNOS -->
     <?php if (!empty($alumnos)): ?>
         <div class="table-container">
-            <h3>Lista de Alumnos</h3>
 
             <table id="tablaAlumnos" class="alumnos-table">
                 <thead>
@@ -150,15 +157,11 @@
 <?php endforeach; ?>
 </tbody>
             </table>
-
-            <div class="resumen-alumnos">
-                <p>Total de alumnos: <strong><?= count($alumnos) ?></strong></p>
-            </div>
         </div>
 
     <?php else: ?>
         <div class="no-alumnos">
-            <p>No hay alumnos inscritos en esta materia para el año seleccionado.</p>
+            <p>Por favor, seleccione un año y una materia en específico.</p>
         </div>
     <?php endif; ?>
 

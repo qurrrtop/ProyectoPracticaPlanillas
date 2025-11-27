@@ -115,7 +115,7 @@
 
         <div class="box-title-list title-head">
             <i class="fa-solid fa-table-list"></i>
-            <h3 class="title-listUser">Lista de usuarios</h3>
+            <h3 class="title-listUser">Lista de docentes</h3>
         </div>
 
         <table class="tabla-usuarios">
